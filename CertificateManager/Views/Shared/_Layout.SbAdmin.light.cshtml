@@ -1,0 +1,84 @@
+﻿@using CertificateManager.Logic.UXLogic
+@inject JavascriptConfigurationHelper jsConfig
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Certificate Manager">
+    <meta name="author" content="Cory Murphy">
+    <!-- Bootstrap core CSS -->
+    <link href="~/lib/startbootstrap-sb-admin/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom fonts for this template -->
+    <link href="~/lib/startbootstrap-sb-admin/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Plugin CSS -->
+    <link href="~/lib/datatables/media/css/dataTables.bootstrap4.min.css" rel="stylesheet" type="text/css">
+    @*<link href="~/lib/startbootstrap-sb-admin/vendor/datatables/dataTables.bootstrap4.css" rel="stylesheet">*@
+
+    <!-- Custom styles for this template -->
+    <link href="~/lib/startbootstrap-sb-admin/css/sb-admin.css" rel="stylesheet">
+
+    <link href="~/lib/jsgrid/dist/jsgrid.min.css" rel="stylesheet">
+    <link href="~/lib/jsgrid/dist/jsgrid-theme.min.css" rel="stylesheet">
+
+    <link href="~/lib/select2/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet"/>
+
+    <link rel="import" href="~/lib/paper-spinner/paper-spinner-lite.html" />
+
+    @RenderSection("Style", required:false)
+    <style>
+        .content-wrapper{
+            background: none;
+        }
+        .form-control{
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+
+<body class="bg-dark">
+
+    <div class="container">
+        @RenderBody()
+    </div>
+
+    <script src="~/lib/axios/dist/axios.min.js"></script>
+
+    <!-- Bootstrap core JavaScript -->
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/popper.js/dist/umd/popper.min.js"></script>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.min.js"></script>
+
+    <script src="~/lib/datatables/media/js/jquery.dataTables.min.js"></script>
+    <script src="~/lib/datatables/media/js/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="~/lib/startbootstrap-sb-admin/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <script src="~/lib/jsgrid/dist/jsgrid.min.js"></script>
+
+    <!-- Custom scripts for this template -->
+    <script src="~/lib/startbootstrap-sb-admin/js/sb-admin.min.js"></script>
+
+
+    <script src="~/lib/webcomponentsjs/webcomponents-lite.js"></script>
+
+    <script src="~/lib/select2/dist/js/select2.full.min.js"></script>
+
+    <script src="~/js/site.js"></script>
+
+    <script>
+        @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
+        @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
+    </script>
+
+    @RenderSection("Script", required:false);
+</body>
+
+</html>

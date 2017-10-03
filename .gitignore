@@ -1,0 +1,16 @@
+packages/
+CertificateAuthorityAdministration/obj/
+CertificateManager.Entities/bin/
+CertificateManager.Entities/obj/
+CertificateManager.IntegrationTests/bin/
+CertificateManager.IntegrationTests/obj/
+CertificateManager.Logic/bin/
+CertificateManager.Logic/obj/
+CertificateManager.Repository/bin/
+CertificateManager.Repository/obj/
+CertificateManager.UnitTests/bin/
+CertificateManager.UnitTests/obj/
+CertificateManager/bin/
+CertificateManager/obj/
+CertificateServices.ActiveDirectory/obj/
+CertificateServices/obj/

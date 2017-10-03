@@ -1,0 +1,168 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D7A343AE-7C7F-431E-9B81-52160D57B44C}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>CertificateServices</RootNamespace>
+    <AssemblyName>CertificateServices</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CertificateAuthorityRequestResponse.cs" />
+    <Compile Include="CertificateRequest.cs" />
+    <Compile Include="CertificateRequestStatus.cs" />
+    <Compile Include="CertificateRequestValidation.cs" />
+    <Compile Include="CertificateSubject.cs" />
+    <Compile Include="CngNativeProviderProxy.cs" />
+    <Compile Include="Exceptions\PrivateKeyDoesNotExistException.cs" />
+    <Compile Include="Exceptions\InaccessiblePrivateKeyException.cs" />
+    <Compile Include="InteropStructures\CngNativeProvider.cs" />
+    <Compile Include="Enumerations\CiperAlgorithms.cs" />
+    <Compile Include="Enumerations\MicrosoftCertificateAuthorityAuthenticationType.cs" />
+    <Compile Include="Exceptions\AccessDeniedLocalMachineCertificateStore.cs" />
+    <Compile Include="Exceptions\ActiveDirectoryUnavailibleException.cs" />
+    <Compile Include="Exceptions\AlgorithmNotSupportedByProviderException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityAdminException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityDoesNotExistInADException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityDoesNotPublishTemplateException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityMatchingTemplateIsNotAvailibleException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityUnavailibleException.cs" />
+    <Compile Include="Exceptions\KeySizeUnsupportedException.cs" />
+    <Compile Include="Exceptions\ProviderDoesNotSupportCipherAlgorithm.cs" />
+    <Compile Include="Exceptions\ProviderDoesNotSupportHashAlgorithm.cs" />
+    <Compile Include="Exceptions\UnableToInstallCertificateToCertificateStoreException.cs" />
+    <Compile Include="Exceptions\UnsupportedCertificateRequestFormat.cs" />
+    <Compile Include="Exceptions\UnsupportedCipherAlgorithmException.cs" />
+    <Compile Include="Exceptions\UnsupportedHashAlgorithmException.cs" />
+    <Compile Include="Enumerations\HashAlgorithm.cs" />
+    <Compile Include="Interfaces\ICertificateAuthority.cs" />
+    <Compile Include="Interfaces\ICertificateProvider.cs" />
+    <Compile Include="Enumerations\KeyUsage.cs" />
+    <Compile Include="Interfaces\ICngNativeProvider.cs" />
+    <Compile Include="InteropStructures\CRYPT_KEY_PROV_INFO.cs" />
+    <Compile Include="InteropStructures\CRYPT_KEY_PROV_PARAM.cs" />
+    <Compile Include="MicrosoftCertificateAuthority.cs" />
+    <Compile Include="MicrosoftCertificateAuthorityCredentialsProvidedOptions.cs" />
+    <Compile Include="MicrosoftCertificateAuthorityOptions.cs" />
+    <Compile Include="MicrosoftCertificateAuthorityWindowsAuthOptions.cs" />
+    <Compile Include="PrivateKeyStorageMetadata.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources.cs" />
+    <Compile Include="SecretKeyProvider.cs" />
+    <Compile Include="SelfSignedCerticateAuthority.cs" />
+    <Compile Include="SigningRequestProtocol.cs" />
+    <Compile Include="Win32CertificateProvider.cs" />
+    <Compile Include="WindowsApi.cs" />
+    <Compile Include="WindowsImpersonation.cs" />
+    <Compile Include="X509Certificate2Extensions.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="CERTCLILib">
+      <Guid>{372FCE32-4324-11D0-8810-00A0C903B83C}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="CertCOMLib">
+      <Guid>{179B730B-9F8B-4E78-92AF-5F788A047EBD}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="CERTENCODELib">
+      <Guid>{13199C00-7494-11D0-8816-00A0C903B83C}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="CERTENROLLLib">
+      <Guid>{728AB348-217D-11DA-B2A4-000E7BBB2B09}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

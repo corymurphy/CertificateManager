@@ -1,0 +1,35 @@
+﻿<div class="modal fade" id="authApiActionModal" role="dialog" aria-labelledby="authApiActionModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add JWT Signing Certificate</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <div class="form-group row">
+                        <label for="thumbprint" class="col-sm-3 col-form-label">Thumbprint</label>
+                        <div class="col-sm-10">
+                            <select class="form-control thumbprint" name="thumbprint" id="thumbprint" style=""></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="primary" class="col-sm-3 col-form-label">Primary</label>
+                        <div class="col-sm-10">
+                            <input id="primary" name="primary" type="checkbox">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="commitAuthApiEntity" data-dismiss="modal">Commit</button>
+            </div>
+        </div>
+    </div>
+</div>

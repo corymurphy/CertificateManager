@@ -1,0 +1,288 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.SbAdmin.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Certificates</a>
+    </li>
+    <li class="breadcrumb-item active">View Certificate</li>
+</ol>
+
+<div class="background-panel">
+
+    <div class="tab">
+        <button class="tablinks" onclick="openTab(event, 'Basic')" id="defaultOpen">Basic</button>
+        <button class="tablinks" onclick="openTab(event, 'Advanced')">Advanced</button>
+        <button class="tablinks" onclick="openTab(event, 'Security')">Security</button>
+    </div>
+
+    <div id="Basic" class="tabcontent">
+        <div class="row">
+            <div class="col-md-2">
+                <img src="~/images/certification-128.png">
+                <button type="button" id="showCertificateDownloadOptionsButton" class="btn btn-primary btn-sm" style="margin-top:20px; display:block;"><i class="fa fa-download"></i> Download</button>
+            </div>
+
+            <div class="col-md-10">
+
+                <h5 id="displayName">Certificate Display Name</h5>
+
+                <table>
+                    <tr>
+                        <th>Id</th>
+                        <td id="certificate-id"></td>
+                    </tr>
+                    <tr>
+                        <th>Thumbprint</th>
+                        <td id="thumbprint"></td>
+                    </tr>
+                    <tr>
+                        <th>Hash Algorithm</th>
+                        <td id="hashAlgorithm">SHA256</td>
+                    </tr>
+                    <tr>
+                        <th>Cipher Algorithm</th>
+                        <td id="cipherAlgorithm">RSA</td>
+                    </tr>
+                    <tr>
+                        <th>Has PrivateKey</th>
+                        <td id="hasPrivateKey">true</td>
+                    </tr>
+                    <tr>
+                        <th>Expires</th>
+                        <td id="expires">05-01-2017 12:00 PM</td>
+                    </tr>
+                    <tr>
+                        <th>Windows Api</th>
+                        <td id="windowsApi">CryptoApi Next Generation</td>
+                    </tr>
+                    <tr>
+                        <th>KeySize</th>
+                        <td id="keySize">2048</td>
+                    </tr>
+                    <tr>
+                        <th>StorageFormat</th>
+                        <td id="storageFormat">Pfx</td>
+                    </tr>
+                </table>
+            </div>
+
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Subject Alternative Names</h5>
+                <ul id="container">
+                    <li>Article 1</li>
+                    <li>Article 2</li>
+                    <li>Article 3</li>
+                    <li>Article 4</li>
+                    <li>Article 5</li>
+                    <li>Article 6</li>
+                    <li>Article 7</li>
+                    <li>Article 8</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div id="Advanced" class="tabcontent">
+        <h3>Paris</h3>
+        <p>Paris is the capital of France.</p>
+    </div>
+
+    <div id="Security" class="tabcontent">
+        <h3>Tokyo</h3>
+        <p>Tokyo is the capital of Japan.</p>
+    </div>
+
+    
+
+
+</div>
+
+@Html.Partial("~/Views/Shared/Modals/_CertificateDownloadOptionsModal.cshtml")
+
+    
+@section Script{ 
+    <script>
+        $(document).ready(function () {
+            document.getElementById("defaultOpen").click();
+            PrivateCertificateAuthority.GetCertificateDetails();
+        });
+
+        $('#showCertificateDownloadOptionsButton').click(function () {
+
+            $('#certificateDownloadOptionsModal').modal('show');
+
+        });
+        
+
+        $('#cer-radio').change(function () {
+            $("#download-certificate-button").prop('disabled', false);
+            $("#download-cer-option-der").prop('disabled', false);
+            $("#download-cer-option-b64").prop('disabled', false);
+            $("#download-cer-option-b64").prop('checked', true);
+            $("#cer-background").css("background-color", "#b0c4de");
+            $("#pfx-background").css("background-color", "#f5f5f5");
+        });
+
+        $('#pfx-radio').change(function () {
+            $("#download-certificate-button").prop('disabled', false);
+            $("#download-pfx-includechain").prop('disabled', false);
+            $("#download-cer-option-b64").prop('disabled', true);
+            $("#download-cer-option-der").prop('disabled', true);
+            $("#pfx-background").css("background-color", "#b0c4de");
+            $("#cer-background").css("background-color", "#f5f5f5");
+        });
+
+
+        $('#download-certificate-button').click(function (e) {
+            var type;
+            var encoding;
+            if ($("#cer-radio").prop("checked")) {
+                if ($("#download-cer-option-b64").prop('checked')) {
+                    type = "certb64";
+                }
+                else {
+                    type = "certbinary";
+                }
+                type = "certbinary";
+            }
+            else if ($("#pfx-radio").prop("checked")) {
+                type = "pfx";
+            }
+            else {
+                type = "";
+            }
+
+            if ($('#include-chain-checkbox').prop('checked'))
+            {
+                type = type + "chain"
+            }
+
+            var downloadUri = "/certificate/" + $('#certificate-id').text();
+
+            switch (type) {
+                case "certbinarychain":
+                    downloadUri = downloadUri + "/download/cer/binary/includechain";
+                    break;
+                case "certbinary":
+                    downloadUri = downloadUri + "/download/cer/binary/nochain";
+                    break;
+                case "certb64chain":
+                    downloadUri = downloadUri + "/download/cer/base64/includechain";
+                    break;
+                case "certb64":
+                    downloadUri = downloadUri + "/download/cer/base64/nochain";
+                    break;
+                case "pfxchain":
+                    downloadUri = downloadUri + "/download/pfx/includechain";
+                    break;
+                case "pfx":
+                    downloadUri = downloadUri + "/download/pfx/nochain";
+                    break;
+                default:
+                    downloadUri = downloadUri + "/download/cer/binary/nochain";
+            }
+
+            e.preventDefault();
+            window.location.href = downloadUri;
+
+        });
+
+    </script>
+}
+
+
+
+
+
+@section Style{ 
+    <style>
+        img {
+            max-width: 90px;
+            max-height: 90px;
+        }
+        ul#container {
+            height: 100px;
+            overflow-y: auto;
+        }
+
+        .background-panel {
+            background: #fff;
+            border-radius: 4px;
+            /*padding: 20px;*/
+        }
+
+        th {
+            color: #777;
+            width: 120px;
+            font-weight: 600;
+            text-align: right;
+            font-size: 12px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom:7px;
+        }
+
+        td {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            font-size: 12px;
+        }
+
+
+
+
+
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        /* Style the buttons inside the tab */
+        div.tab button {
+            background-color: inherit;
+            float: left;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 14px 16px;
+            transition: 0.3s;
+        }
+
+        /* Change background color of buttons on hover */
+        div.tab button:hover {
+            background-color: #ddd;
+        }
+
+        /* Create an active/current tablink class */
+        div.tab button.active {
+            background-color: #ccc;
+        }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+
+    </style>
+    
+}

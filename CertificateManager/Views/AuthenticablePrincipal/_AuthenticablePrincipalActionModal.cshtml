@@ -1,0 +1,50 @@
+﻿<div class="modal fade" id="authenticablePrincipalActionModal" tabindex="-1" role="dialog" aria-labelledby="authenticablePrincipalActionModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add new certificate manager user</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <div class="form-group row">
+                        <label for="authPrincipalUpn" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="authPrincipalUpn" name="authPrincipalUpn" placeholder="cmurphy@microsoft.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="authPrincipalEnabled" class="col-sm-3 col-form-label">Local Logon Enabled</label>
+                        <div class="col-sm-10">
+                            <input id="localLogonEnabled" name="localLogonEnabled" type="checkbox">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="authPrincipalEnabled" class="col-sm-3 col-form-label">Enabled</label>
+                        <div class="col-sm-10">
+                            <input id="authPrincipalEnabled" name="authPrincipalEnabled" type="checkbox">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="alternativeUpn" class="col-sm-3 col-form-label">AlternativeUpn</label>
+                        <div class="col-sm-10">
+                            <select multiple="multiple" style="min-width:280px;" id="alternativeUpn" class="form-control alternativeupn-actionmodal-select2 select2-editable"></select>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="commitAuthenticablePrincipalButton" data-dismiss="modal">Commit</button>
+            </div>
+        </div>
+    </div>
+</div>

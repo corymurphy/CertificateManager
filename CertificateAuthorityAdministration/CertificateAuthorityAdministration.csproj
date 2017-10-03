@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net461</TargetFramework>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <Platforms>AnyCPU;x86;x64</Platforms>
+  </PropertyGroup>
+
+</Project>

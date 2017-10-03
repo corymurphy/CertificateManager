@@ -1,0 +1,80 @@
+﻿
+<div class="modal fade" id="addPrivateCaModal" tabindex="-1" role="dialog" aria-labelledby="addPrivateCaModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+
+                <div class="modal-header">
+                    <h5 class="modal-title" id="privateCaModalLabel">Add Private Certificate Authority</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="container">
+
+                        <div class="form-group row">
+                            <label for="caServerName" class="col-sm-2 col-form-label">Server Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caServerName" placeholder="certp01">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="caCommonName" class="col-sm-2 col-form-label">Common Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caCommonName" placeholder="Corporate Issuing Authority G1">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="caHash" class="col-sm-2 col-form-label">Hash</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caHash" placeholder="SHA256">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="caAuthenticationRealm" class="col-sm-2 col-form-label">Authentication Realm</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caAuthenticationRealm" placeholder="corp.mydomain.net">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="caAuthenticationType" class="col-sm-2 col-form-label">Authentication Type</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caAuthenticationType" placeholder="WindowsKerberos">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="caUsername" class="col-sm-2 col-form-label">Username</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caUsername" placeholder="casvc">
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="caPassword" class="col-sm-2 col-form-label">Password</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="caPassword" placeholder="password">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addPrivateCaButton" data-dismiss="modal">Add</button>
+                </div>
+
+
+        </div>
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿<div class="modal fade" id="addAdcsTemplateModal" tabindex="-1" role="dialog" aria-labelledby="addAdcsTemplateModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            @*<form id="adcsTemplateForm">*@
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Download Certificate</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="container">
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateName" class="col-sm-3 col-form-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="adcsTemplateName" placeholder="ServerAuthentication-CapiRsa">
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateHash" class="col-sm-3 col-form-label">Hash</label>
+                            <div class="col-sm-10">
+                                <select id="adcsTemplateHash" class="form-control"></select>
+                                @*<input type="text" class="form-control" id="adcsTemplateHash" placeholder="SHA256">*@
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateCipher" class="col-sm-3 col-form-label">Cipher</label>
+                            <div class="col-sm-10">
+                                <select id="adcsTemplateCipher" class="form-control"></select>
+                                @*<input type="text" class="form-control" id="adcsTemplateCipher" placeholder="RSA">*@
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateKeyUsage" class="col-sm-3 col-form-label">KeyUsage</label>
+                            <div class="col-sm-10">
+                                <select id="adcsTemplateKeyUsage"  class="form-control"></select>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateWindowsApi" class="col-sm-3 col-form-label">WindowsApi</label>
+                            <div class="col-sm-10">
+                                <select id="adcsTemplateWindowsApi" class="form-control"></select>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="adcsTemplateAllowedToIssue" class="col-sm-3 col-form-label">AllowedToIssue</label>
+                            <div class="col-sm-10">
+                                <select multiple="multiple" style="min-width:280px;" id="adcsTemplateAllowedToIssue" class="form-control security-roles-adcs-select2 security-roles-adcs-select2-editable"></select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="addAdcsTemplateButton" data-dismiss="modal">Add</button>
+                </div>
+            @*</form>*@
+        </div>
+    </div>
+</div>
