@@ -36,7 +36,7 @@ var CmOptions = {
     ]
 }
 
-var baseUri = "http://certificatemanager.muellersystems.net/"
+var baseUri = "http://certificatemanager/"
 var certSearchResult = null;
 
 

@@ -61,5 +61,10 @@ namespace CertificateManager.Logic
             return ConstructClaimsPrincipal(authenticablePrincipal, localAuthenticationScheme);
         }
 
+        public string HashPassword(string password)
+        {
+            return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
     }
 }

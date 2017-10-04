@@ -46,14 +46,14 @@ namespace CertificateManager
                 //.AddOpenIdConnect("OidcPrimary",
                 //    options =>
                 //    {
-                //        options.MetadataAddress = @"https://idp.msdev.com:9445/oauth2/oidcdiscovery/.well-known/openid-configuration";
+                //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
                 //        //options.SaveTokens = true;
-                //        options.ClientId = "_MA4J_KLfC_sH8cYOcyO5Sy7UZ0a";
-                //        options.ClientSecret = "A1bpXBYrTBEZxkRxMq49pPuLE5wa";
+                //        options.ClientId = "";
+                //        options.ClientSecret = "";
                 //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
                 //        options.ResponseType = "id_token token";
                 //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //        options.Authority = @"https://idp.dev.muellersystems.net:9445/oauth2/token";
+                //        options.Authority = @"https://idp/oauth2/token";
                 //        //options.
                 //    }
                 //);
@@ -62,9 +62,9 @@ namespace CertificateManager
             //options =>
 
             //{
-            //    options.MetadataAddress = @"https://idp.msdev.com:9445/oauth2/oidcdiscovery/.well-known/openid-configuration";
+            //    options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
             //    options.SaveTokens = true;
-            //    options.ClientId = "_MA4J_KLfC_sH8cYOcyO5Sy7UZ0a";
+            //    options.ClientId = "";
 
             //}
 

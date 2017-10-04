@@ -68,8 +68,8 @@ namespace CertificateManager.IntegrationTests
 
         //        Console.Write(user);
         //        user.AlternativeUserPrincipalNames = new List<string>();
-        //        user.AlternativeUserPrincipalNames.Add("cory.murphy@mueller.com");
-        //        user.AlternativeUserPrincipalNames.Add("cmurphy@muellerflo.com");
+        //        user.AlternativeUserPrincipalNames.Add("cory.murphy@fakedomain.com");
+        //        user.AlternativeUserPrincipalNames.Add("cmurphy@fakedomain.com");
 
         //        col.Update(user);
         //    }
