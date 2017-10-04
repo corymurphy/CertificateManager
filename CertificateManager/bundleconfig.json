@@ -2,34 +2,37 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 [
   {
-    "outputFileName": "wwwroot/css/site.min.css",
+    "outputFileName": "wwwroot/css/base.min.css",
     // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
-      //"wwwroot/css/site.css",
-      //"wwwroot/lib/bootstrap/dist/css/bootstrap.css",
-      //"wwwroot/lib/font-awesome/css/font-awesome.css",
-      //"wwwroot/lib/datatables/media/css/dataTables.bootstrap4.css",
-      //"wwwroot/lib/metisMenu/dist/metisMenu.css",
-      //"wwwroot/lib/startbootstrap-sb-admin/css/sb-admin.min.css"
-      //"wwwroot/lib/startbootstrap-sb-admin-2/dist/css/sb-admin-2.css"
-    ]
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "node_modules/sb_admin/css/sb-admin.css",
+      "node_modules/morris.js/morris.css",
+      "node_modules/font-awesome/css/font-awesome.min.css",
+      "node_modules/jsgrid/dist/jsgrid.min.css",
+      "node_modules/jsgrid/dist/jsgrid-theme.min.css",
+      "node_modules/datatables/media/css/jquery.dataTables.min.css"
+    ],
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
   },
   {
-    "outputFileName": "wwwroot/js/site.js",
+    "outputFileName": "wwwroot/js/base.min.js",
     "inputFiles": [
-      //"wwwroot/lib/jquery/dist/jquery.js",
-      //"wwwroot/lib/startbootstrap-sb-admin/vendor/popper/popper.js",
-      //"wwwroot/lib/bootstrap/dist/js/bootstrap.js",
-      //"wwwroot/lib/startbootstrap-sb-admin/vendor/jquery-easing/jquery.easing.min.js",
-      //"wwwroot/lib/startbootstrap-sb-admin/vendor/chart.js/Chart.js",
-      //"wwwroot/lib/startbootstrap-sb-admin/vendor/chart.js/Chart.min.js",
-      //"wwwroot/lib/datatables/media/js/jquery.dataTables.min.js",
-      //"wwwroot/lib/datatables/media/js/dataTables.bootstrap4.js",
-      "wwwroot/js/cm-constants.js",
-      "wwwroot/js/cm-services.js",
-      "wwwroot/js/cm-presentation.js",
-      "Views/PrivateCertificateAuthority/private-certificate-authority.js"
-
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "node_modules/axios/dist/axios.min.js",
+      "node_modules/popper.js/dist/umd/popper.min.js",
+      "node_modules/datatables/media/js/jquery.dataTables.min.js",
+      "node_modules/jquery-easing/dist/jquery.easing.1.3.umd.min.js",
+      "node_modules/jsgrid/dist/jsgrid.min.js",
+      "node_modules/select2/dist/js/select2.full.min.js"
       //"wwwroot/js/site.js",
       //"wwwroot/lib/startbootstrap-sb-admin/js/sb-admin.min.js"
       //"wwwroot/lib/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js"
@@ -38,8 +41,8 @@
     "minify": {
       //"enabled": false,
       //"renameLocals": false
-      "enabled": true,
-      "renameLocals": true
+      "enabled": false,
+      "renameLocals": false
     },
     // Optionally generate .map file
     "sourceMap": false
