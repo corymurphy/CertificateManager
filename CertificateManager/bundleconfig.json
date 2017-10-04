@@ -1,5 +1,6 @@
 ﻿// Configure bundling and minification for the project.
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
+//https://docs.microsoft.com/en-us/aspnet/core/client-side/less-sass-fa
 [
   {
     "outputFileName": "wwwroot/css/base.min.css",
