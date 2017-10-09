@@ -17,3 +17,4 @@ CertificateServices.ActiveDirectory/obj/
 CertificateServices.ActiveDirectory/bin/
 CertificateServices/obj/
 CertificateServices/bin/
+CertificateManager/node_modules/

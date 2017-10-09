@@ -32,9 +32,9 @@ textarea {
 }
 
 /* Make .svg files in the carousel display properly in older browsers */
-.carousel-inner .item img[src$=".svg"] {
+/*.carousel-inner .item img[src$=".svg"] {
     width: 100%;
-}
+}*/
 
 /* Hide/rearrange for smaller screens */
 @media screen and (max-width: 767px) {
@@ -59,7 +59,7 @@ textarea {
     overflow: auto;
 }
 
-td.jsgrid-cell {
+jsgrid-cell {
     font-size: 13px;
 }
 
@@ -69,17 +69,11 @@ th {
     font-weight: 600;
     text-align: right;
     font-size: 12px;
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding: 7px 15px 7px 15px;
 }
 
 td {
-    padding-left: 15px;
-    padding-right: 15px;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding: 7px 15px 7px 15px;
     font-size: 12px;
 }
 
