@@ -81,9 +81,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IAuditRepository.cs" />
     <Compile Include="ICertificateRepository.cs" />
     <Compile Include="IConfigurationRepository.cs" />
     <Compile Include="IRuntimeCacheRepository.cs" />
+    <Compile Include="LiteDbAuditRepository.cs" />
     <Compile Include="LiteDbCertificateRepository.cs" />
     <Compile Include="LiteDbConfigurationRepositoryOld.cs" />
     <Compile Include="LiteDbConfigurationRepository.cs" />

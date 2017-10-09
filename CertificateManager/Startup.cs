@@ -84,6 +84,7 @@ namespace CertificateManager
             services.AddSingleton<ICertificateRepository>(new LiteDbCertificateRepository(@"d:\db\certs.db"));
             services.AddSingleton<IRuntimeConfigurationState>(new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository));
             services.AddSingleton<JavascriptConfigurationHelper>(new JavascriptConfigurationHelper(configurationRepository));
+            services.AddSingleton<AuditLogic>( new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

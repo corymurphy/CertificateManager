@@ -16,13 +16,15 @@ namespace CertificateManager.Controllers
         private IConfigurationRepository configurationRepository;
         private ICertificateProvider certificateProvider;
         private HttpResponseHandler response;
+        private AuditLogic audit;
 
-        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider)
+        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, AuditLogic auditLogic)
         {
             this.certificateRepository = certRepo;
             this.configurationRepository = configRepo;
             this.certificateProvider = certProvider;
             this.response = new HttpResponseHandler(this);
+            this.audit = auditLogic;
         }
 
        
@@ -38,6 +40,7 @@ namespace CertificateManager.Controllers
             try
             {
                 result = processor.CreateCertificateWithPrivateKey(model);
+                
             }
             catch(Exception e)
             {

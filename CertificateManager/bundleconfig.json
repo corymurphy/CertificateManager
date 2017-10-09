@@ -2,27 +2,27 @@
 // More info at https://go.microsoft.com/fwlink/?LinkId=808241
 //https://docs.microsoft.com/en-us/aspnet/core/client-side/less-sass-fa
 [
-  {
-    "outputFileName": "wwwroot/css/base.min.css",
-    // An array of relative input file paths. Globbing patterns supported
-    "inputFiles": [
-      "node_modules/bootstrap/dist/css/bootstrap.min.css",
-      "node_modules/sb_admin/css/sb-admin.css",
-      "node_modules/morris.js/morris.css",
-      "node_modules/font-awesome/css/font-awesome.min.css",
-      "node_modules/jsgrid/dist/jsgrid.min.css",
-      "node_modules/jsgrid/dist/jsgrid-theme.min.css",
-      "node_modules/datatables/media/css/jquery.dataTables.min.css"
-    ],
-    "minify": {
-      //"enabled": false,
-      //"renameLocals": false
-      "enabled": false,
-      "renameLocals": false
-    },
-    // Optionally generate .map file
-    "sourceMap": false
-  },
+  //{
+  //  "outputFileName": "wwwroot/css/base.min.css",
+  //  // An array of relative input file paths. Globbing patterns supported
+  //  "inputFiles": [
+  //    "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  //    "node_modules/sb_admin/css/sb-admin.css",
+  //    "node_modules/morris.js/morris.css",
+  //    "node_modules/font-awesome/css/font-awesome.min.css",
+  //    "node_modules/jsgrid/dist/jsgrid.min.css",
+  //    "node_modules/jsgrid/dist/jsgrid-theme.min.css",
+  //    "node_modules/datatables/media/css/jquery.dataTables.min.css"
+  //  ],
+  //  "minify": {
+  //    //"enabled": false,
+  //    //"renameLocals": false
+  //    "enabled": false,
+  //    "renameLocals": false
+  //  },
+  //  // Optionally generate .map file
+  //  "sourceMap": false
+  //},
   {
     "outputFileName": "wwwroot/js/base.min.js",
     "inputFiles": [

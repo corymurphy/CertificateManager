@@ -13,6 +13,10 @@
     "morris.js": "^0.5.0",
     "font-awesome": "^4.7.0",
     "popper.js": "^1.12.5",
-    "jquery-easing": "^0.0.1"
+    "jquery-easing": "^0.0.1",
+    "gulp": "3.9.1",
+    "gulp-less": "3.3.0",
+    "gulp-concat": "~2.6.1",
+    "gulp-clean-css": "~3.9.0"
   }
 }
