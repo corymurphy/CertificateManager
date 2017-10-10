@@ -33,7 +33,8 @@
       "node_modules/font-awesome/css/font-awesome.min.css",
       "node_modules/jsgrid/dist/jsgrid.min.css",
       "node_modules/jsgrid/dist/jsgrid-theme.min.css",
-      "node_modules/datatables/media/css/jquery.dataTables.min.css"
+      "node_modules/datatables/media/css/jquery.dataTables.min.css",
+      "style/card.css"
     ],
     "minify": {
       //"enabled": false,
@@ -45,9 +46,28 @@
     "sourceMap": false
   },
   {
+    "outputFileName": "wwwroot/css/bootstrap.css",
+    "inputFiles": [ "node_modules/bootstrap/dist/css/bootstrap.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
     "outputFileName": "wwwroot/css/bootstrap.min.css",
     "inputFiles": [ "node_modules/bootstrap/dist/css/bootstrap.min.css" ],
-    "minify": { "enabled": false, "renameLocals": false }
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/dashboard.css",
+    "inputFiles": [ "wwwroot/src-assets/dashboard.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
   },
   {
     "outputFileName": "wwwroot/css/sb-admin.css",
@@ -74,12 +94,93 @@
     }
   },
   {
+    "outputFileName": "wwwroot/js/jquery.min.js",
+    "inputFiles": [ "node_modules/jquery/dist/jquery.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/jquery.slim.min.js",
+    "inputFiles": [ "node_modules/jquery/dist/jquery.slim.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/popper.min.js",
+    "inputFiles": [ "node_modules/popper.js/dist/popper.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/bootstrap.min.js",
+    "inputFiles": [ "node_modules/bootstrap/dist/js/bootstrap.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/select2.min.css",
+    "inputFiles": [ "node_modules/select2/dist/css/select2.min.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/select2.full.min.js",
+    "inputFiles": [ "node_modules/select2/dist/js/select2.full.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+
+
+
+  {
+    "outputFileName": "wwwroot/js/jsgrid.min.js",
+    "inputFiles": [ "node_modules/jsgrid/dist/jsgrid.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+  {
+    "outputFileName": "wwwroot/js/cm.min.js",
+    "inputFiles": [
+      "wwwroot/src-assets/cm-constants.js",
+      "wwwroot/src-assets/cm-presentation.js",
+      "wwwroot/src-assets/cm-services.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+
+
+  {
     "outputFileName": "wwwroot/js/base.min.js",
     "inputFiles": [
       "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/popper.js/dist/umd/popper.min.js",
       "node_modules/bootstrap/dist/js/bootstrap.min.js",
       "node_modules/axios/dist/axios.min.js",
-      "node_modules/popper.js/dist/umd/popper.min.js",
+
       "node_modules/datatables/media/js/jquery.dataTables.min.js",
       "node_modules/jquery-easing/dist/jquery.easing.1.3.umd.min.js",
       "node_modules/jsgrid/dist/jsgrid.min.js",

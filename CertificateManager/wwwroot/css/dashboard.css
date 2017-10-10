@@ -1,4 +1,4 @@
-﻿/*
+/*
  * Base structure
  */
 
@@ -110,4 +110,12 @@ body {
 .placeholder img {
     display: inline-block;
     border-radius: 50%;
+}
+
+.nav-item{
+    font-size:13px;
+}
+
+.nav-pills{
+    margin-bottom: 20px;
 }
