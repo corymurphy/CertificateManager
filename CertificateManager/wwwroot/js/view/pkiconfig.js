@@ -4,6 +4,8 @@
     {
         CmOptions.hashAlgorithmOptions.forEach(function (item) {
 
+            var caHash = $('#caHash');
+
             var element = $('#adcsTemplateHash');
 
             element.append($('<option>', {
@@ -11,8 +13,15 @@
                 text: item.Name
             }));
 
-            if (item.Primary)
+
+            caHash.append($('<option>', {
+                value: item.Name,
+                text: item.Name
+            }));
+
+            if (item.Primary === true)
             {
+                caHash.val(item.Name);
                 element.val(item.Name);
             }   
         });
@@ -39,6 +48,22 @@
         });
 
 
+        //CmOptions.authenticationTypeOptions.forEach(function (item) {
+        //    $('#caAuthenticationType').append($('<option>', {
+        //        value: item.Name,
+        //        text: item.Name
+        //    }));
+        //});
+
+        //CmOptions.ExternalIdentitySources.forEach(function (item) {
+        //    if (item.enabled)
+        //    {
+        //        $('#caAuthenticationRealm').append($('<option>', {
+        //            value: item.id,
+        //            text: item.name
+        //        }));
+        //    }
+        //});
         
     },
 
@@ -83,11 +108,11 @@
     },
 
     ShowAddTemplateModal: function (dialogType, client) {
-        $("#adcsTemplateName").val(client.name);
-        $("#adcsTemplateHash").val(client.hash);
-        $("#adcsTemplateCipher").val(client.cipher);
-        $("#adcsTemplateKeyUsage").val(client.keyUsage);
-        $("#adcsTemplateWindowsApi").val(client.windowsApi);
+        //$("#adcsTemplateName").val(client.name);
+        //$("#adcsTemplateHash").val(client.hash);
+        //$("#adcsTemplateCipher").val(client.cipher);
+        //$("#adcsTemplateKeyUsage").val(client.keyUsage);
+        //$("#adcsTemplateWindowsApi").val(client.windowsApi);
 
         $('#addAdcsTemplateButton').click(function () {
 
@@ -143,21 +168,28 @@
 
     },
 
-    ShowAddPrivateCaModal: function (dialogType, client) {
-        $("#caServerName").val(client.serverName);
-        $("#caCommonName").val(client.commonName);
-        $("#caHash").val(client.hashAlgorithm);
-        $("#caAuthenticationRealm").val(client.authenticationRealm);
-        $("#caAuthenticationType").val(client.authenticationType);
-        $("#caUsername").val(client.username);
-        $("#caPassword").val(client.password);
+    ShowAddPrivateCaModal: function (client) {
 
-        $('#addPrivateCaButton').click(function () {
+        PkiConfig.InitializePrivateCaIdentityProviderSelect2();
+
+        $('#commitPrivateCaButton').click(function () {
 
             PkiConfig.AddPrivateCa(client, dialogType === "Add");
         });
 
-        $("#addAdcsTemplateModal").modal("show");
+        $("#privateCaActionModal").modal("show");
+    },
+
+    ShowEditPrivateCaModal: function (data)
+    {
+        PkiConfig.InitializePrivateCaIdentityProviderSelect2();
+
+        $('#addPrivateCaButton').click(function () {
+
+            PkiConfig.ChangePrivateCa(data);
+        });
+
+        $("#privateCaActionModal").modal("show");
     },
 
     AddPrivateCa: function (client, isNew) {
@@ -171,9 +203,22 @@
             password: $("#caPassword").val()
         });
 
-        $("#privateCaTable").jsGrid(isNew ? "insertItem" : "updateItem", client);
+        $("#privateCaTable").jsGrid("insertItem", client);
 
-        $("#addPrivateCaModal").modal("hide");
+        $("#privateCaActionModal").modal("hide");
+    },
+
+    ChangePrivateCa: function (client) {
+        $.extend(client, {
+            serverName: $("#caServerName").val(),
+            commonName: $("#caCommonName").val(),
+            hashAlgorithm: $("#caHash").val(),
+            identityProviderId: $('#caIdentityProvider').val()
+        });
+
+        $("#privateCaTable").jsGrid("updateItem", client);
+
+        $("#privateCaActionModal").modal("hide");
     },
 
     PrivateCertificateAuthoritiesController: {
@@ -184,7 +229,7 @@
                 url: "/pki-config/certificate-authorities/private",
                 dataType: "json"
             }).done(function (response) {
-                d.resolve(response);
+                d.resolve(response.payload);
             });
             return d.promise();
         },
@@ -360,20 +405,60 @@
 
             controller: PkiConfig.PrivateCertificateAuthoritiesController,
 
+            rowClick: function (args) {
+                PkiConfig.ShowEditPrivateCaModal(args.item);
+            },
+
             fields: [
                 { name: "serverName", type: "text" },
                 { name: "commonName", type: "text" },
                 { name: "hashAlgorithm", type: "select", items: CmOptions.hashAlgorithmOptions, valueType: "string", valueField: "Name", textField: "Name" },
-                { name: "authenticationRealm", type: "text" },
-                { name: "authenticationType", type: "select", items: CmOptions.authenticationTypeOptions, valueType: "string", valueField: "Name", textField: "Name" },
-                { name: "username", type: "text" },
-                { name: "password", type: "text", readOnly: true },
+                { name: "caIdp", type: "select", items: CmOptions.ExternalIdentitySources, valueType: "string", valueField: "id", textField: "name" },
+                {
+                    name: "caIdp2",
+                    itemTemplate: function (value, item) {
+
+                        var idpDisplayName = "";
+
+                        CmOptions.ExternalIdentitySources.forEach(function (idp) {
+
+
+                            if (idp.id == item.identityProviderId)
+                            {
+                                idpDisplayName = idp.name
+                            }
+
+                            
+                        });
+
+
+                        if (idpDisplayName === "")
+                        {
+                            idpDisplayName = "none"; 
+                        }
+
+                        return idpDisplayName;
+                        //var roleSelect = $("<select style='width:100%' class='security-roles-adcs-select2' multiple='multiple'>");
+
+                        //item.rolesAllowedToIssueSelectView.forEach(function (option) {
+                        //    roleSelect.append($('<option>', {
+                        //        value: option.id,
+                        //        text: option.name
+                        //    }).attr('selected', true));
+                        //});
+
+                        //roleSelect = roleSelect.attr('disabled', true);
+                        //return roleSelect;
+                        //return $("<div>").append(roleSelect);
+                    }
+                },
                 {
                     type: "control",
+                    editButton: false,
                     headerTemplate: function () {
                         return $("<button>").attr("type", "button").text("Add")
                             .on("click", function () {
-                                PkiConfig.ShowAddPrivateCaModal("Add", {});
+                                PkiConfig.ShowAddPrivateCaModal({});
                             });
                     }
                 }
@@ -393,6 +478,11 @@
                 text: option.Name
             }))
         });
+    },
+
+    InitializePrivateCaIdentityProviderSelect2: function ()
+    {
+        $('#caIdentityProvider').select2({ data: CmOptions.ExternalIdentitySources, width: '100%' });
     },
 
     InitializeSelect2: function ()

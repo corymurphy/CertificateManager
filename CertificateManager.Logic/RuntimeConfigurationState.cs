@@ -69,7 +69,7 @@ namespace CertificateManager.Logic
 
         public void ValidateAtLeastOneCertificateAuthority()
         {
-            IEnumerable<MicrosoftCertificateAuthorityOptions> found = configurationRepository.GetPrivateCertificateAuthorities();
+            IEnumerable<PrivateCertificateAuthorityConfig> found = configurationRepository.GetPrivateCertificateAuthorities();
 
             if(found == null && !runtimeCacheRepository.ConfigurationAlertExists(AlertType.NoCertificateAuthoritiesConfigured))
             {

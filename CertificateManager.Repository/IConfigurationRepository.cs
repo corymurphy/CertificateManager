@@ -17,11 +17,14 @@ namespace CertificateManager.Repository
         void InsertAdcsTemplate(AdcsTemplate template);
         MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash);
         MicrosoftCertificateAuthority GetPrivateCertificateAuthority(HashAlgorithm hash);
-        MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthority(Guid id);
-        IEnumerable<MicrosoftCertificateAuthorityOptions> GetPrivateCertificateAuthorities();
-        void DeletePrivateCertificateAuthority(Guid id);
-        void UpdatePrivateCertificateAuthority(MicrosoftCertificateAuthorityOptions ca);
 
+
+        PrivateCertificateAuthorityConfig GetPrivateCertificateAuthority(Guid id);
+        IEnumerable<PrivateCertificateAuthorityConfig> GetPrivateCertificateAuthorities();
+        void DeletePrivateCertificateAuthority(Guid id);
+        void UpdatePrivateCertificateAuthority(PrivateCertificateAuthorityConfig ca);
+        void DropPrivateCertificateAuthorityCollection();
+        void InsertPrivateCertificateAuthorityConfig(PrivateCertificateAuthorityConfig ca);
 
 
 

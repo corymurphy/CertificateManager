@@ -119,7 +119,7 @@ namespace CertificateManager.Controllers
         [Route("pki-config/template")]
         public JsonResult AddAdcsTemplate(AdcsTemplate template)
         {
-            IEnumerable<MicrosoftCertificateAuthorityOptions> actual = configurationRepository.GetPrivateCertificateAuthorities();
+            IEnumerable<PrivateCertificateAuthorityConfig> actual = configurationRepository.GetPrivateCertificateAuthorities();
 
             if(actual == null)
             {

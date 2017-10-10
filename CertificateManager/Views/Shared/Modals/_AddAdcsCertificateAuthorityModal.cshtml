@@ -1,6 +1,6 @@
 ﻿
 <div class="modal fade" id="addPrivateCaModal" tabindex="-1" role="dialog" aria-labelledby="addPrivateCaModal" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
 
                 <div class="modal-header">
@@ -32,7 +32,7 @@
                         <div class="form-group row">
                             <label for="caHash" class="col-sm-2 col-form-label">Hash</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="caHash" placeholder="SHA256">
+                                <select id="caHash" class="form-control" ></select>
                             </div>
                         </div>
 
@@ -40,7 +40,7 @@
                         <div class="form-group row">
                             <label for="caAuthenticationRealm" class="col-sm-2 col-form-label">Authentication Realm</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="caAuthenticationRealm" placeholder="corp.mydomain.net">
+                                <select id="caAuthenticationRealm" class="form-control"></select>
                             </div>
                         </div>
 
@@ -48,7 +48,7 @@
                         <div class="form-group row">
                             <label for="caAuthenticationType" class="col-sm-2 col-form-label">Authentication Type</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="caAuthenticationType" placeholder="WindowsKerberos">
+                                <select id="caAuthenticationType" class="form-control"></select>
                             </div>
                         </div>
 

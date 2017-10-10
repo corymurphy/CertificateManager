@@ -326,6 +326,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AuditLogic.cs" />
+    <Compile Include="AuthorizationLogic.cs" />
     <Compile Include="DataTransformation.cs" />
     <Compile Include="DnsValidation.cs" />
     <Compile Include="HttpResponseHandler.cs" />

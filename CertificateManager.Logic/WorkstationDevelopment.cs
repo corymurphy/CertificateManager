@@ -45,35 +45,17 @@ namespace CertificateManager.Logic
                     });
                 }
             }
+            ExternalIdentitySource idp = configDb.GetExternalIdentitySources().FirstOrDefault();
 
-            MicrosoftCertificateAuthorityOptions ca = null;
-            try
+            configDb.DropPrivateCertificateAuthorityCollection();
+
+            PrivateCertificateAuthorityConfig caConfig = new PrivateCertificateAuthorityConfig()
             {
-                ca = configDb.GetPrivateCertificateAuthorityOptions(HashAlgorithm.SHA256);
-            }
-            catch
-            {
-                if (ca == null)
-                {
-                    MicrosoftCertificateAuthorityOptions caConfig = new MicrosoftCertificateAuthorityOptions()
-                    {
-                        AuthenticationType = MicrosoftCertificateAuthorityAuthenticationType.UsernamePassword,
-                        CommonName = caCommonName,
-                        ServerName = caServerName,
-                        HashAlgorithm = HashAlgorithm.SHA256,
-                        AuthenticationRealm = domain,
-                        Password = password,
-                        Username = username
-                    };
-
-                    configDb.Insert<MicrosoftCertificateAuthorityOptions>(caConfig);
-                }
-            }
-
-            
-
-
-            
+                CommonName = caCommonName,
+                ServerName = caServerName,
+                HashAlgorithm = HashAlgorithm.SHA256,
+                IdentityProviderId = idp.Id
+            };
         }
     }
 }

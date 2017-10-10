@@ -147,19 +147,32 @@ namespace CertificateManager.Repository
 
         public MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash)
         {
-            MicrosoftCertificateAuthorityOptions options;
 
-            using (LiteDatabase db = new LiteDatabase(path))
+            PrivateCertificateAuthorityConfig caConfig = this.GetPrivateCertificateAuthorityConfigByHash(hash);
+
+            ExternalIdentitySource idp = this.GetExternalIdentitySource(caConfig.IdentityProviderId);
+
+            MicrosoftCertificateAuthorityAuthenticationType authType;
+
+            if (idp.ExternalIdentitySourceType == Entities.Enumerations.ExternalIdentitySourceType.ActiveDirectoryBasic)
+                authType = MicrosoftCertificateAuthorityAuthenticationType.UsernamePassword;
+            else
+                authType = MicrosoftCertificateAuthorityAuthenticationType.WindowsKerberos;
+
+            MicrosoftCertificateAuthorityOptions options = new MicrosoftCertificateAuthorityOptions()
             {
-                LiteCollection<MicrosoftCertificateAuthorityOptions> col = db.GetCollection<MicrosoftCertificateAuthorityOptions>(privateCertificateAuthorityCollectionName);
+                AuthenticationRealm = idp.Domain,
+                AuthenticationType = authType,
+                HashAlgorithm = hash,
+                CommonName = caConfig.CommonName,
+                ServerName = caConfig.ServerName,
+                Id = caConfig.Id,
+                Password = idp.Password,
+                Username = idp.Username
+            };
 
-                options = col.FindOne(Query.EQ("HashAlgorithm", hash.ToString()));
+            return options;
 
-                if (options == null)
-                    throw new ConfigurationItemNotFoundException("could not find valid ca");
-                else
-                    return options;
-            }
         }
 
         public MicrosoftCertificateAuthority GetPrivateCertificateAuthority(HashAlgorithm hash)
@@ -168,49 +181,60 @@ namespace CertificateManager.Repository
 
             return new MicrosoftCertificateAuthority(options);
         }
-        public MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthority(Guid id)
+
+        private PrivateCertificateAuthorityConfig GetPrivateCertificateAuthorityConfigByHash(HashAlgorithm hash)
         {
-            using (LiteDatabase db = new LiteDatabase(path))
-            {
-                LiteCollection<MicrosoftCertificateAuthorityOptions> col =
-                    db.GetCollection<MicrosoftCertificateAuthorityOptions>(privateCertificateAuthorityCollectionName);
-                return col.FindById(id);
-            }
+            LiteCollection<PrivateCertificateAuthorityConfig> col = db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            PrivateCertificateAuthorityConfig options = col.FindOne(Query.EQ("HashAlgorithm", hash.ToString()));
+
+            if (options == null)
+                throw new ConfigurationItemNotFoundException("could not find valid ca");
+            else
+                return options;
+
         }
 
-        public IEnumerable<MicrosoftCertificateAuthorityOptions> GetPrivateCertificateAuthorities()
+
+
+        public PrivateCertificateAuthorityConfig GetPrivateCertificateAuthority(Guid id)
         {
-            using (LiteDatabase db = new LiteDatabase(path))
-            {
-                LiteCollection<MicrosoftCertificateAuthorityOptions> col =
-                    db.GetCollection<MicrosoftCertificateAuthorityOptions>(privateCertificateAuthorityCollectionName);
-                return col.FindAll();
-            }
+            LiteCollection<PrivateCertificateAuthorityConfig> col =
+                db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            return col.FindById(id);
+        }
+
+        public IEnumerable<PrivateCertificateAuthorityConfig> GetPrivateCertificateAuthorities()
+        {
+            LiteCollection<PrivateCertificateAuthorityConfig> col =
+                db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            return col.FindAll();
         }
 
         public void DeletePrivateCertificateAuthority(Guid id)
         {
-            using (LiteDatabase db = new LiteDatabase(path))
-            {
-                LiteCollection<MicrosoftCertificateAuthorityOptions> col = 
-                    db.GetCollection<MicrosoftCertificateAuthorityOptions>(privateCertificateAuthorityCollectionName);
-                col.Delete(id);
-            }
+            LiteCollection<PrivateCertificateAuthorityConfig> col = 
+                db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            col.Delete(id);
         }
 
-        public void UpdatePrivateCertificateAuthority(MicrosoftCertificateAuthorityOptions ca)
+        public void UpdatePrivateCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
-            using (LiteDatabase db = new LiteDatabase(path))
-            {
-                LiteCollection<MicrosoftCertificateAuthorityOptions> col =
-                    db.GetCollection<MicrosoftCertificateAuthorityOptions>(privateCertificateAuthorityCollectionName);
-                col.Update(ca);
-            }
+            LiteCollection<PrivateCertificateAuthorityConfig> col =
+                db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            col.Update(ca);
         }
         
+        public void DropPrivateCertificateAuthorityCollection()
+        {
+            db.DropCollection(privateCertificateAuthorityCollectionName);
+        }
 
-
-
+        public void InsertPrivateCertificateAuthorityConfig(PrivateCertificateAuthorityConfig ca)
+        {
+            LiteCollection<PrivateCertificateAuthorityConfig> col =
+                db.GetCollection<PrivateCertificateAuthorityConfig>(privateCertificateAuthorityCollectionName);
+            col.Insert(ca);
+        }
 
 
         public void InsertExternalIdentitySource(ExternalIdentitySource entity)
@@ -474,5 +498,7 @@ namespace CertificateManager.Repository
             LiteCollection<AppConfig> col = db.GetCollection<AppConfig>(appConfigCollectionName);
             col.Update(appConfig);
         }
+
+
     }
 }

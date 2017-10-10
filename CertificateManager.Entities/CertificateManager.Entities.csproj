@@ -199,6 +199,7 @@
     <Compile Include="Entities\AppConfig.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
     <Compile Include="Entities\AuditEvent.cs" />
+    <Compile Include="Entities\PrivateCertificateAuthorityConfig.cs" />
     <Compile Include="Entities\EventResult.cs" />
     <Compile Include="Entities\EventCategory.cs" />
     <Compile Include="Entities\AuthApiCertificate.cs" />
