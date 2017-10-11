@@ -5,6 +5,7 @@ using CertificateServices.Enumerations;
 using CertificateServices.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
 namespace CertificateManager.Logic
@@ -16,14 +17,16 @@ namespace CertificateManager.Logic
         ICertificateProvider certificateProvider;
         DataTransformation dataTransformation;
         SecretKeyProvider secrets;
+        ClaimsPrincipal user;
 
-        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider)
+        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, ClaimsPrincipal user)
         {
             this.configurationRepository = configurationRepository;
             this.certificateRepository = certificateRepository;
             this.certificateProvider = certificateProvider;
             this.dataTransformation = new DataTransformation();
             this.secrets = new SecretKeyProvider();
+            this.user = user;
         }
 
         public SignPrivateCertificateResult SignCertificate(SignPrivateCertificateModel model)
@@ -99,14 +102,16 @@ namespace CertificateManager.Logic
             };
 
             List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
-            defaultAcl.Add( new AccessControlEntry()
+
+            defaultAcl.Add(new AccessControlEntry()
             {
                 Expires = DateTime.MaxValue,
                 AceType = Entities.Enumerations.AceType.Allow,
                 Id = new Guid(),
                 IdentityType = Entities.Enumerations.IdentityType.Role,
-                Identity = 
-            })
+                Identity = user.Identity.Name
+            });
+
             Certificate storedCert = new Certificate()
             {
                 Id = result.Id,

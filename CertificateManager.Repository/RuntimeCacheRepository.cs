@@ -10,6 +10,8 @@ namespace CertificateManager.Repository
     public class RuntimeCacheRepository : IRuntimeCacheRepository
     {
         string connectionString;
+
+        
         private const string configurationAlertsCollectionName = "ConfigAlerts";
         public RuntimeCacheRepository(string connectionString)
         {

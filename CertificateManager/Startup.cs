@@ -112,6 +112,8 @@ namespace CertificateManager
 
             IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
 
+            if (env.IsDevelopment())
+                runtimeConfigurationState.IsDevelopment = true;
 
             app.UseAuthentication();
 

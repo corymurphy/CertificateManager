@@ -7,6 +7,8 @@ using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateServices.Enumerations;
 using System.Security.Cryptography.X509Certificates;
+using Moq;
+using System.Security.Claims;
 
 namespace CertificateManager.IntegrationTests
 {
@@ -23,6 +25,7 @@ namespace CertificateManager.IntegrationTests
         Win32CertificateProvider certProvider = new Win32CertificateProvider();
         LiteDbCertificateRepository certDb;
         X509Normalization x509Normalization = new X509Normalization();
+        Mock<ClaimsPrincipal> user;
 
         [TestMethod]
         public void PrivateCertificateProcessing_CreateCertificate_CngRsa2048_ClientServerAuth_Success()
@@ -46,7 +49,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -75,7 +78,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             X509Certificate2 cert = new X509Certificate2(result.PfxByte, result.Password);
@@ -105,7 +108,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -131,7 +134,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -157,7 +160,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -183,7 +186,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -210,7 +213,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
@@ -238,7 +241,7 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, user.Object);
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
             X509Certificate2 cert = new X509Certificate2(result.PfxByte, result.Password);
@@ -251,6 +254,8 @@ namespace CertificateManager.IntegrationTests
         [TestInitialize]
         public void InitializeTest()
         {
+            user = new Mock<ClaimsPrincipal>();
+
             string configPath = Path.GetTempFileName();
             configDb = new LiteDbConfigurationRepository(configPath);
 

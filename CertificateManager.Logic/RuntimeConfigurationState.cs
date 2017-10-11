@@ -12,6 +12,9 @@ namespace CertificateManager.Logic
     {
         IConfigurationRepository configurationRepository;
         IRuntimeCacheRepository runtimeCacheRepository;
+
+        public bool IsDevelopment { get; set; }
+
         public RuntimeConfigurationState(IConfigurationRepository configurationRepository, IRuntimeCacheRepository runtimeCacheRepository)
         {
             this.configurationRepository = configurationRepository;

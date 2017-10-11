@@ -13,21 +13,37 @@ namespace CertificateManager.Controllers
 {
     public class AuthenticationController : Controller
     {
+        IRuntimeConfigurationState runtimeConfigurationState;
         IConfigurationRepository configurationRepository;
         HttpResponseHandler http;
+        bool allowDevBypass = false;
         //RoleManagementLogic roleManagement;
 
-        public AuthenticationController(IConfigurationRepository configurationRepository)
+        public AuthenticationController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState)
         {
             this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
-            //this.roleManagement = new RoleManagementLogic(configurationRepository);
+            this.allowDevBypass = true;
+            this.runtimeConfigurationState = runtimeConfigurationState;
         }
 
         [HttpGet]
         [Route("view/auth/login")]
         public ActionResult Login()
         {
+            if (runtimeConfigurationState.IsDevelopment)
+            {
+                ViewBag.ByPassAuth = true;
+                ViewBag.FormAction = "/auth/login/dev-bypass";
+            }
+                
+            else
+            {
+                ViewBag.ByPassAuth = false;
+                ViewBag.FormAction = "/view/auth/login";
+            }
+                
+
             return View("Login");
         }
 
@@ -95,5 +111,23 @@ namespace CertificateManager.Controllers
             return Challenge("OidcPrimary");
         }
 
+
+        [HttpPost]
+        [Route("auth/login/dev-bypass")]
+        public async Task<ActionResult> AuthenticateDevBypass()
+        {
+            if(runtimeConfigurationState.IsDevelopment)
+            {
+                IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository);
+
+                await HttpContext.SignInAsync(authenticationLogic.Authenticate("cmurphy"));
+                return Redirect(Url.Content("~/")); 
+            }
+            else
+            {
+                return http.RespondBadRequest("Resource does not exist");
+            }
+            
+        }
     }
 }

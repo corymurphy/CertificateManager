@@ -11,6 +11,7 @@ namespace CertificateManager.Logic
         private const string roleClaim = "http://certificatemanager/role";
         private const string altNameClaim = "http://certificatemanager/alternative-upn";
         private const string localAuthenticationScheme = "Local";
+        private const string devAuthBypass = "DevelopmentAuthority";
 
         IConfigurationRepository configurationRepository;
 
@@ -25,15 +26,25 @@ namespace CertificateManager.Logic
 
             id.AddClaim(new Claim(nameClaim, authenticablePrincipal.UserPrincipalName));
 
-            foreach (string altUpn in authenticablePrincipal.AlternativeUserPrincipalNames)
+            if(authenticablePrincipal.AlternativeUserPrincipalNames != null)
             {
-                id.AddClaim(new Claim(altNameClaim, altUpn));
+                foreach (string altUpn in authenticablePrincipal.AlternativeUserPrincipalNames)
+                {
+                    id.AddClaim(new Claim(altNameClaim, altUpn));
+                }
             }
 
-            foreach (SecurityRole role in configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id))
+            var roles = configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id);
+
+            if (roles != null)
             {
-                id.AddClaim(new Claim(roleClaim, role.Id.ToString()));
+                foreach (SecurityRole role in configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id))
+                {
+                    id.AddClaim(new Claim(roleClaim, role.Id.ToString()));
+                }
             }
+
+            
 
             ClaimsPrincipal principal = new ClaimsPrincipal(id);
 
@@ -64,6 +75,13 @@ namespace CertificateManager.Logic
         public string HashPassword(string password)
         {
             return BCrypt.Net.BCrypt.HashPassword(password);
+        }
+
+        public ClaimsPrincipal Authenticate(string upn)
+        {
+            AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
+
+            return ConstructClaimsPrincipal(authenticablePrincipal, devAuthBypass);
         }
 
     }

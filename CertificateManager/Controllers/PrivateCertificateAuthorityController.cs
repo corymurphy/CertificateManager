@@ -34,7 +34,7 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult CreateCertificate(CreatePrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, User);
 
             CreatePrivateCertificateResult result;
             try
@@ -56,7 +56,7 @@ namespace CertificateManager.Controllers
         public JsonResult SignCertificaste(SignPrivateCertificateModel model)
         {
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, User);
 
             SignPrivateCertificateResult result;
             try

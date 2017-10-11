@@ -1,4 +1,7 @@
-﻿@{
+﻿@*@using CertificateManager.Logic.UXLogic
+@inject JavascriptConfigurationHelper jsConfig*@
+
+@{
     ViewData["Title"] = "Users";
     Layout = "~/Views/Shared/_Layout.SbAdmin.light.cshtml";
 }
@@ -16,7 +19,8 @@
 <div class="card card-login mx-auto mt-5">
     <div class="card-header">Login</div>
     <div class="card-body">
-        <form action="/view/auth/login" method="post">
+        <form action="@ViewBag.FormAction" method="post" id="loginForm">
+
             <div class="form-group">
                 <label for="userPrincipalName">User Principal Name</label>
                 <input class="form-control" id="userPrincipalName" name="userPrincipalName" aria-describedby="emailHelp" placeholder="Enter UPN">
@@ -26,7 +30,7 @@
                 <input class="form-control" id="password" name="password" type="password" placeholder="Password">
             </div>
 
-            <input type="submit" class="btn btn-primary btn-block" value="Login"/>
+            <input type="submit" class="btn btn-primary btn-block" value="Login" />
 
             @*<a class="btn btn-primary btn-block" href="index.html">Login</a>*@
         </form>
@@ -48,10 +52,10 @@
         <a class="btn btn-secondary btn-block alt-login-btn" href="index.html" style="display:none;">SAML</a>
 
         @*<div class="text-center">
-            <a class="d-block small mt-3" href="register.html">Register an Account</a>
-            <a class="d-block small" href="forgot-password.html">Forgot Password?</a>
-        </div>*@
-    </div>
+                <a class="d-block small mt-3" href="register.html">Register an Account</a>
+                <a class="d-block small" href="forgot-password.html">Forgot Password?</a>
+            </div>*@
+</div>
 </div>
 
 
@@ -60,27 +64,37 @@
 
     @section Script{
 
-    @*<script src="~/js/view/security-roles.js"></script>*@
+        <script src="~/js/jquery.min.js"></script>
 
-        <script>
-            $(document).ready(function () {
+        @if (ViewBag.ByPassAuth)
+        {
+            <script>
+                $(document).ready(function () {
 
+                    $('#loginForm').submit();
 
-                $('#altLoginMethodCheckbox').change(function () {
-                    if ($(this).is(":checked")) {
-                        $('.alt-login-btn').show();
-                    }
-                    else {
-                        $('.alt-login-btn').hide();
-                    }
                 });
+            </script>
 
+        }
+        else
 
-                //$('#altLoginMethodCheckbox').click(function () {
-                    
-                //});
-            });
-        </script>
+        {
+            <script>
+                $(document).ready(function () {
+                    $('#altLoginMethodCheckbox').change(function () {
+                        if ($(this).is(":checked")) {
+                            $('.alt-login-btn').show();
+                        }
+                        else {
+                            $('.alt-login-btn').hide();
+                        }
+                    });
+                });
+            </script>
+        }
+
+        
     }
 
 
