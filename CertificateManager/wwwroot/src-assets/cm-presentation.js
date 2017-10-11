@@ -40,6 +40,26 @@ var UIDefaults = {
 
 
 var UiGlobal = {
+
+    GetWindowsApiDisplay: function (name)
+    {
+        var displayName = "unknown";
+
+        CmOptions.windowsApiOptions.forEach(function (item) {
+
+            if (item.Name == name)
+            {
+                displayName = item.Display;
+            }
+        });
+
+        return displayName;
+    },
+
+    GetShortDateTime: function (value, item) {
+        var date = new Date(value)
+        return date.toDateString();
+    },
     RefreshGrid: function (grid)
     {
         grid.jsGrid("render");

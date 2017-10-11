@@ -18,6 +18,7 @@ namespace CertificateManager.Controllers
         IConfigurationRepository configurationRepository;
         DataTransformation dataTransformation;
         SecretKeyProvider secrets;
+        HttpResponseHandler http;
 
         public CertificatesController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository)
         {
@@ -25,6 +26,7 @@ namespace CertificateManager.Controllers
             this.certificateRepository = certificateRepository;
             this.dataTransformation = new DataTransformation();
             this.secrets = new SecretKeyProvider();
+            this.http = new HttpResponseHandler(this);
         }
 
         [HttpGet]
@@ -36,10 +38,31 @@ namespace CertificateManager.Controllers
             return Json(cert);
         }
 
-        [Route("views/certificate/{id:guid}")]
-        public ActionResult ViewCertificate()
+        [Route("view/certificate/{id:guid}")]
+        public ActionResult ViewCertificate(Guid id)
         {
+            ViewBag.CertificateId = id;
             return View("View");
         }
+
+        [Route("view/certificates")]
+        public ActionResult ViewAllCertificates()
+        {
+            return View("ViewAllCertificates");
+        }
+
+        [Route("certificates")]
+        public JsonResult AllCertificates()
+        {
+            return http.RespondSuccess(certificateRepository.FindAllCertificates());
+        }
+
+        [HttpDelete]
+        [Route("certificate")]
+        public JsonResult DeleteCertificate(Guid id)
+        {
+            return null;
+        }
+
     }
 }

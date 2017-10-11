@@ -1,6 +1,7 @@
 ﻿using System;
 using CertificateServices.Enumerations;
 using CertificateServices;
+using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
@@ -19,5 +20,6 @@ namespace CertificateManager.Entities
         public CertificateStorageFormat CertificateStorageFormat { get; set; }
         public CertificateSubject CertificateSubject { get; set; }
         public bool HasPrivateKey { get; set; }
+        public List<AccessControlEntry> Acl { get; set; }
     }
 }

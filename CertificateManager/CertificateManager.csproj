@@ -18,6 +18,17 @@
     <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="scripts\cm-constants.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="scripts\cm-presentation.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="scripts\cm-services.js">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.1.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
@@ -38,15 +49,11 @@
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="wwwroot\js\view\private-certificate-authority.js" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CertificateManager.Entities\CertificateManager.Entities.csproj" />
     <ProjectReference Include="..\CertificateManager.Logic\CertificateManager.Logic.csproj" />
     <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="scripts\" />
     <Folder Include="wwwroot\fonts\" />
   </ItemGroup>
 </Project>

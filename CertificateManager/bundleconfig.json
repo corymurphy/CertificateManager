@@ -157,9 +157,12 @@
   {
     "outputFileName": "wwwroot/js/cm.min.js",
     "inputFiles": [
-      "wwwroot/src-assets/cm-constants.js",
-      "wwwroot/src-assets/cm-presentation.js",
-      "wwwroot/src-assets/cm-services.js"
+      "scripts/cm-constants.js",
+      "scripts/cm-presentation.js",
+      "scripts/cm-services.js",
+      "scripts/view-certificate.js",
+      "scripts/private-certificate-authority.js",
+      "scripts/view-all-certificates.js"
     ],
     // Optionally specify minification options
     "minify": {
@@ -171,7 +174,15 @@
     // Optionally generate .map file
     "sourceMap": false
   },
-
+  {
+    "outputFileName": "wwwroot/css/cm.min.css",
+    "inputFiles": [ "style/cm.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    },
+    "sourceMap": false
+  },
 
   {
     "outputFileName": "wwwroot/js/base.min.js",

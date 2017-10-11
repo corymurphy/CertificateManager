@@ -68,5 +68,11 @@ namespace CertificateManager.Repository
             return col.Find(left);
 
         }
+
+        public IEnumerable<AllCertificatesViewModel> FindAllCertificates()
+        {
+            LiteCollection<AllCertificatesViewModel> col = db.GetCollection<AllCertificatesViewModel>(certificateCollection);
+            return col.FindAll();
+        }
     }
 }

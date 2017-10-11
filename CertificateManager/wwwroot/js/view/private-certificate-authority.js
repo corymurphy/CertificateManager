@@ -130,7 +130,7 @@ var PrivateCertificateAuthority = {
 
         window.sessionStorage.setItem("certificateId", data.id);
         $('#create-private-certificate-btn').prop('disabled', false);
-        window.location.replace("/views/certificate/" + data.id);
+        window.location.replace("/view/certificate/" + data.id);
     },
 
     CreateCertificateErrorCallback: function (x, t, m) {

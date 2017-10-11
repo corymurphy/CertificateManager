@@ -196,6 +196,7 @@
     <Compile Include="Entities\AdcsTemplateUpdateModel.cs" />
     <Compile Include="Entities\AdcsTemplate.cs" />
     <Compile Include="Entities\AddAuthenticablePrincipalEntity.cs" />
+    <Compile Include="Entities\AllCertificatesViewModal.cs" />
     <Compile Include="Entities\AppConfig.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
     <Compile Include="Entities\AuditEvent.cs" />
