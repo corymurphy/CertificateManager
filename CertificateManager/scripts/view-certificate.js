@@ -3,8 +3,11 @@
     PageLoad: function ()
     {
         document.getElementById("defaultOpen").click();
+
+        ViewCertificate.SubjectAlternativeNameTable = $('#subjectAlternativeNameTable');
         Services.GetCertificateDetails(ViewCertificate.GetCertificateId(), ViewCertificate.GetCertificateSuccessCallback, ViewCertificate.GetCertificateErrorCallback);
         ViewCertificate.InitializeDownloadUx();
+
     },
 
     GetCertificateId: function ()
@@ -13,6 +16,8 @@
     },
 
     CertificateData: null,
+
+    SubjectAlternativeNameTable: null,
 
     GetCertificateSuccessCallback: function (data)
     {
@@ -28,6 +33,7 @@
         $('#keySize').text(data.keySize);
         $('#storageFormat').text(data.certificateStorageFormat);
 
+        ViewCertificate.InitializeSubjectAlternativeNamesTable(ViewCertificate.SubjectAlternativeNameTable, data.subject.subjectAlternativeName)
     },
 
     GetCertificateErrorCallback: function ()
@@ -115,5 +121,36 @@
             window.location.href = downloadUri;
 
         });
+    },
+
+    InitializeSubjectAlternativeNamesTable: function (table, sanList) {
+        table.jsGrid({
+            width: "100%",
+            paging: true,
+            autoload: true,
+            pageLoading: true,
+
+            controller: {
+                loadData: function () {
+                    return { data: sanList }
+                    //return { data: sanList, itemsCount: 1 }
+                }
+            },
+
+            fields: [
+                {
+                    title: "Subject Alternative Name",
+                    itemTemplate: function (value, item) {
+                        return item;
+                    }
+                },
+            ]
+        });
+    },
+
+    InitialzeAclTable: function ()
+    {
+
     }
+
 }

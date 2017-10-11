@@ -22,6 +22,11 @@ namespace CertificateManager.Repository
             this.path = path;
         }
 
+        public void DeleteAllCertificates()
+        {
+            db.DropCollection(certificateCollection);
+        }
+
         public void DeleteCertificate()
         {
             throw new NotImplementedException();

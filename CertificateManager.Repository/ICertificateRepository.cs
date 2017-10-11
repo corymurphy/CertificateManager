@@ -7,15 +7,23 @@ namespace CertificateManager.Repository
     public interface ICertificateRepository
     {
         void Insert<T>(T item);
+
         StoredCertificateEntity GetCertificate();
+
         T GetCertificate<T>(Guid id);
+
         void DeleteCertificate();
+
         void UpdateCertificate();
+
+        void DeleteAllCertificates();
 
         IEnumerable<AllCertificatesViewModel> FindAllCertificates();
 
         IEnumerable<SearchCertificatesEntity> FindCertificates(string query);
 
         IEnumerable<SearchCertificatesEntity> FindCertificatesAmbiguousNameResolution(string query);
+
+
     }
 }

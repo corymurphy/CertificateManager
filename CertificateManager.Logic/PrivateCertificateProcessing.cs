@@ -36,7 +36,7 @@ namespace CertificateManager.Logic
 
             CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
 
-            return HandleCertificateAuthorityResponse(model, response);
+            return HandleCertificateAuthorityResponse(model, response, csr.Subject);
         }
 
         public CreatePrivateCertificateResult CreateCertificateWithPrivateKey(CreatePrivateCertificateModel model)
@@ -53,17 +53,17 @@ namespace CertificateManager.Logic
 
             CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
 
-            return HandleCertificateAuthorityResponse(model, response);
+            return HandleCertificateAuthorityResponse(model, response, csr.Subject);
         }
 
-        private CreatePrivateCertificateResult HandleCertificateAuthorityResponse(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response)
+        private CreatePrivateCertificateResult HandleCertificateAuthorityResponse(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             CreatePrivateCertificateResult result;
 
             switch (response.CertificateRequestStatus)
             {
                 case CertificateRequestStatus.Issued:
-                    result = HandleSuccess(model, response);
+                    result = HandleSuccess(model, response, subject);
                     break;
                 case CertificateRequestStatus.Pending:
                     result = HandlePending(model, response);
@@ -84,7 +84,7 @@ namespace CertificateManager.Logic
             };
         }
 
-        private CreatePrivateCertificateResult HandleSuccess(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response)
+        private CreatePrivateCertificateResult HandleSuccess(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             string password = secrets.NewSecret(64);
             X509Certificate2 cert = certificateProvider.InstallIssuedCertificate(response.IssuedCertificate);
@@ -98,7 +98,15 @@ namespace CertificateManager.Logic
                 Id = Guid.NewGuid()
             };
 
-
+            List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
+            defaultAcl.Add( new AccessControlEntry()
+            {
+                Expires = DateTime.MaxValue,
+                AceType = Entities.Enumerations.AceType.Allow,
+                Id = new Guid(),
+                IdentityType = Entities.Enumerations.IdentityType.Role,
+                Identity = 
+            })
             Certificate storedCert = new Certificate()
             {
                 Id = result.Id,
@@ -114,7 +122,9 @@ namespace CertificateManager.Logic
                 ValidTo = cert.NotAfter,
                 ValidFrom = cert.NotBefore,
                 KeySize = model.KeySize,
-                KeyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage)
+                KeyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage),
+                Subject = subject,
+                Acl = defaultAcl
             };
 
             certificateRepository.Insert(storedCert);
@@ -127,14 +137,14 @@ namespace CertificateManager.Logic
             return null;
         }
 
-        private SignPrivateCertificateResult HandleCertificateAuthorityResponse(SignPrivateCertificateModel model, CertificateAuthorityRequestResponse response)
+        private SignPrivateCertificateResult HandleCertificateAuthorityResponse(SignPrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             SignPrivateCertificateResult result;
 
             switch (response.CertificateRequestStatus)
             {
                 case CertificateRequestStatus.Issued:
-                    result = HandleSuccess(model, response);
+                    result = HandleSuccess(model, response, subject);
                     break;
                 case CertificateRequestStatus.Pending:
                     result = HandlePending(model, response);
@@ -152,7 +162,7 @@ namespace CertificateManager.Logic
             return null;
         }
 
-        private SignPrivateCertificateResult HandleSuccess(SignPrivateCertificateModel model, CertificateAuthorityRequestResponse response)
+        private SignPrivateCertificateResult HandleSuccess(SignPrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             return null;
         }

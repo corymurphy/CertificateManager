@@ -127,7 +127,7 @@ var PrivateCertificateAuthority = {
 
         window.sessionStorage.setItem("certificateId", data.id);
         $('#create-private-certificate-btn').prop('disabled', false);
-        window.location.replace("/views/certificate/" + data.id);
+        window.location.replace("/view/certificate/" + data.id);
     },
 
     CreateCertificateErrorCallback: function (x, t, m) {
@@ -178,6 +178,7 @@ var PrivateCertificateAuthority = {
     },
 
     InitializeUi: function () {
+
         CmOptions.hashAlgorithmOptions.forEach(function (item) {
 
             var element = $('#hashAlgorithm');
@@ -201,10 +202,23 @@ var PrivateCertificateAuthority = {
 
         CmOptions.keyUsageOptions.forEach(function (item) {
             if (item.Primitive) {
-                $('#keyUsage').append($('<option>', {
-                    value: item.Name,
-                    text: item.Display
-                }));
+
+                if (item.Primary)
+                {
+                    $('#keyUsage').append($('<option>', {
+                        value: item.Name,
+                        text: item.Display,
+                        selected: "selected"
+                    }));
+                }
+                else
+                {
+                    $('#keyUsage').append($('<option>', {
+                        value: item.Name,
+                        text: item.Display
+                    }));
+                }
+                
             }
         });
 

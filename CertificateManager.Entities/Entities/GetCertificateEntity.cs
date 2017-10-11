@@ -18,7 +18,7 @@ namespace CertificateManager.Entities
         public DateTime ValidTo { get; set; }
         public DateTime ValidFrom { get; set; }
         public CertificateStorageFormat CertificateStorageFormat { get; set; }
-        public CertificateSubject CertificateSubject { get; set; }
+        public CertificateSubject Subject { get; set; }
         public bool HasPrivateKey { get; set; }
         public List<AccessControlEntry> Acl { get; set; }
     }

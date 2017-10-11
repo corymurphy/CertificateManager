@@ -81,7 +81,11 @@ namespace CertificateManager
           
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
             services.AddSingleton<ICertificateProvider>(new Win32CertificateProvider());
-            services.AddSingleton<ICertificateRepository>(new LiteDbCertificateRepository(@"d:\db\certs.db"));
+
+            ICertificateRepository certificateRepository = new LiteDbCertificateRepository(@"d:\db\certs.db");
+            //certificateRepository.DeleteAllCertificates();
+
+            services.AddSingleton<ICertificateRepository>(certificateRepository);
             services.AddSingleton<IRuntimeConfigurationState>(new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository));
             services.AddSingleton<JavascriptConfigurationHelper>(new JavascriptConfigurationHelper(configurationRepository));
             services.AddSingleton<AuditLogic>( new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
