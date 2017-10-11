@@ -258,7 +258,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.CryptoApi,
                 Cipher = CipherAlgorithm.RSA,
-                Hash = HashAlgorithm.SHA256,
+                //Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.ServerAuthentication,
                 Name = "ServerAuthentication-CapiRsa"
             });
@@ -267,7 +267,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.CryptoApi,
                 Cipher = CipherAlgorithm.RSA,
-                Hash = HashAlgorithm.SHA256,
+                //Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.None,
                 Name = "NoKeyUsage-CapiRsa"
             });
@@ -276,7 +276,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.Cng,
                 Cipher = CipherAlgorithm.RSA,
-                Hash = HashAlgorithm.SHA256,
+               // Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.ServerAuthentication,
                 Name = "ServerAuthentication-CngRsa"
             });
@@ -285,7 +285,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.Cng,
                 Cipher = CipherAlgorithm.RSA,
-                Hash = HashAlgorithm.SHA256,
+                //Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.ServerAuthentication | KeyUsage.ClientAuthentication,
                 Name = "ClientServerAuthentication-CngRsa"
             });
@@ -294,7 +294,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.Cng,
                 Cipher = CipherAlgorithm.ECDH,
-                Hash = HashAlgorithm.SHA256,
+                //Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.ServerAuthentication,
                 Name = "ServerAuthentication-CngEcdh"
             });
@@ -303,7 +303,7 @@ namespace CertificateManager.IntegrationTests
             {
                 WindowsApi = WindowsApi.Cng,
                 Cipher = CipherAlgorithm.ECDSA,
-                Hash = HashAlgorithm.SHA256,
+                //Hash = HashAlgorithm.SHA256,
                 KeyUsage = KeyUsage.ServerAuthentication,
                 Name = "ServerAuthentication-CngEcdsa"
             });

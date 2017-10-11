@@ -9,7 +9,7 @@ namespace CertificateManager.Entities
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public HashAlgorithm Hash { get; set; }
+        //public HashAlgorithm Hash { get; set; }
         public CipherAlgorithm Cipher { get; set; }
         public KeyUsage KeyUsage { get; set; }
         public WindowsApi WindowsApi { get; set; }

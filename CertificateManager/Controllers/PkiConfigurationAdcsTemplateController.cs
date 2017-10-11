@@ -35,7 +35,7 @@ namespace CertificateManager.Controllers
             {
                 AdcsTemplateGetModel item = new AdcsTemplateGetModel();
                 item.Name = template.Name;
-                item.Hash = template.Hash;
+                //item.Hash = template.Hash;
                 item.Cipher = template.Cipher;
                 item.KeyUsage = template.KeyUsage;
                 item.WindowsApi = template.WindowsApi;
@@ -82,7 +82,7 @@ namespace CertificateManager.Controllers
 
             template.Name = updateEntity.Name;
             template.RolesAllowedToIssue = dataTransform.ParseGuidList(updateEntity.RolesAllowedToIssue);
-            template.Hash = updateEntity.Hash;
+            //template.Hash = updateEntity.Hash;
             template.KeyUsage = updateEntity.KeyUsage;
             template.WindowsApi = updateEntity.WindowsApi;
             template.Cipher = updateEntity.Cipher;
@@ -93,7 +93,7 @@ namespace CertificateManager.Controllers
             AdcsTemplateGetModel response = new AdcsTemplateGetModel();
 
             response.Name = template.Name;
-            response.Hash = template.Hash;
+            //response.Hash = template.Hash;
             response.Cipher = template.Cipher;
             response.KeyUsage = template.KeyUsage;
             response.WindowsApi = template.WindowsApi;

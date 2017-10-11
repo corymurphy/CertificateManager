@@ -83,10 +83,7 @@ namespace CertificateManager.Repository
                     template = col.FindOne(
                         Query.And(
 
-                            Query.And(
-                                Query.EQ("Hash", hash.ToString()),
-                                Query.EQ("Cipher", cipher.ToString())
-                            ),
+                            Query.EQ("Cipher", cipher.ToString()),
 
                             Query.And(
                                 Query.EQ("WindowsApi", api.ToString()),
@@ -141,10 +138,7 @@ namespace CertificateManager.Repository
             }
         }
 
-
-
-
-
+   
         public MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash)
         {
 

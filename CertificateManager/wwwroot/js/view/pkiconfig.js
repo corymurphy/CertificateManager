@@ -1,4 +1,27 @@
-﻿var PkiConfig = {
+﻿var debugData = "";
+
+var PkiConfig = {
+
+    ResolveIdpName: function (value, item)
+    {
+        var idpDisplayName = "";
+
+        CmOptions.ExternalIdentitySources.forEach(function (idp) {
+
+
+            if (idp.id == item.identityProviderId) {
+                idpDisplayName = idp.name
+            }
+
+
+        });
+
+        if (idpDisplayName === "") {
+            idpDisplayName = "none";
+        }
+
+        return idpDisplayName;
+    },
 
     InitializeSelect: function ()
     {
@@ -95,7 +118,7 @@
 
         $.extend(client, {
             name: $("#adcsTemplateName").val(),
-            hash: $("#adcsTemplateHash").val(),
+            //hash: $("#adcsTemplateHash").val(),
             cipher: $("#adcsTemplateCipher").val(),
             keyUsage: $("#adcsTemplateKeyUsage").val(),
             windowsApi: $("#adcsTemplateWindowsApi").val(),
@@ -108,11 +131,6 @@
     },
 
     ShowAddTemplateModal: function (dialogType, client) {
-        //$("#adcsTemplateName").val(client.name);
-        //$("#adcsTemplateHash").val(client.hash);
-        //$("#adcsTemplateCipher").val(client.cipher);
-        //$("#adcsTemplateKeyUsage").val(client.keyUsage);
-        //$("#adcsTemplateWindowsApi").val(client.windowsApi);
 
         $('#addAdcsTemplateButton').click(function () {
 
@@ -131,7 +149,7 @@
         }
 
         $("#adcsTemplateName").val(client.name);
-        $("#adcsTemplateHash").val(client.hash);
+        //$("#adcsTemplateHash").val(client.hash);
         $("#adcsTemplateCipher").val(client.cipher);
         $("#adcsTemplateKeyUsage").val(client.keyUsage);
         $("#adcsTemplateWindowsApi").val(client.windowsApi);
@@ -174,19 +192,26 @@
 
         $('#commitPrivateCaButton').click(function () {
 
-            PkiConfig.AddPrivateCa(client, dialogType === "Add");
+            PkiConfig.AddPrivateCa(client);
         });
 
         $("#privateCaActionModal").modal("show");
     },
 
-    ShowEditPrivateCaModal: function (data)
+    ShowEditPrivateCaModal: function (client)
     {
+        debugData = client;
+        $('#privateCaId').val(client.id);
+        $('#caServerName').val(client.serverName);
+        $('#caCommonName').val(client.commonName);
+        $('#caHash').val(client.hashAlgorithm);
+        
+        
         PkiConfig.InitializePrivateCaIdentityProviderSelect2();
 
-        $('#addPrivateCaButton').click(function () {
+        $('#commitPrivateCaButton').click(function () {
 
-            PkiConfig.ChangePrivateCa(data);
+            PkiConfig.ChangePrivateCa(client);
         });
 
         $("#privateCaActionModal").modal("show");
@@ -210,6 +235,7 @@
 
     ChangePrivateCa: function (client) {
         $.extend(client, {
+            id: $('#privateCaId').val(),
             serverName: $("#caServerName").val(),
             commonName: $("#caCommonName").val(),
             hashAlgorithm: $("#caHash").val(),
@@ -244,14 +270,17 @@
         },
 
         updateItem: function (item) {
-
+            var d = $.Deferred();
             $.ajax({
                 type: "PUT",
                 url: "/pki-config/certificate-authority/private",
                 data: item
+            }).done(function (response) {
+                d.resolve(response.payload);
             }).fail(function (xhr, ajaxOptions, thrownError) {
                 PkiConfig.HandleError(xhr.responseJSON.message, $("#privateCaTable"));
-            });
+                });
+            return d.promise();
         },
 
         deleteItem: function (item) {
@@ -341,12 +370,13 @@
             },
             
             fields: [
-                { name: "name", type: "text", validate: { validator: "rangeLength", param: [1, 100] }, width: 80 },
-                { name: "hash", type: "select", items: CmOptions.hashAlgorithmOptions, valueType: "string", valueField: "Name", textField: "Name", width: 30 },
-                { name: "cipher", type: "select", items: CmOptions.cipherOptions, valueField: "Name", textField: "Name", width: 30 },
-                { name: "keyUsage", type: "select", items: CmOptions.keyUsageOptions, valueField: "Name", textField: "Name" },
-                { name: "windowsApi", type: "select", items: CmOptions.windowsApiOptions, valueField: "Name", textField: "Name", width: 40 },
+                { title: "Template Name", name: "name", type: "text", validate: { validator: "rangeLength", param: [1, 100] }, width: 80 },
+                //{ title: "Server Name", name: "hash", type: "select", items: CmOptions.hashAlgorithmOptions, valueType: "string", valueField: "Name", textField: "Name", width: 30 },
+                { title: "Cipher", name: "cipher", type: "select", items: CmOptions.cipherOptions, valueField: "Name", textField: "Name", width: 30 },
+                { title: "Key Usage", name: "keyUsage", type: "select", items: CmOptions.keyUsageOptions, valueField: "Name", textField: "Name" },
+                { title: "WindowsApi", name: "windowsApi", type: "select", items: CmOptions.windowsApiOptions, valueField: "Name", textField: "Name", width: 40 },
                 {
+                    title: "Roles Allowed To Issue This Template",
                     name: "rolesAllowedToIssue",
                     itemTemplate: function (value, item) {
 
@@ -393,7 +423,7 @@
             width: "100%",
 
             //filtering: true,
-            editing: true,
+            editing: false,
             sorting: true,
             paging: true,
             autoload: true,
@@ -410,48 +440,10 @@
             },
 
             fields: [
-                { name: "serverName", type: "text" },
-                { name: "commonName", type: "text" },
-                { name: "hashAlgorithm", type: "select", items: CmOptions.hashAlgorithmOptions, valueType: "string", valueField: "Name", textField: "Name" },
-                { name: "caIdp", type: "select", items: CmOptions.ExternalIdentitySources, valueType: "string", valueField: "id", textField: "name" },
-                {
-                    name: "caIdp2",
-                    itemTemplate: function (value, item) {
-
-                        var idpDisplayName = "";
-
-                        CmOptions.ExternalIdentitySources.forEach(function (idp) {
-
-
-                            if (idp.id == item.identityProviderId)
-                            {
-                                idpDisplayName = idp.name
-                            }
-
-                            
-                        });
-
-
-                        if (idpDisplayName === "")
-                        {
-                            idpDisplayName = "none"; 
-                        }
-
-                        return idpDisplayName;
-                        //var roleSelect = $("<select style='width:100%' class='security-roles-adcs-select2' multiple='multiple'>");
-
-                        //item.rolesAllowedToIssueSelectView.forEach(function (option) {
-                        //    roleSelect.append($('<option>', {
-                        //        value: option.id,
-                        //        text: option.name
-                        //    }).attr('selected', true));
-                        //});
-
-                        //roleSelect = roleSelect.attr('disabled', true);
-                        //return roleSelect;
-                        //return $("<div>").append(roleSelect);
-                    }
-                },
+                { title: "Server Name", name: "serverName", type: "text" },
+                { title: "Common Name", name: "commonName", type: "text" },
+                { title: "Hash", name: "hashAlgorithm", type: "select", items: CmOptions.hashAlgorithmOptions, valueType: "string", valueField: "Name", textField: "Name" },
+                { title: "Identity Provider", name: "identityProviderId", itemTemplate: function (value, item) { return PkiConfig.ResolveIdpName(value, item); }  },
                 {
                     type: "control",
                     editButton: false,

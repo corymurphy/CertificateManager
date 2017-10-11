@@ -52,7 +52,8 @@ namespace CertificateManager.Controllers
         public JsonResult AddCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
             ca.Id = Guid.NewGuid();
-            configurationRepository.Insert<PrivateCertificateAuthorityConfig>(ca);
+            configurationRepository.InsertPrivateCertificateAuthorityConfig(ca);
+            //configurationRepository.Insert<PrivateCertificateAuthorityConfig>(ca);
             return http.RespondSuccess(ca);
         }
     }

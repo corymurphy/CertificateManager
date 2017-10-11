@@ -87,7 +87,6 @@
     <Compile Include="IRuntimeCacheRepository.cs" />
     <Compile Include="LiteDbAuditRepository.cs" />
     <Compile Include="LiteDbCertificateRepository.cs" />
-    <Compile Include="LiteDbConfigurationRepositoryOld.cs" />
     <Compile Include="LiteDbConfigurationRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RuntimeCacheRepository.cs" />

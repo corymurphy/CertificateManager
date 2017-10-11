@@ -39,7 +39,7 @@ namespace CertificateManager.Logic
                     {
                         WindowsApi = WindowsApi.CryptoApi,
                         Cipher = CipherAlgorithm.RSA,
-                        Hash = HashAlgorithm.SHA256,
+                        //Hash = HashAlgorithm.SHA256,
                         KeyUsage = KeyUsage.ServerAuthentication,
                         Name = "ServerAuthentication-CapiRsa"
                     });

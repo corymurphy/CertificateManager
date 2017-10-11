@@ -203,16 +203,7 @@ var PrivateCertificateAuthority = {
             }));
         });
 
-        CmOptions.keyUsageOptions.forEach(function (item) {
-            if (item.Primitive) {
-                $('#keyUsage').append($('<option>', {
-                    value: item.Name,
-                    text: item.Display
-                }));
-            }
-        });
-
-        $('#keyUsage').select2({ width: '100%' });
+        PrivateCertificateAuthority.InitializeKeyUsageSelect();
 
         CmOptions.windowsApiOptions.forEach(function (item) {
             $('#windowsApi').append($('<option>', {
@@ -225,6 +216,35 @@ var PrivateCertificateAuthority = {
     PageLoad: function () {
         PrivateCertificateAuthority.InitializeUi();
         PrivateCertificateAuthority.RegisterCreateCertificateButtonEvent();
+    },
+
+    InitializeKeyUsageSelect: function ()
+    {
+        CmOptions.keyUsageOptions.forEach(function (item) {
+
+            if (item.Primitive) {
+
+                if (item.Primary)
+                {
+                    $('#keyUsage').append($('<option>', {
+                        value: item.Name,
+                        text: item.Display,
+                        selected: "selected"
+                    }));
+                }
+                else
+                {
+                    $('#keyUsage').append($('<option>', {
+                        value: item.Name,
+                        text: item.Display
+                    }));
+                }
+                
+            }
+        });
+
+        $('#keyUsage').select2({ width: '100%' });
+
     }
 };
 
