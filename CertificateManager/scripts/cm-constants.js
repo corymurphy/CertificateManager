@@ -33,5 +33,7 @@
     ExternalIdentitySourceType: [
         { Name: "ActiveDirectoryIwa", Id: 0, Display: "ActiveDirectoryIwa" },
         { Name: "ActiveDirectoryBasic", Id: 1, Display: "ActiveDirectoryBasic" },
-    ]
+    ],
+
+    LocalIdentityProviderId: "02abeb4c-e0b6-4231-b836-268aa40c3f1c"
 }

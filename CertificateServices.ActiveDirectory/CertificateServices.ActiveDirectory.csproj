@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
   </ItemGroup>
 
 </Project>

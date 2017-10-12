@@ -1,6 +1,7 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateManager.Repository;
+using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -13,12 +14,12 @@ namespace CertificateManager.Controllers
         UserManagementLogic userManagement;
         IdentityAuthenticationLogic authenticationLogic;
 
-        public AuthenticablePrincipalController(IConfigurationRepository configurationRepository)
+        public AuthenticablePrincipalController(IConfigurationRepository configurationRepository, IActiveDirectoryAuthenticator activeDirectoryAuthenticator)
         {
             this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
             this.userManagement = new UserManagementLogic(configurationRepository);
-            this.authenticationLogic = new IdentityAuthenticationLogic(configurationRepository);
+            this.authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
         }
 
         [HttpGet]

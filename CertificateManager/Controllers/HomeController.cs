@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CertificateManager.Logic;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CertificateManager.Controllers
@@ -6,7 +7,13 @@ namespace CertificateManager.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        
+        HttpResponseHandler http;
+
+        public HomeController()
+        {
+            http = new HttpResponseHandler(this);
+        }
+
         [HttpGet("~/")]
         [Route("home/index")]
         public IActionResult Index()
@@ -17,7 +24,7 @@ namespace CertificateManager.Controllers
         [Route("secure")]
         public JsonResult Secure()
         {
-            return Json(new { status = "success" });
+            return http.RespondSuccess(User);
         }
     }
 }

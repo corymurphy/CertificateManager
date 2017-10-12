@@ -8,6 +8,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using CertificateServices.ActiveDirectory;
 
 namespace CertificateManager.Controllers
 {
@@ -15,13 +16,15 @@ namespace CertificateManager.Controllers
     {
         IRuntimeConfigurationState runtimeConfigurationState;
         IConfigurationRepository configurationRepository;
+        IActiveDirectoryAuthenticator activeDirectoryAuthenticator;
         HttpResponseHandler http;
         bool allowDevBypass = false;
         //RoleManagementLogic roleManagement;
 
-        public AuthenticationController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState)
+        public AuthenticationController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState, IActiveDirectoryAuthenticator activeDirectoryAuthenticator)
         {
             this.configurationRepository = configurationRepository;
+            this.activeDirectoryAuthenticator = activeDirectoryAuthenticator;
             this.http = new HttpResponseHandler(this);
             this.allowDevBypass = true;
             this.runtimeConfigurationState = runtimeConfigurationState;
@@ -51,11 +54,11 @@ namespace CertificateManager.Controllers
         [Route("view/auth/login")]
         public async Task<ActionResult> Login(LoginLocalViewModel model)
         {
-            IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository);
+            IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
 
             try
             {
-                await HttpContext.SignInAsync(authenticationLogic.AuthenticateLocal(model.UserPrincipalName, model.Password));
+                await HttpContext.SignInAsync(authenticationLogic.Authenticate(model));
                 return RedirectToAction("Profile");
             }
             catch
@@ -63,8 +66,6 @@ namespace CertificateManager.Controllers
                 return RedirectToAction("Login");
             } 
         }
-
-
         [HttpGet]
         [Authorize]
         [Route("view/auth/profile")]
@@ -111,14 +112,13 @@ namespace CertificateManager.Controllers
             return Challenge("OidcPrimary");
         }
 
-
         [HttpPost]
         [Route("auth/login/dev-bypass")]
         public async Task<ActionResult> AuthenticateDevBypass()
         {
             if(runtimeConfigurationState.IsDevelopment)
             {
-                IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository);
+                IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
 
                 await HttpContext.SignInAsync(authenticationLogic.Authenticate("cmurphy"));
                 return Redirect(Url.Content("~/")); 

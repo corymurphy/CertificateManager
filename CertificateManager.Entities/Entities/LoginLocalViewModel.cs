@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace CertificateManager.Entities
 {
@@ -10,5 +11,8 @@ namespace CertificateManager.Entities
         [Required]
         [DataType(DataType.Password)]
         public string Password { get; set; }
+
+        [Required]
+        public Guid Domain { get; set; }
     }
 }

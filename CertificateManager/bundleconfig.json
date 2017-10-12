@@ -157,12 +157,7 @@
   {
     "outputFileName": "wwwroot/js/cm.min.js",
     "inputFiles": [
-      "scripts/cm-constants.js",
-      "scripts/cm-presentation.js",
-      "scripts/cm-services.js",
-      "scripts/view-certificate.js",
-      "scripts/private-certificate-authority.js",
-      "scripts/view-all-certificates.js"
+      "scripts/"
     ],
     // Optionally specify minification options
     "minify": {
@@ -174,6 +169,33 @@
     // Optionally generate .map file
     "sourceMap": false
   },
+
+  //{
+  //  "outputFileName": "wwwroot/js/cm.min.js",
+  //  "inputFiles": [
+  //    "scripts/cm-constants.js",
+  //    "scripts/cm-presentation.js",
+  //    "scripts/cm-services.js",
+  //    "scripts/view-certificate.js",
+  //    "scripts/private-certificate-authority.js",
+  //    "scripts/view-all-certificates.js",
+  //    "scripts/external-identity-sources.js",
+  //    "scripts/login.js",
+  //    "scripts/security-roles.js",
+  //    "scripts/pkiconfig.js",
+  //    "scripts/security-role-details.js",
+  //    "scripts/authenticable-principal.js"
+  //  ],
+  //  // Optionally specify minification options
+  //  "minify": {
+  //    //"enabled": false,
+  //    //"renameLocals": false
+  //    "enabled": false,
+  //    "renameLocals": false
+  //  },
+  //  // Optionally generate .map file
+  //  "sourceMap": false
+  //},
   {
     "outputFileName": "wwwroot/css/cm.min.css",
     "inputFiles": [ "style/cm.css" ],

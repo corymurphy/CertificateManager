@@ -49,5 +49,12 @@ namespace CertificateManager.Logic.UXLogic
 
             return string.Format("CmOptions.ExternalIdentitySources = {0}", JsonConvert.SerializeObject(editedIdps));
         }
+
+        public string RenderLocalAuthenticationStateJsonArray()
+        {
+            AppConfig appConfig = configurationRepository.GetAppConfig();
+
+            return string.Format("CmOptions.LocalAuthenticationEnabled = {0}", appConfig.LocalLogonEnabled.ToString().ToLower());
+        }
     }
 }

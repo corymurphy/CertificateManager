@@ -36,5 +36,17 @@ namespace CertificateManager.Controllers
             return http.RespondSuccess();
         }
 
+        [HttpPut]
+        [Route("config/local")]
+        public JsonResult SetLocalConfig(AppConfig newConfig)
+        {
+            AppConfig existinConfig = configurationRepository.GetAppConfig();
+            existinConfig.LocalLogonEnabled = newConfig.LocalLogonEnabled;
+            existinConfig.EmergencyAccessEnabled = newConfig.EmergencyAccessEnabled;
+            configurationRepository.SetAppConfig(existinConfig);
+
+            return http.RespondSuccess();
+        }
+
     }
 }

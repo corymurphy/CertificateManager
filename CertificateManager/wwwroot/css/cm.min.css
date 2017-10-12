@@ -117,3 +117,8 @@ div.tab button {
     border-bottom-right-radius: 4px;
     background-color: #fff;
 }
+
+
+.jsgrid-cell {
+    overflow: hidden;
+}

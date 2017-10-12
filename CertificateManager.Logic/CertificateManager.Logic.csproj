@@ -352,6 +352,10 @@
       <Project>{9858f331-54a1-4784-ba3a-0ac9a22dbb5e}</Project>
       <Name>CertificateManager.Repository</Name>
     </ProjectReference>
+    <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj">
+      <Project>{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}</Project>
+      <Name>CertificateServices.ActiveDirectory</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CertificateServices\CertificateServices.csproj">
       <Project>{d7a343ae-7c7f-431e-9b81-52160d57b44c}</Project>
       <Name>CertificateServices</Name>

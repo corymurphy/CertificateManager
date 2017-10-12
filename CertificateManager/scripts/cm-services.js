@@ -1,10 +1,8 @@
 ﻿
-var baseUri = "http://certificatemanager/"
 var certSearchResult = null;
 
-
 var Services = {
-
+ 
     CreateCertificate: function (request, successCallback, errorCallback) {
         $.ajax({
             url: "/ca/private/certificate/request/includeprivatekey",
@@ -176,5 +174,22 @@ var Services = {
             }
         });
     },
+
+    SetLocalAppConfig: function (data, successCallback, errorCallback) {
+        $.ajax({
+            url: "/config/local",
+            type: 'put',
+            cache: false,
+            async: true,
+            data: data,
+            dataType: "json",
+            success: function (data) {
+                successCallback();
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    }
 
 }

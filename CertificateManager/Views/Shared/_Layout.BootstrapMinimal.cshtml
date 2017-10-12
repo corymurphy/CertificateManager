@@ -1,5 +1,7 @@
 ﻿@using CertificateManager.Logic.UXLogic
+@using CertificateManager.Logic
 @inject JavascriptConfigurationHelper jsConfig
+@inject IRuntimeConfigurationState runtimeConfigurationState
 
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +17,8 @@
     <link href="~/css/jsgrid.min.css" rel="stylesheet">
     <link href="~/css/jsgrid-theme.min.css" rel="stylesheet">
     <link href="~/css/select2.min.css" rel="stylesheet"/>
+
+
     <link href="~/css/cm.min.css" rel="stylesheet" />
 
     @RenderSection("Style", required: false)
@@ -32,12 +36,6 @@
                 <li class="nav-item active">
                     <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Home <span class="sr-only">(current)</span></a>
                 </li>
-                @*<li class="nav-item">
-                    <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Settings</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Profile</a>
-                </li>*@
                 <li class="nav-item">
                     <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Help</a>
                 </li>
@@ -109,17 +107,13 @@
         </div>
     </div>
 
-        <script src="~/js/base.min.js"></script>
-        <script src="~/js/cm.min.js"></script>
-        @*<script src="./js/jquery.min.js"></script>
-        <script src="./js/popper.min.js"></script>
-        <script src="./js/bootstrap.min.js"></script>
-        <script src="./js/jsgrid.min.js"></script>
-        <script src="~/js/select2.full.min.js"></script>*@
+    <script src="~/js/base.min.js"></script>
+    <script src="~/js/cm.min.js"></script>
 
     <script>
         @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
+        @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())
     </script>
 
     @RenderSection("Script", required: false);

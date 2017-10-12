@@ -33,7 +33,33 @@
     </div>
 
     <div id="local" class="tabcontent">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-id-card"></i> Settings
+            </div>
+            <div class="card-body">
 
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Allow Local Logon</label>
+                            <input type="checkbox" aria-label="Checkbox for following text input" id="allowLocalAuthentication">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="name">Allow Emergency Access</label>
+                            <input type="checkbox" aria-label="Checkbox for following text input" id="allowEmergencyAccess">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <button id="saveLocalConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ExternalIdentitySources.SetLocalAppConfig();">Save</button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div id="authnApi" class="tabcontent">
@@ -83,9 +109,6 @@
     @Html.Partial("~/Views/ExternalIdentitySources/_AuthApiConfigActionModal.cshtml")
 
     @section Script{
-
-        <script src="~/js/view/external-identity-sources.js"></script>
-
         <script>
         $(document).ready(function () {
             ExternalIdentitySources.PageLoad();

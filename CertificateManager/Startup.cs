@@ -2,6 +2,7 @@
 using CertificateManager.Logic.UXLogic;
 using CertificateManager.Repository;
 using CertificateServices;
+using CertificateServices.ActiveDirectory;
 using CertificateServices.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -82,6 +83,8 @@ namespace CertificateManager
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
             services.AddSingleton<ICertificateProvider>(new Win32CertificateProvider());
 
+            services.AddSingleton<IActiveDirectoryAuthenticator>(new ActiveDirectoryAuthenticator());
+
             ICertificateRepository certificateRepository = new LiteDbCertificateRepository(@"d:\db\certs.db");
             //certificateRepository.DeleteAllCertificates();
 
@@ -113,10 +116,10 @@ namespace CertificateManager
             IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
 
             if (env.IsDevelopment())
-                runtimeConfigurationState.IsDevelopment = true;
+                runtimeConfigurationState.IsDevelopment = false;
 
             app.UseAuthentication();
-
+            
            
 
 

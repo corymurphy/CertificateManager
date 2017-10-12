@@ -35,12 +35,13 @@
         @RenderBody()
     </div>
 
-    @*<script src="~/js/base.min.js"></script>
-    <script src="~/js/cm.min.js"></script>*@
+    <script src="~/js/base.min.js"></script>
+    <script src="~/js/cm.min.js"></script>
 
     <script>
         @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
+        @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())
     </script>
 
     @RenderSection("Script", required:false);

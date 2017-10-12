@@ -1,6 +1,4 @@
-﻿@*@using CertificateManager.Logic.UXLogic
-@inject JavascriptConfigurationHelper jsConfig*@
-
+﻿
 @{
     ViewData["Title"] = "Users";
     Layout = "~/Views/Shared/_Layout.SbAdmin.light.cshtml";
@@ -30,7 +28,14 @@
                 <input class="form-control" id="password" name="password" type="password" placeholder="Password">
             </div>
 
-            <input type="submit" class="btn btn-primary btn-block" value="Login" />
+            <div class="form-group">
+                <label for="password">Domain</label>
+                <select class="form-control" name="domain" id="domain">
+
+                </select>
+            </div>
+
+            <input type="submit" class="btn btn-primary btn-block" style="margin-top:50px;" value="Login" />
 
             @*<a class="btn btn-primary btn-block" href="index.html">Login</a>*@
         </form>
@@ -63,38 +68,16 @@
 
 
     @section Script{
+        <script>
+            $(document).ready(function () {
 
-        <script src="~/js/jquery.min.js"></script>
+                Login.PageLoad();
 
-        @if (ViewBag.ByPassAuth)
-        {
-            <script>
-                $(document).ready(function () {
+                //$('#loginForm').submit();
 
-                    $('#loginForm').submit();
+            });
+        </script>
 
-                });
-            </script>
-
-        }
-        else
-
-        {
-            <script>
-                $(document).ready(function () {
-                    $('#altLoginMethodCheckbox').change(function () {
-                        if ($(this).is(":checked")) {
-                            $('.alt-login-btn').show();
-                        }
-                        else {
-                            $('.alt-login-btn').hide();
-                        }
-                    });
-                });
-            </script>
-        }
-
-        
     }
 
 
