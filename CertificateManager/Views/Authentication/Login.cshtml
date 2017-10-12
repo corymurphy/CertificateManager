@@ -56,34 +56,21 @@
 
         <a class="btn btn-secondary btn-block alt-login-btn" href="index.html" style="display:none;">SAML</a>
 
-        @*<div class="text-center">
-                <a class="d-block small mt-3" href="register.html">Register an Account</a>
-                <a class="d-block small" href="forgot-password.html">Forgot Password?</a>
-            </div>*@
-</div>
+    </div>
 </div>
 
+@section Script{
+    <script>
+        $(document).ready(function () {
+            Login.PageLoad();
+        });
+    </script>
+}
 
 
+@section Style{
 
+    <style>
+    </style>
 
-    @section Script{
-        <script>
-            $(document).ready(function () {
-
-                Login.PageLoad();
-
-                //$('#loginForm').submit();
-
-            });
-        </script>
-
-    }
-
-
-    @section Style{
-
-        <style>
-        </style>
-
-    }
+}
