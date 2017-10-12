@@ -18,3 +18,4 @@ CertificateServices.ActiveDirectory/bin/
 CertificateServices/obj/
 CertificateServices/bin/
 CertificateManager/node_modules/
+CertificateManager/wwwroot/js/
