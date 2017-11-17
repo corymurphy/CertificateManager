@@ -1,14 +1,11 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateManager.Repository;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Security.Claims;
-
-using Microsoft.AspNetCore.Authentication;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using CertificateServices.ActiveDirectory;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 
 namespace CertificateManager.Controllers
 {
@@ -45,7 +42,9 @@ namespace CertificateManager.Controllers
                 ViewBag.ByPassAuth = false;
                 ViewBag.FormAction = "/view/auth/login";
             }
-                
+            
+
+
 
             return View("Login");
         }

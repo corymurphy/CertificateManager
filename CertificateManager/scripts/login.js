@@ -9,7 +9,7 @@
 
     ConfigureAuthBypass: function ()
     {
-
+        //controlled by form post
     },
 
     InitializeAlternativeLoginOptions: function ()

@@ -190,6 +190,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Exceptions\PrivateCertificateAuthorityDoesNotExistException.cs" />
     <Compile Include="Entities\AccessControlEntry.cs" />
     <Compile Include="Entities\ActiveDirectoryAuthenticablePrincipal.cs" />
     <Compile Include="Entities\AdcsTemplateGetModel.cs" />
@@ -200,6 +201,9 @@
     <Compile Include="Entities\AppConfig.cs" />
     <Compile Include="Entities\ApplicationUser.cs" />
     <Compile Include="Entities\AuditEvent.cs" />
+    <Compile Include="Entities\AppSettings.cs" />
+    <Compile Include="Entities\EnvironmentInitializationProvider.cs" />
+    <Compile Include="Entities\InitialSetupConfigModel.cs" />
     <Compile Include="Entities\PrivateCertificateAuthorityConfig.cs" />
     <Compile Include="Entities\EventResult.cs" />
     <Compile Include="Entities\EventCategory.cs" />

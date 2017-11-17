@@ -325,6 +325,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdcsTemplateLogic.cs" />
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
     <Compile Include="DataTransformation.cs" />
@@ -332,6 +333,7 @@
     <Compile Include="HttpResponseHandler.cs" />
     <Compile Include="ICertificateManagerHostingEnvironment.cs" />
     <Compile Include="IdentityAuthenticationLogic.cs" />
+    <Compile Include="InitialSetupLogic.cs" />
     <Compile Include="IRuntimeConfigurationState.cs" />
     <Compile Include="PrivateCertificateProcessing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -1,4 +1,6 @@
-﻿using CertificateManager.Logic;
+﻿using CertificateManager.Entities;
+using CertificateManager.Logic;
+using CertificateManager.Logic.ConfigurationProvider;
 using CertificateManager.Logic.UXLogic;
 using CertificateManager.Repository;
 using CertificateServices;
@@ -10,18 +12,22 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System;
 
 namespace CertificateManager
 {
     public class Startup
     {
+        private IHostingEnvironment env;
+        private EnvironmentInitializationProvider environmentInitializationProvider;
         public Startup(IHostingEnvironment env)
         {
+            this.env = env;
+            environmentInitializationProvider = new EnvironmentInitializationProvider(env);
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                 .AddEnvironmentVariables();
             Configuration = builder.Build();
 
@@ -33,6 +39,7 @@ namespace CertificateManager
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.ConfigureWritable<AppSettings>(Configuration.GetSection("AppSettings"), environmentInitializationProvider.GetAppSettingsFileName());
 
             services.Configure<IISOptions>(options => {
                 options.AutomaticAuthentication = true;
@@ -44,21 +51,22 @@ namespace CertificateManager
                     options.AccessDeniedPath = "/view/auth/forbidden";
                     options.LoginPath = "/view/auth/login";
                 });
-                //.AddOpenIdConnect("OidcPrimary",
-                //    options =>
-                //    {
-                //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
-                //        //options.SaveTokens = true;
-                //        options.ClientId = "";
-                //        options.ClientSecret = "";
-                //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
-                //        options.ResponseType = "id_token token";
-                //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-                //        options.Authority = @"https://idp/oauth2/token";
-                //        //options.
-                //    }
-                //);
+            //.AddOpenIdConnect("OidcPrimary",
+            //    options =>
+            //    {
+            //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
+            //        //options.SaveTokens = true;
+            //        options.ClientId = "";
+            //        options.ClientSecret = "";
+            //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
+            //        options.ResponseType = "id_token token";
+            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //        options.Authority = @"https://idp/oauth2/token";
+            //        //options.
+            //    }
+            //);
 
+            AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
             //options =>
 
@@ -69,6 +77,20 @@ namespace CertificateManager
 
             //}
 
+            string configDbPath = @"D:\db\config.db";
+            bool initialSetupComplete = false;
+
+            if (System.IO.File.Exists(configDbPath))
+            {
+                //initialSetupComplete = true;
+            }
+            else
+            {
+                initialSetupComplete = false;
+            }
+
+
+            
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
@@ -77,9 +99,10 @@ namespace CertificateManager
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });
 
-            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(@"D:\db\config.db");
-            RuntimeCacheRepository runtimeCacheRepository = new RuntimeCacheRepository(@"d:\db\runtimecache.db");
-          
+            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(configDbPath);
+            //RuntimeCacheRepository runtimeCacheRepository = new RuntimeCacheRepository(@"d:\db\runtimecache.db");
+            RuntimeCacheRepository runtimeCacheRepository = null;
+
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
             services.AddSingleton<ICertificateProvider>(new Win32CertificateProvider());
 
@@ -89,7 +112,13 @@ namespace CertificateManager
             //certificateRepository.DeleteAllCertificates();
 
             services.AddSingleton<ICertificateRepository>(certificateRepository);
-            services.AddSingleton<IRuntimeConfigurationState>(new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository));
+
+            services.AddSingleton<IRuntimeConfigurationState>(
+                new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository)
+                {
+                    InitialSetupComplete = initialSetupComplete
+                });
+
             services.AddSingleton<JavascriptConfigurationHelper>(new JavascriptConfigurationHelper(configurationRepository));
             services.AddSingleton<AuditLogic>( new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
         }
@@ -116,7 +145,7 @@ namespace CertificateManager
             IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
 
             if (env.IsDevelopment())
-                runtimeConfigurationState.IsDevelopment = false;
+                runtimeConfigurationState.IsDevelopment = true;
 
             app.UseAuthentication();
             

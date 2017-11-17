@@ -15,6 +15,8 @@ namespace CertificateManager.Logic
 
         public bool IsDevelopment { get; set; }
 
+        public bool InitialSetupComplete { get; set; }
+
         public RuntimeConfigurationState(IConfigurationRepository configurationRepository, IRuntimeCacheRepository runtimeCacheRepository)
         {
             this.configurationRepository = configurationRepository;

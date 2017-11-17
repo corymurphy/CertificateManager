@@ -7,6 +7,7 @@ namespace CertificateManager.Logic
     public interface IRuntimeConfigurationState
     {
         bool IsDevelopment { get; set; }
+        bool InitialSetupComplete { get; set; }
         void AlertApplicationStarted();
         void Validate();
         void ValidateAtLeastOneCertificateAuthority();
