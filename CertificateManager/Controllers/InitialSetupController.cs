@@ -8,16 +8,12 @@ namespace CertificateManager.Controllers
 {
     public class InitialSetupController : Controller
     {
-        IRuntimeConfigurationState runtimeConfigurationState;
-        IConfigurationRepository configurationRepository;
         HttpResponseHandler http;
         IWritableOptions<AppSettings> appSettings;
 
-        public InitialSetupController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState, IWritableOptions<AppSettings> appSettings)
+        public InitialSetupController(IWritableOptions<AppSettings> appSettings)
         {
             this.appSettings = appSettings;
-            this.runtimeConfigurationState = runtimeConfigurationState;
-            this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
         }
 
@@ -26,15 +22,7 @@ namespace CertificateManager.Controllers
         [Route("initial-setup")]
         public ActionResult InitialSetup()
         {
-
-
-
-
-
-
-
-
-            appSettings.Update(options => options.DatastoreRootPath = "a");
+            //appSettings.Update(options => options.DatastoreRootPath = "a");
             SecretKeyProvider secretKeyProvider = new SecretKeyProvider();
             ViewBag.EncryptionKey = secretKeyProvider.NewSecret(32);
             return View();
@@ -44,16 +32,17 @@ namespace CertificateManager.Controllers
         [Route("initial-setup")]
         public ActionResult SetInitialConfig(InitialSetupConfigModel config)
         {
-            runtimeConfigurationState.InitialSetupComplete = true;
-            return RedirectToAction("Login", "Authentication");
-            //return null;
-        }
+            appSettings.Update(setting => setting.DatastoreRootPath = config.DatastoreRootPath);
 
-        [HttpPut]
-        [Route("initial-setup")]
-        public JsonResult SetLocalConfig(AppConfig newConfig)
-        {
-            return null;
+            DatabaseLocator dbLocator = new DatabaseLocator(config.DatastoreRootPath);
+
+            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(dbLocator.GetConfigurationRepositoryConnectionString());
+
+            InitialSetupLogic initialSetupLogic = new InitialSetupLogic(configurationRepository);
+
+            initialSetupLogic.SetConfiguration(config);
+            
+            return RedirectToAction("Login", "Authentication");
         }
 
     }

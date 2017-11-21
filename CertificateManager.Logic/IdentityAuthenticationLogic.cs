@@ -11,16 +11,17 @@ namespace CertificateManager.Logic
         private const string nameClaim = "http://certificatemanager/upn";
         private const string roleClaim = "http://certificatemanager/role";
         private const string altNameClaim = "http://certificatemanager/alternative-upn";
-        private const string localAuthenticationScheme = "Local";
+
         private const string devAuthBypass = "DevelopmentAuthority";
         private Guid localIdentityProviderId = new Guid("02abeb4c-e0b6-4231-b836-268aa40c3f1c");
 
         IConfigurationRepository configurationRepository;
         IActiveDirectoryAuthenticator activeDirectoryAuthenticator;
+        LocalIdentityProviderLogic localIdentityProviderLogic;
 
         public IdentityAuthenticationLogic(IConfigurationRepository configurationRepository, IActiveDirectoryAuthenticator activeDirectoryAuthenticator)
         {
-            this.configurationRepository = configurationRepository;
+            this.localIdentityProviderLogic = new LocalIdentityProviderLogic(configurationRepository);
             this.activeDirectoryAuthenticator = activeDirectoryAuthenticator;
         }
 
@@ -66,16 +67,9 @@ namespace CertificateManager.Logic
 
         public ClaimsPrincipal AuthenticateLocal(string upn, string password)
         {
-            AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
+            AuthenticablePrincipal authenticablePrincipal = localIdentityProviderLogic.Authenticate(upn, password);
 
-            if (authenticablePrincipal == null)
-                throw new Exception("User does not exist");
-
-
-            if (!BCrypt.Net.BCrypt.Verify(password, authenticablePrincipal.PasswordHash))
-                throw new Exception("Authentication failed");
-
-            return ConstructClaimsPrincipal(authenticablePrincipal, localAuthenticationScheme);
+            return ConstructClaimsPrincipal(authenticablePrincipal, localIdentityProviderLogic.GetLocalIdpIdentifier());
         }
 
         public ClaimsPrincipal AuthenticateActiveDirectory(string upn, Guid domain, string password)
@@ -102,7 +96,7 @@ namespace CertificateManager.Logic
 
         public ClaimsPrincipal Authenticate(string upn)
         {
-            AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
+            AuthenticablePrincipal authenticablePrincipal = localIdentityProviderLogic.Authenticate(upn);
 
             return ConstructClaimsPrincipal(authenticablePrincipal, devAuthBypass);
         }

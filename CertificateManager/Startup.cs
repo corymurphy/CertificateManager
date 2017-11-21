@@ -12,11 +12,14 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CertificateManager
 {
     public class Startup
     {
+        DatabaseLocator databaseLocator;
+        private bool initialSetupComplete = false;
         private IHostingEnvironment env;
         private EnvironmentInitializationProvider environmentInitializationProvider;
         public Startup(IHostingEnvironment env)
@@ -51,46 +54,20 @@ namespace CertificateManager
                     options.AccessDeniedPath = "/view/auth/forbidden";
                     options.LoginPath = "/view/auth/login";
                 });
-            //.AddOpenIdConnect("OidcPrimary",
-            //    options =>
-            //    {
-            //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
-            //        //options.SaveTokens = true;
-            //        options.ClientId = "";
-            //        options.ClientSecret = "";
-            //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
-            //        options.ResponseType = "id_token token";
-            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //        options.Authority = @"https://idp/oauth2/token";
-            //        //options.
-            //    }
-            //);
 
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
 
-            //options =>
+            databaseLocator = new DatabaseLocator(appSettings);
 
-            //{
-            //    options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
-            //    options.SaveTokens = true;
-            //    options.ClientId = "";
-
-            //}
-
-            string configDbPath = @"D:\db\config.db";
-            bool initialSetupComplete = false;
-
-            if (System.IO.File.Exists(configDbPath))
+            if(databaseLocator.ConfigurationRepositoryExists())
             {
-                //initialSetupComplete = true;
+                initialSetupComplete = true;
+                InitializeApp(services);
             }
             else
             {
                 initialSetupComplete = false;
             }
-
-
-            
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
@@ -98,8 +75,58 @@ namespace CertificateManager
                 options.SerializerSettings.Converters.Add(new Newtonsoft.Json.Converters.StringEnumConverter());
                 options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
             });
+        }
 
-            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(configDbPath);
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
+        {
+            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
+            loggerFactory.AddDebug();
+
+
+            if(!initialSetupComplete)
+            {
+                //RequireInitialSetup(app);
+            }
+
+            if (env.IsDevelopment())
+            {
+                //WorkstationDevelopment devEnv = new WorkstationDevelopment(@"D:\db\config.db");
+                //devEnv.Setup();
+
+                app.UseDeveloperExceptionPage();
+                app.UseBrowserLink();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Home/Error");
+            }
+
+            //IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
+
+            //if (env.IsDevelopment())
+            //    runtimeConfigurationState.IsDevelopment = true;
+
+
+            app.UseAuthentication();
+            
+            app.UseStaticFiles();
+
+            app.UseMvc();
+        }
+
+        private void RequireInitialSetup(IApplicationBuilder app)
+        {
+            app.Run(context =>
+            {
+                if(context.Request.Path.Value != "/initial-setup") context.Response.Redirect("/initial-setup");
+                return Task.FromResult<object>(null);
+            });
+        }
+
+        private void InitializeApp(IServiceCollection services)
+        {
+            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
             //RuntimeCacheRepository runtimeCacheRepository = new RuntimeCacheRepository(@"d:\db\runtimecache.db");
             RuntimeCacheRepository runtimeCacheRepository = null;
 
@@ -120,66 +147,45 @@ namespace CertificateManager
                 });
 
             services.AddSingleton<JavascriptConfigurationHelper>(new JavascriptConfigurationHelper(configurationRepository));
-            services.AddSingleton<AuditLogic>( new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
-        {
-            loggerFactory.AddConsole(Configuration.GetSection("Logging"));
-            loggerFactory.AddDebug();
-
-            if (env.IsDevelopment())
-            {
-                WorkstationDevelopment devEnv = new WorkstationDevelopment(@"D:\db\config.db");
-                //devEnv.Setup();
-
-                app.UseDeveloperExceptionPage();
-                app.UseBrowserLink();
-            }
-            else
-            {
-                app.UseExceptionHandler("/Home/Error");
-            }
-
-            IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
-
-            if (env.IsDevelopment())
-                runtimeConfigurationState.IsDevelopment = true;
-
-            app.UseAuthentication();
-            
-           
-
-
-            //runtimeConfigurationState.AlertApplicationStarted();
-
-            //runtimeConfigurationState.Validate();
-
-
-            app.UseStaticFiles();
-
-
-
-            //app.UseCookieAuthentication(new CookieAuthenticationOptions()
-            //{
-            //    AuthenticationScheme = CookieAuthenticationDefaults.AuthenticationScheme,
-            //    AutomaticAuthenticate = true,
-                
-            //});
-
-
-
-            app.UseMvc();
-
-
-
+            services.AddSingleton<AuditLogic>(new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
         }
 
         public void ConfigureAutoMapper()
         {
             //AutoMapper.Mapper.
             //    CreateMap<, CertificateSubject>();
+        }
+
+
+
+
+        private void ConfigureOidc()
+        {
+            //.AddOpenIdConnect("OidcPrimary",
+            //    options =>
+            //    {
+            //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
+            //        //options.SaveTokens = true;
+            //        options.ClientId = "";
+            //        options.ClientSecret = "";
+            //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
+            //        options.ResponseType = "id_token token";
+            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            //        options.Authority = @"https://idp/oauth2/token";
+            //        //options.
+            //    }
+            //);
+
+
+
+            //options =>
+
+            //{
+            //    options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
+            //    options.SaveTokens = true;
+            //    options.ClientId = "";
+
+            //}
         }
     }
 }

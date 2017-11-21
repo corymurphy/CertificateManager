@@ -18,11 +18,11 @@ namespace CertificateManager.Controllers
         HttpResponseHandler http;
         DataTransformation dataTransform;
 
-        public PkiConfigurationAdcsTemplateController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState)
+        public PkiConfigurationAdcsTemplateController(IConfigurationRepository configurationRepository)
         {
             this.configurationRepository = configurationRepository;
-            this.runtimeConfigurationState = runtimeConfigurationState;
-            this.adcsTemplateLogic = new AdcsTemplateLogic(configurationRepository, runtimeConfigurationState);
+            //this.runtimeConfigurationState = runtimeConfigurationState;
+            this.adcsTemplateLogic = new AdcsTemplateLogic(configurationRepository);
             this.http = new HttpResponseHandler(this);
             this.dataTransform = new DataTransformation();
         }

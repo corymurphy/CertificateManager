@@ -1,7 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateManager.Repository;
-using CertificateServices;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -10,11 +9,11 @@ namespace CertificateManager.Controllers
 {
     public class PkiConfigurationCertificateAuthorityController : Controller
     {
-        IConfigurationRepository configurationRepository;
+        CertificateAuthorityConfigurationLogic caConfigLogic;
         HttpResponseHandler http;
         public PkiConfigurationCertificateAuthorityController(IConfigurationRepository configurationRepository)
         {
-            this.configurationRepository = configurationRepository;
+            this.caConfigLogic = new CertificateAuthorityConfigurationLogic(configurationRepository);
             this.http = new HttpResponseHandler(this);
         }
 
@@ -22,7 +21,7 @@ namespace CertificateManager.Controllers
         [Route("pki-config/certificate-authorities/private")]
         public JsonResult GetCertificateAuthorities()
         {
-            IEnumerable<PrivateCertificateAuthorityConfig> actual = configurationRepository.GetPrivateCertificateAuthorities();
+            IEnumerable<PrivateCertificateAuthorityConfig> actual = caConfigLogic.GetPrivateCertificateAuthorities();
             return http.RespondSuccess(actual);
         }
 
@@ -30,7 +29,7 @@ namespace CertificateManager.Controllers
         [Route("pki-config/certificate-authority/private")]
         public JsonResult DeleteCertificateAuthority(Guid id)
         {
-            configurationRepository.DeletePrivateCertificateAuthority(id);
+            caConfigLogic.DeletePrivateCertificateAuthority(id);
             return http.RespondSuccess();
         }
 
@@ -39,11 +38,7 @@ namespace CertificateManager.Controllers
         [Route("pki-config/certificate-authority/private")]
         public JsonResult UpdateCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
-            PrivateCertificateAuthorityConfig existingCa = configurationRepository.GetPrivateCertificateAuthority(ca.Id);
-
-            ca.Id = existingCa.Id;
-
-            configurationRepository.UpdatePrivateCertificateAuthority(ca);
+            caConfigLogic.UpdatePrivateCertificateAuthority(ca);
             return http.RespondSuccess();
         }
 
@@ -51,9 +46,7 @@ namespace CertificateManager.Controllers
         [Route("pki-config/certificate-authority/private")]
         public JsonResult AddCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
-            ca.Id = Guid.NewGuid();
-            configurationRepository.InsertPrivateCertificateAuthorityConfig(ca);
-            //configurationRepository.Insert<PrivateCertificateAuthorityConfig>(ca);
+            caConfigLogic.AddPrivateCertificateAuthority(ca);
             return http.RespondSuccess(ca);
         }
     }

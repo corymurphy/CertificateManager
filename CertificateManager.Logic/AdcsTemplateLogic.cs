@@ -1,7 +1,8 @@
 ﻿using CertificateManager.Entities;
-using CertificateManager.Entities.Enumerations;
 using CertificateManager.Entities.Exceptions;
 using CertificateManager.Repository;
+using CertificateServices;
+using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
 
@@ -11,12 +12,11 @@ namespace CertificateManager.Logic
     {
         DataTransformation dataTransform;
         IConfigurationRepository configurationRepository;
-        IRuntimeConfigurationState runtimeConfigurationState;
 
-        public AdcsTemplateLogic(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState)
+
+        public AdcsTemplateLogic(IConfigurationRepository configurationRepository)
         {
             this.configurationRepository = configurationRepository;
-            this.runtimeConfigurationState = runtimeConfigurationState;
             this.dataTransform = new DataTransformation();
         }
 
@@ -29,7 +29,22 @@ namespace CertificateManager.Logic
 
             template.Id = Guid.NewGuid();
             configurationRepository.InsertAdcsTemplate(template);
-            runtimeConfigurationState.ClearAlert(AlertType.NoTemplatesConfigured);
+            //runtimeConfigurationState.ClearAlert(AlertType.NoTemplatesConfigured);
+            return template;
+        }
+
+        public AdcsTemplate AddTemplate(string name, CipherAlgorithm cipher, KeyUsage keyUsage, WindowsApi api)
+        {
+            AdcsTemplate template = new AdcsTemplate()
+            {
+                Name = name, 
+                Cipher = cipher,
+                KeyUsage = keyUsage,
+                WindowsApi = api
+            };
+
+            configurationRepository.InsertAdcsTemplate(template);
+
             return template;
         }
 

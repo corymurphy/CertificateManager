@@ -325,9 +325,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ActiveDirectoryIdentityProviderLogic.cs" />
     <Compile Include="AdcsTemplateLogic.cs" />
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
+    <Compile Include="CertificateAuthorityConfigurationLogic.cs" />
+    <Compile Include="DatabaseLocator.cs" />
     <Compile Include="DataTransformation.cs" />
     <Compile Include="DnsValidation.cs" />
     <Compile Include="HttpResponseHandler.cs" />
@@ -335,6 +338,7 @@
     <Compile Include="IdentityAuthenticationLogic.cs" />
     <Compile Include="InitialSetupLogic.cs" />
     <Compile Include="IRuntimeConfigurationState.cs" />
+    <Compile Include="LocalIdentityProviderLogic.cs" />
     <Compile Include="PrivateCertificateProcessing.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RoleManagementLogic.cs" />

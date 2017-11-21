@@ -12,6 +12,7 @@ namespace CertificateManager.Entities
             this.LocalLogonEnabled = true;
             this.EmergencyAccessEnabled = true;
         }
+        public string EncryptionKey { get; set; }
         public bool EmergencyAccessEnabled { get; set; }
         public bool LocalLogonEnabled { get; set; }
         public int JwtValidityPeriod { get; set; }
