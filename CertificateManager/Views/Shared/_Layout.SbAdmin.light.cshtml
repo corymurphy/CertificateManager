@@ -1,5 +1,5 @@
 ﻿@using CertificateManager.Logic.UXLogic
-@inject JavascriptConfigurationHelper jsConfig
+@inject IClientsideConfigurationProvider jsConfig
 
 <!DOCTYPE html>
 <html lang="en">
@@ -11,11 +11,6 @@
     <meta name="author" content="Cory Murphy">
 
     <link href="~/css/bootstrap.min.css" rel="stylesheet">
-    @*<link href="~/css/dashboard.css" rel="stylesheet">
-    <link href="~/css/jsgrid.min.css" rel="stylesheet">
-    <link href="~/css/jsgrid-theme.min.css" rel="stylesheet">
-    <link href="~/css/select2.min.css" rel="stylesheet" />
-    <link href="~/css/cm.min.css" rel="stylesheet" />*@
 
     @RenderSection("Style", required: false)
 
@@ -39,6 +34,7 @@
     <script src="~/js/cm.min.js"></script>
 
     <script>
+        @Html.Raw(jsConfig.RenderDynamicScript())
         @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
         @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())

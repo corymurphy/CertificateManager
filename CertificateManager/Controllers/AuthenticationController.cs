@@ -5,23 +5,22 @@ using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Threading.Tasks;
 
 namespace CertificateManager.Controllers
 {
     public class AuthenticationController : Controller
     {
+        IdentityAuthenticationLogic authenticationLogic;
         IRuntimeConfigurationState runtimeConfigurationState;
-        IConfigurationRepository configurationRepository;
-        IActiveDirectoryAuthenticator activeDirectoryAuthenticator;
         HttpResponseHandler http;
         bool allowDevBypass = false;
         //RoleManagementLogic roleManagement;
 
-        public AuthenticationController(IConfigurationRepository configurationRepository, IRuntimeConfigurationState runtimeConfigurationState, IActiveDirectoryAuthenticator activeDirectoryAuthenticator)
+        public AuthenticationController(IdentityAuthenticationLogic authenticationLogic, IRuntimeConfigurationState runtimeConfigurationState)
         {
-            this.configurationRepository = configurationRepository;
-            this.activeDirectoryAuthenticator = activeDirectoryAuthenticator;
+            this.authenticationLogic = authenticationLogic;
             this.http = new HttpResponseHandler(this);
             this.allowDevBypass = true;
             this.runtimeConfigurationState = runtimeConfigurationState;
@@ -53,14 +52,12 @@ namespace CertificateManager.Controllers
         [Route("view/auth/login")]
         public async Task<ActionResult> Login(LoginLocalViewModel model)
         {
-            IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
-
             try
             {
                 await HttpContext.SignInAsync(authenticationLogic.Authenticate(model));
                 return RedirectToAction("Profile");
             }
-            catch
+            catch(Exception e)
             {
                 return RedirectToAction("Login");
             } 
@@ -117,8 +114,6 @@ namespace CertificateManager.Controllers
         {
             if(runtimeConfigurationState.IsDevelopment)
             {
-                IdentityAuthenticationLogic authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
-
                 await HttpContext.SignInAsync(authenticationLogic.Authenticate("cmurphy"));
                 return Redirect(Url.Content("~/")); 
             }

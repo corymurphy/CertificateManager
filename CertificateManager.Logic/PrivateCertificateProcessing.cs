@@ -18,6 +18,7 @@ namespace CertificateManager.Logic
         DataTransformation dataTransformation;
         SecretKeyProvider secrets;
         ClaimsPrincipal user;
+        EncryptionProvider cipher;
 
         public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, ClaimsPrincipal user)
         {
@@ -26,6 +27,7 @@ namespace CertificateManager.Logic
             this.certificateProvider = certificateProvider;
             this.dataTransformation = new DataTransformation();
             this.secrets = new SecretKeyProvider();
+            this.cipher = new EncryptionProvider(configurationRepository.GetAppConfig().EncryptionKey);
             this.user = user;
         }
 
@@ -89,16 +91,18 @@ namespace CertificateManager.Logic
 
         private CreatePrivateCertificateResult HandleSuccess(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
+            string nonce = secrets.NewSecretBase64(32);
             string password = secrets.NewSecret(64);
             X509Certificate2 cert = certificateProvider.InstallIssuedCertificate(response.IssuedCertificate);
 
             CreatePrivateCertificateResult result = new CreatePrivateCertificateResult()
             {
                 Password = password,
-                Pfx = System.Convert.ToBase64String( cert.Export(X509ContentType.Pfx, password) ),
+                Pfx = Convert.ToBase64String( cert.Export(X509ContentType.Pfx, password) ),
                 Status = PrivateCertificateRequestStatus.Success,
                 Thumbprint = cert.Thumbprint,
-                Id = Guid.NewGuid()
+                Id = Guid.NewGuid(),
+                
             };
 
             List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
@@ -116,7 +120,7 @@ namespace CertificateManager.Logic
             {
                 Id = result.Id,
                 Thumbprint = cert.Thumbprint,
-                PfxPassword = password,
+                PfxPassword = cipher.Encrypt(password, nonce),
                 WindowsApi = model.Provider,
                 Content = result.Pfx,
                 CertificateStorageFormat = CertificateStorageFormat.Pfx,
@@ -129,7 +133,9 @@ namespace CertificateManager.Logic
                 KeySize = model.KeySize,
                 KeyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage),
                 Subject = subject,
-                Acl = defaultAcl
+                Acl = defaultAcl,
+                PasswordNonce = nonce
+
             };
 
             certificateRepository.Insert(storedCert);

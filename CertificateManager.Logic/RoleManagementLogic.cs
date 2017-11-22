@@ -93,6 +93,18 @@ namespace CertificateManager.Logic
 
             return principal;
         }
+
+        public void InitializeRoles(List<Guid> users)
+        {
+            SecurityRole adminRole = new SecurityRole()
+            {
+                Enabled = true,
+                Id = Guid.NewGuid(),
+                Member = users,
+                Name = "Administrators@certificatemanager.local"
+            };
+
+        }
     }
 
 }

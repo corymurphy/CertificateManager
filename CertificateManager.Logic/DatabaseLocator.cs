@@ -5,7 +5,7 @@ namespace CertificateManager.Logic
 {
     public class DatabaseLocator
     {
-
+        private string auditDbName = "certificatemanager.audit.db";
         private string configDbName = "certificatemanager.config.db";
         private string certDbName = "certificatemanager.config.db";
         private string dbRoot;
@@ -27,7 +27,7 @@ namespace CertificateManager.Logic
             if (string.IsNullOrWhiteSpace(dbRoot))
                 return false;
 
-            if (Directory.Exists(GetConfigurationRepositoryConnectionString()))
+            if (File.Exists(GetConfigurationRepositoryConnectionString()))
                 return true;
             else
                 return false;
@@ -36,9 +36,17 @@ namespace CertificateManager.Logic
 
         public string GetConfigurationRepositoryConnectionString()
         {
+            return Path.Combine(dbRoot, configDbName);
+        }
+
+        public string GetCertificateRepositoryConnectionString()
+        {
             return Path.Combine(dbRoot, certDbName);
         }
 
-        
+        public string GetAuditRepositoryConnectionString()
+        {
+            return Path.Combine(dbRoot, auditDbName);
+        }
     }
 }

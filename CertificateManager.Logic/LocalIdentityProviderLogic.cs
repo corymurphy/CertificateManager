@@ -18,7 +18,7 @@ namespace CertificateManager.Logic
             return appConfig.LocalIdpIdentifier;
         }
 
-        public void InitializeEmergencyAccess(string secret)
+        public AuthenticablePrincipal InitializeEmergencyAccess(string secret)
         {
             AuthenticablePrincipal authenticablePrincipal = new AuthenticablePrincipal()
             {
@@ -26,13 +26,15 @@ namespace CertificateManager.Logic
                 Id = Guid.NewGuid(),
                 Enabled = true,
                 UserPrincipalName = "emergencyaccess@certificatemanager.local",
-                PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(secret)
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
             configurationRepository.InsertAuthenticablePrincipal(authenticablePrincipal);
+
+            return authenticablePrincipal;
         }
 
-        public void InitializeLocalAdministrator(string secret)
+        public AuthenticablePrincipal InitializeLocalAdministrator(string secret)
         {
             AuthenticablePrincipal authenticablePrincipal = new AuthenticablePrincipal()
             {
@@ -40,10 +42,12 @@ namespace CertificateManager.Logic
                 Id = Guid.NewGuid(),
                 Enabled = true,
                 UserPrincipalName = "administrator@certificatemanager.local",
-                PasswordHash = BCrypt.Net.BCrypt.EnhancedHashPassword(secret)
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
             configurationRepository.InsertAuthenticablePrincipal(authenticablePrincipal);
+
+            return authenticablePrincipal;
         }
 
         public AuthenticablePrincipal Authenticate(string upn, string password)
@@ -69,5 +73,16 @@ namespace CertificateManager.Logic
 
             return authenticablePrincipal;
         }
+
+        public void InitializeRoles()
+        {
+            SecurityRole role = new SecurityRole()
+            {
+
+            };
+
+        }
+
+
     }
 }

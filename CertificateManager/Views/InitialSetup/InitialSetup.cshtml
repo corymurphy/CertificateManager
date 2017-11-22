@@ -29,6 +29,12 @@
                 <label for="datastoreRootPath">Datastore Root Path</label>
                 <input class="form-control" id="datastoreRootPath" name="datastoreRootPath" aria-describedby="emailHelp" placeholder="eg. d:\datastore">
             </div>
+
+            <div class="form-group">
+                <label for="localAdminUpn">Local Admin UserPrincipalName</label>
+                <input class="form-control" id="localAdminUpn" name="localAdminUpn" type="text" readonly="readonly" value="administrator@certificatemanager.local">
+            </div>
+
             <div class="form-group">
                 <label for="localAdminPassword">Local Admin Password</label>
                 <input class="form-control" id="localAdminPassword" name="localAdminPassword" type="password" placeholder="Password">
@@ -37,6 +43,11 @@
             <div class="form-group">
                 <label for="encryptionKey">EncryptionKey</label>
                 <input class="form-control" id="encryptionKey" name="encryptionKey" type="text" readonly="readonly" value="@ViewBag.EncryptionKey">
+            </div>
+
+            <div class="form-group">
+                <label for="emergencyAccessKey">Emergency Access Key</label>
+                <input class="form-control" id="emergencyAccessKey" name="emergencyAccessKey" type="text" readonly="readonly" value="@ViewBag.EmergencyAccessKey">
             </div>
 
         </div>
@@ -106,10 +117,14 @@
                 <select class="form-control" name="AdcsHashAlgorithm" id="AdcsHashAlgorithm">
                     @foreach (var alg in Enum.GetNames(typeof(HashAlgorithm)))
                     {
-                        if (alg == "SHA256"){ <option selected="selected" value="@alg">@alg</option> }
-                        else {<option  value="@alg">@alg</option>}
+                        if (alg == "SHA256")
+                        {
+                    <option selected="selected" value="@alg">@alg</option> }
+                        else
+                        {
+                    <option value="@alg">@alg</option>}
                     }
-                    
+
                 </select>
             </div>
         </div>
@@ -132,10 +147,10 @@
                     {
                         if (alg == "Cng")
                         {
-                    <option selected="selected" value="@alg">@alg</option> }
+                            <option selected="selected" value="@alg">@alg</option> }
                         else
                         {
-                    <option value="@alg">@alg</option>}
+                            <option value="@alg">@alg</option>}
                     }
 
                 </select>
@@ -186,12 +201,13 @@
 
 
     <input type="submit" class="btn btn-primary btn-block" style="margin-top:50px;" value="Complete Configuration" />
+
 </form>
 
 @section Script{
     <script>
         $(document).ready(function () {
-            Login.PageLoad();
+            //Login.PageLoad();
         });
     </script>
 }
@@ -204,11 +220,3 @@
 
 }
 
-
-
-
-
-
-
-
-@*@Html.GetEnumSelectList()*@

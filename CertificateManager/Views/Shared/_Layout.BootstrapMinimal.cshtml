@@ -1,6 +1,6 @@
 ﻿@using CertificateManager.Logic.UXLogic
 @using CertificateManager.Logic
-@inject JavascriptConfigurationHelper jsConfig
+@inject IClientsideConfigurationProvider jsConfig
 @inject IRuntimeConfigurationState runtimeConfigurationState
 
 <!DOCTYPE html>
@@ -111,6 +111,8 @@
     <script src="~/js/cm.min.js"></script>
 
     <script>
+
+        @Html.Raw(jsConfig.RenderDynamicScript())
         @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
         @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())

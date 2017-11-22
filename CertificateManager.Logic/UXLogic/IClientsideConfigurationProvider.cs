@@ -1,0 +1,14 @@
+﻿namespace CertificateManager.Logic.UXLogic
+{
+    public interface IClientsideConfigurationProvider
+    {
+        string RenderDynamicScript();
+
+        string RenderIdentitySourcesJsonArray();
+
+        string RenderLocalAuthenticationStateJsonArray();
+
+        string RenderSecurityRolesJsonArray();
+
+    }
+}

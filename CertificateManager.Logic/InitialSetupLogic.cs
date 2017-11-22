@@ -1,5 +1,8 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Repository;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace CertificateManager.Logic
 {
@@ -11,7 +14,8 @@ namespace CertificateManager.Logic
         ActiveDirectoryIdentityProviderLogic idpLogic;
         CertificateAuthorityConfigurationLogic certificateAuthorityConfigurationLogic;
         AdcsTemplateLogic templateLogic;
-        SecretKeyProvider keyProvider;
+        RoleManagementLogic roleManagement;
+        //SecretKeyProvider keyProvider;
 
         public InitialSetupLogic(IConfigurationRepository configurationRepository)
         {
@@ -20,17 +24,20 @@ namespace CertificateManager.Logic
             this.templateLogic = new AdcsTemplateLogic(configurationRepository);
             this.certificateAuthorityConfigurationLogic = new CertificateAuthorityConfigurationLogic(configurationRepository);
             this.idpLogic = new ActiveDirectoryIdentityProviderLogic(configurationRepository);
+            this.roleManagement = new RoleManagementLogic(configurationRepository);
             this.localIdpLogic = new LocalIdentityProviderLogic(configurationRepository);
-
         }
         
 
-        public void SetConfiguration(InitialSetupConfigModel config)
+        public void Complete(InitialSetupConfigModel config)
         {
+
             ExternalIdentitySource idp = idpLogic.Add(config.AdName, config.AdServer, config.AdSearchBase, config.AdServiceAccountUsername, config.AdServiceAccountPassword, config.AdUseAppPoolIdentity);
             certificateAuthorityConfigurationLogic.AddPrivateCertificateAuthority(config.AdcsServerName, config.AdcsCommonName, config.AdcsHashAlgorithm, idp.Id);
             AdcsTemplate adcsTemplate = templateLogic.AddTemplate(config.AdcsTemplateName, config.AdcsTemplateCipher, config.AdcsTemplateKeyUsage, config.AdcsTemplateWindowsApi);
-            localIdpLogic.InitializeEmergencyAccess(config.EmergencyAccessKey);
+            AuthenticablePrincipal emergencyAccess = localIdpLogic.InitializeEmergencyAccess(config.EmergencyAccessKey);
+            AuthenticablePrincipal admin = localIdpLogic.InitializeLocalAdministrator(config.LocalAdminPassword);
+            roleManagement.InitializeRoles(new List<Guid>() { emergencyAccess.Id, admin.Id });
 
             AppConfig appConfig = new AppConfig()
             {
@@ -38,8 +45,7 @@ namespace CertificateManager.Logic
             };
 
             configurationRepository.SetAppConfig(appConfig);
-
-            //runtimeConfigurationState.InitialSetupComplete = true;
         }
+
     }
 }

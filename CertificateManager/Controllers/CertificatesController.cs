@@ -19,6 +19,7 @@ namespace CertificateManager.Controllers
         DataTransformation dataTransformation;
         SecretKeyProvider secrets;
         HttpResponseHandler http;
+        EncryptionProvider cipher;
 
         public CertificatesController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository)
         {
@@ -26,6 +27,7 @@ namespace CertificateManager.Controllers
             this.certificateRepository = certificateRepository;
             this.dataTransformation = new DataTransformation();
             this.secrets = new SecretKeyProvider();
+            this.cipher = new EncryptionProvider(configurationRepository.GetAppConfig().EncryptionKey);
             this.http = new HttpResponseHandler(this);
         }
 

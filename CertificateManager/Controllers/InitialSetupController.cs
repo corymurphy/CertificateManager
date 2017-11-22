@@ -1,20 +1,30 @@
-﻿using CertificateManager.Logic;
-using CertificateManager.Entities;
-using CertificateManager.Repository;
-using Microsoft.AspNetCore.Mvc;
+﻿using CertificateManager.Entities;
+using CertificateManager.Logic;
 using CertificateManager.Logic.ConfigurationProvider;
+using CertificateManager.Repository;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CertificateManager.Controllers
 {
     public class InitialSetupController : Controller
     {
+        IApplicationLifetime application;
         HttpResponseHandler http;
         IWritableOptions<AppSettings> appSettings;
 
-        public InitialSetupController(IWritableOptions<AppSettings> appSettings)
+        public InitialSetupController(IWritableOptions<AppSettings> appSettings, IApplicationLifetime application)
         {
+            this.application = application;
             this.appSettings = appSettings;
             this.http = new HttpResponseHandler(this);
+        }
+
+        [HttpGet]
+        [Route("initial-setup/complete")]
+        public ActionResult Complete()
+        {
+            return View();
         }
 
 
@@ -22,9 +32,11 @@ namespace CertificateManager.Controllers
         [Route("initial-setup")]
         public ActionResult InitialSetup()
         {
-            //appSettings.Update(options => options.DatastoreRootPath = "a");
+           
             SecretKeyProvider secretKeyProvider = new SecretKeyProvider();
-            ViewBag.EncryptionKey = secretKeyProvider.NewSecret(32);
+            ViewBag.EncryptionKey = secretKeyProvider.NewSecretBase64(32);
+            ViewBag.EmergencyAccessKey = secretKeyProvider.NewSecret(32);
+
             return View();
         }
 
@@ -40,9 +52,16 @@ namespace CertificateManager.Controllers
 
             InitialSetupLogic initialSetupLogic = new InitialSetupLogic(configurationRepository);
 
-            initialSetupLogic.SetConfiguration(config);
+            initialSetupLogic.Complete(config);
             
-            return RedirectToAction("Login", "Authentication");
+            return RedirectToAction("Complete", "InitialSetup");
+        }
+
+        [Route("initial-setup/restart-app")]
+        public JsonResult RestartApp()
+        {
+            application.StopApplication();
+            return http.RespondSuccess();
         }
 
     }

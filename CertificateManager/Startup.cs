@@ -9,6 +9,7 @@ using CertificateServices.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -16,14 +17,22 @@ using System.Threading.Tasks;
 
 namespace CertificateManager
 {
+
+
+
+
     public class Startup
     {
         DatabaseLocator databaseLocator;
         private bool initialSetupComplete = false;
         private IHostingEnvironment env;
         private EnvironmentInitializationProvider environmentInitializationProvider;
+
+        //private static CancellationTokenSource cancelTokenSource = new System.Threading.CancellationTokenSource();
+
         public Startup(IHostingEnvironment env)
         {
+
             this.env = env;
             environmentInitializationProvider = new EnvironmentInitializationProvider(env);
 
@@ -35,6 +44,9 @@ namespace CertificateManager
             Configuration = builder.Build();
 
             ConfigureAutoMapper();
+
+            
+            
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -67,6 +79,7 @@ namespace CertificateManager
             else
             {
                 initialSetupComplete = false;
+                InitializeSetup(services);
             }
 
             // Add framework services.
@@ -82,12 +95,6 @@ namespace CertificateManager
         {
             loggerFactory.AddConsole(Configuration.GetSection("Logging"));
             loggerFactory.AddDebug();
-
-
-            if(!initialSetupComplete)
-            {
-                //RequireInitialSetup(app);
-            }
 
             if (env.IsDevelopment())
             {
@@ -117,27 +124,53 @@ namespace CertificateManager
 
         private void RequireInitialSetup(IApplicationBuilder app)
         {
-            app.Run(context =>
-            {
-                if(context.Request.Path.Value != "/initial-setup") context.Response.Redirect("/initial-setup");
-                return Task.FromResult<object>(null);
-            });
+            //app.UseMvc(routes => routes.MapRoute().DefaultHandler)
+
+
+            //app.Run(context =>
+            //{
+            //    if(context.Request.Path.Value != "/initial-setup") context.Response.Redirect("/initial-setup");
+            //    return Task.FromResult<object>(null);
+            //});
+        }
+
+
+        private void InitializeSetup(IServiceCollection services)
+        {
+            services.AddSingleton<IRuntimeConfigurationState>(
+                new RuntimeConfigurationState(null, null)
+                {
+                    InitialSetupComplete = false
+                }
+            );
+
+            services.AddSingleton<IClientsideConfigurationProvider>(new ClientsideConfigurationProviderInitialSetup());
+
+            //IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator)
+
+            services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(null, null));
         }
 
         private void InitializeApp(IServiceCollection services)
         {
             LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
-            //RuntimeCacheRepository runtimeCacheRepository = new RuntimeCacheRepository(@"d:\db\runtimecache.db");
+
+            ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
+            
+            services.AddSingleton<IActiveDirectoryAuthenticator>(activeDirectoryAuthenticator);
+
+            services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator));
+
+            ICertificateRepository certificateRepository = new LiteDbCertificateRepository(databaseLocator.GetCertificateRepositoryConnectionString());
+
             RuntimeCacheRepository runtimeCacheRepository = null;
 
+            services.AddSingleton<RoleManagementLogic>(new RoleManagementLogic(configurationRepository));
+
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
+
             services.AddSingleton<ICertificateProvider>(new Win32CertificateProvider());
-
-            services.AddSingleton<IActiveDirectoryAuthenticator>(new ActiveDirectoryAuthenticator());
-
-            ICertificateRepository certificateRepository = new LiteDbCertificateRepository(@"d:\db\certs.db");
-            //certificateRepository.DeleteAllCertificates();
-
+          
             services.AddSingleton<ICertificateRepository>(certificateRepository);
 
             services.AddSingleton<IRuntimeConfigurationState>(
@@ -146,8 +179,9 @@ namespace CertificateManager
                     InitialSetupComplete = initialSetupComplete
                 });
 
-            services.AddSingleton<JavascriptConfigurationHelper>(new JavascriptConfigurationHelper(configurationRepository));
-            services.AddSingleton<AuditLogic>(new AuditLogic(new LiteDbAuditRepository(@"d:\db\audit.db")));
+            services.AddSingleton<IClientsideConfigurationProvider>(new ClientsideConfigurationProvider(configurationRepository));
+
+            services.AddSingleton<AuditLogic>(new AuditLogic(new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString())));
         }
 
         public void ConfigureAutoMapper()

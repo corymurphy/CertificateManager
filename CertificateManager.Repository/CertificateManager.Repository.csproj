@@ -81,6 +81,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConfigurationRepositoryInitialSetupEmpty.cs" />
     <Compile Include="IAuditRepository.cs" />
     <Compile Include="ICertificateRepository.cs" />
     <Compile Include="IConfigurationRepository.cs" />

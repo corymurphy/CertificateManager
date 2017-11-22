@@ -9,15 +9,13 @@ namespace CertificateManager.Controllers
 {
     public class SecurityRolesController : Controller
     {
-        IConfigurationRepository configurationRepository;
         HttpResponseHandler http;
         RoleManagementLogic roleManagement;
 
-        public SecurityRolesController(IConfigurationRepository configurationRepository)
+        public SecurityRolesController(RoleManagementLogic roleManagement)
         {
-            this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
-            this.roleManagement = new RoleManagementLogic(configurationRepository);
+            this.roleManagement = roleManagement;
         }
 
         [HttpGet]

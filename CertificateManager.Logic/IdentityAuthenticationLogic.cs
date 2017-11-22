@@ -23,6 +23,7 @@ namespace CertificateManager.Logic
         {
             this.localIdentityProviderLogic = new LocalIdentityProviderLogic(configurationRepository);
             this.activeDirectoryAuthenticator = activeDirectoryAuthenticator;
+            this.configurationRepository = configurationRepository;
         }
 
         private ClaimsPrincipal ConstructClaimsPrincipal(AuthenticablePrincipal authenticablePrincipal, string authScheme)

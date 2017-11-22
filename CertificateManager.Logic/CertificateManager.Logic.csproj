@@ -330,6 +330,8 @@
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
     <Compile Include="CertificateAuthorityConfigurationLogic.cs" />
+    <Compile Include="EncryptionProvider.cs" />
+    <Compile Include="UXLogic\ClientsideConfigurationProviderInitialSetup.cs" />
     <Compile Include="DatabaseLocator.cs" />
     <Compile Include="DataTransformation.cs" />
     <Compile Include="DnsValidation.cs" />
@@ -345,7 +347,8 @@
     <Compile Include="RuntimeConfigurationState.cs" />
     <Compile Include="SecretKeyProvider.cs" />
     <Compile Include="UserManagementLogic.cs" />
-    <Compile Include="UXLogic\JavascriptConfigurationHelper.cs" />
+    <Compile Include="UXLogic\IClientsideConfigurationProvider.cs" />
+    <Compile Include="UXLogic\ClientsideConfigurationProvider.cs" />
     <Compile Include="WorkstationDevelopment.cs" />
     <Compile Include="X509Normalization.cs" />
   </ItemGroup>
