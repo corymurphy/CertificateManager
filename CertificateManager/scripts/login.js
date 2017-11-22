@@ -2,9 +2,18 @@
 
     PageLoad: function ()
     {
+        Login.ShowErrorIfUnsuccessful();
         Login.InitializeAlternativeLoginOptions();
         Login.ConfigureAuthBypass();
-        Login.InitializeDomainSelect();
+        Login.InitializeDomainSelect();   
+    },
+
+    ShowErrorIfUnsuccessful: function ()
+    {
+        if (Login.IsAuthFailure())
+        {
+            UiGlobal.ShowError();
+        }
     },
 
     ConfigureAuthBypass: function ()
@@ -45,6 +54,18 @@
                 value: CmOptions.LocalIdentityProviderId,
                 text: 'Local'
             }));
+        }
+    },
+
+    IsAuthFailure: function ()
+    {
+        if (document.URL.indexOf("authentication_failure") > -1)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 

@@ -55,11 +55,11 @@ namespace CertificateManager.Controllers
             try
             {
                 await HttpContext.SignInAsync(authenticationLogic.Authenticate(model));
-                return RedirectToAction("Profile");
+                return RedirectToAction("Index", "Home");
             }
             catch(Exception e)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("Login", "Authentication", new { status = "authentication_failure" });
             } 
         }
         [HttpGet]

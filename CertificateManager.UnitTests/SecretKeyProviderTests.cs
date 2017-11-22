@@ -65,5 +65,51 @@ namespace CertificateManager.UnitTests
 
             Assert.AreEqual(length, secret.Length);
         }
+
+        [TestMethod]
+        public void SecretKeyProvider_NewSecretBase64_Length32_ReturnsWellFormedBase64()
+        {
+            int length = 32;
+
+            SecretKeyProvider secrets = new SecretKeyProvider();
+
+            string secret = secrets.NewSecretBase64(length);
+
+            byte[] secretByte = Convert.FromBase64String(secret);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SecretKeyProvider_NewSecretBase64_Length2_ThrowArgumentOutOfRangeException()
+        {
+            int length = 2;
+
+            SecretKeyProvider secrets = new SecretKeyProvider();
+
+            secrets.NewSecretBase64(length);
+        }
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SecretKeyProvider_NewSecretBase64_Length130_ThrowArgumentOutOfRangeException()
+        {
+            int length = 130;
+
+            SecretKeyProvider secrets = new SecretKeyProvider();
+
+            secrets.NewSecretBase64(length);
+        }
+
+
+        [TestMethod]
+        [ExpectedException(typeof(ArgumentOutOfRangeException))]
+        public void SecretKeyProvider_NewSecretBase64_LengthNegative1_ThrowArgumentOutOfRangeException()
+        {
+            int length = -1;
+
+            SecretKeyProvider secrets = new SecretKeyProvider();
+
+            secrets.NewSecretBase64(length);
+        }
     }
 }

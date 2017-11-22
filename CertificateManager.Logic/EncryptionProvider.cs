@@ -8,35 +8,27 @@ namespace CertificateManager.Logic
     public class EncryptionProvider
     {
         private byte[] keyBytes;
+
         public EncryptionProvider(string key)
         {
             if (string.IsNullOrEmpty(key))
                 throw new ArgumentNullException(nameof(key));
 
-            //TODO: Validate is base64 encoded
-            this.keyBytes = Convert.FromBase64String(key);
+            this.keyBytes = DecodeKey(key);
         }
 
         public string Encrypt(string data, string nonce)
         {
             string encryptedData;
             byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            byte[] nonceBytes;
-            try
-            {
-                nonceBytes = Convert.FromBase64String(nonce);
-            }
-            catch
-            {
-                throw new FormatException("Unable to convert the key or nonce from base64 to byte array.");
-            }
+            byte[] nonceBytes = DecodeNonce(nonce);
 
             HMACSHA256 hmac = new HMACSHA256(keyBytes);
             byte[] derivedKey = hmac.ComputeHash(nonceBytes);
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using (RijndaelManaged aes = new RijndaelManaged())
+                using (AesManaged aes = new AesManaged())
                 {
                     aes.KeySize = 256;
                     aes.BlockSize = 128;
@@ -54,27 +46,19 @@ namespace CertificateManager.Logic
             }
             return encryptedData;
         }
+
         public string Decrypt(string ciphertext, string nonce)
         {
             string decryptedData;
-            byte[] ciphertextByte = Convert.FromBase64String(ciphertext);
-            byte[] nonceBytes;
-
-            try
-            {
-                nonceBytes = Convert.FromBase64String(nonce);
-            }
-            catch
-            {
-                throw new FormatException("Unable to convert the key or nonce from base64 to byte array.");
-            }
+            byte[] ciphertextByte = DecodeCiphertext(ciphertext);
+            byte[] nonceBytes = DecodeNonce(nonce);
 
             HMACSHA256 hmac = new HMACSHA256(keyBytes);
             byte[] derivedKey = hmac.ComputeHash(nonceBytes);
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using (RijndaelManaged aes = new RijndaelManaged())
+                using (AesManaged aes = new AesManaged())
                 {
                     aes.KeySize = 256;
                     aes.BlockSize = 128;
@@ -92,5 +76,42 @@ namespace CertificateManager.Logic
             }
             return decryptedData;
         }
+
+        private byte[] DecodeCiphertext(string ciphertext)
+        {
+            try
+            {
+                return Convert.FromBase64String(ciphertext);
+            }
+            catch(FormatException)
+            {
+                throw new FormatException("Invalid ciphertext was provided for cryptographic operation. It was not well formed base64." );
+            }
+        }
+
+        private byte[] DecodeNonce(string nonce)
+        {
+            try
+            {
+                return Convert.FromBase64String(nonce);
+            }
+            catch (FormatException)
+            {
+                throw new FormatException("Invalid nonce was provided for cryptographic operation. It was not well formed base64.");
+            }
+        }
+
+        private byte[] DecodeKey(string key)
+        {
+            try
+            {
+                return Convert.FromBase64String(key);
+            }
+            catch (FormatException)
+            {
+                throw new FormatException("Invalid key was provided for cryptographic operation. It was not well formed base64.");
+            }
+        }
+
     }
 }

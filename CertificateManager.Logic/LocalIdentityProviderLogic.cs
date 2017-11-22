@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Exceptions;
 using CertificateManager.Repository;
 using System;
 
@@ -6,7 +7,11 @@ namespace CertificateManager.Logic
 {
     public class LocalIdentityProviderLogic
     {
+        public delegate void AuthenticationLogicEventRaiser();
+        public event AuthenticationLogicEventRaiser OnSuccessfulUserAuthentication;
+
         IConfigurationRepository configurationRepository;
+
         public LocalIdentityProviderLogic(IConfigurationRepository configurationRepository)
         {
             this.configurationRepository = configurationRepository;
@@ -55,11 +60,15 @@ namespace CertificateManager.Logic
             AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
 
             if (authenticablePrincipal == null)
-                throw new Exception("User does not exist");
+                throw new AuthenticablePrincipalDoesNotExistException();
 
+            if (!authenticablePrincipal.Enabled)
+                throw new AuthenticablePrincipalDeniedLoginByPolicyException();
 
             if (!BCrypt.Net.BCrypt.Verify(password, authenticablePrincipal.PasswordHash))
-                throw new Exception("Authentication failed");
+                throw new CredentialsInvalidForAuthenticablePrincipalException("Authentication failed");
+
+            OnSuccessfulUserAuthentication();
 
             return authenticablePrincipal;
         }
@@ -71,18 +80,10 @@ namespace CertificateManager.Logic
             if (authenticablePrincipal == null)
                 throw new Exception("User does not exist");
 
+            OnSuccessfulUserAuthentication();
+
             return authenticablePrincipal;
         }
-
-        public void InitializeRoles()
-        {
-            SecurityRole role = new SecurityRole()
-            {
-
-            };
-
-        }
-
 
     }
 }

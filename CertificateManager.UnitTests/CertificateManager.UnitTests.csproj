@@ -209,6 +209,7 @@
     <Compile Include="ActiveDirectoryUnitTests.cs" />
     <Compile Include="DataTransformationTests.cs" />
     <Compile Include="SecretKeyProviderTests.cs" />
+    <Compile Include="EncryptionProviderTests.cs" />
     <Compile Include="X509NormalizationTests.cs" />
     <Compile Include="Win32CertificateProviderTests.cs" />
   </ItemGroup>

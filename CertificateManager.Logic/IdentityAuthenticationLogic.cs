@@ -65,10 +65,11 @@ namespace CertificateManager.Logic
                 return this.AuthenticateActiveDirectory(model.UserPrincipalName, model.Domain, model.Password);
         }
 
-
         public ClaimsPrincipal AuthenticateLocal(string upn, string password)
         {
             AuthenticablePrincipal authenticablePrincipal = localIdentityProviderLogic.Authenticate(upn, password);
+
+            this.IncrementSuccessfulAuthentication(authenticablePrincipal, localIdentityProviderId);
 
             return ConstructClaimsPrincipal(authenticablePrincipal, localIdentityProviderLogic.GetLocalIdpIdentifier());
         }
@@ -84,11 +85,16 @@ namespace CertificateManager.Logic
 
 
             if(activeDirectoryAuthenticator.Authenticate(upn, password, externalIdentitySource.Domain))
+            {
+                this.IncrementSuccessfulAuthentication(authenticablePrincipal, domain);
                 return ConstructClaimsPrincipal(authenticablePrincipal, externalIdentitySource.Name);
+            }
             else
+            {
                 throw new Exception("Authentication failed");
+            }
+                
         }
-
 
         public string HashPassword(string password)
         {
@@ -102,5 +108,12 @@ namespace CertificateManager.Logic
             return ConstructClaimsPrincipal(authenticablePrincipal, devAuthBypass);
         }
 
+        private void IncrementSuccessfulAuthentication(AuthenticablePrincipal authenticablePrincipal, Guid realm)
+        {
+            authenticablePrincipal.LastLogonDate = DateTime.Now;
+            authenticablePrincipal.LastLogonRealm = realm;
+
+            configurationRepository.UpdateAuthenticablePrincipal(authenticablePrincipal);
+        }
     }
 }

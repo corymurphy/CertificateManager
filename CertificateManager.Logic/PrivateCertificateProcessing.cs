@@ -91,7 +91,7 @@ namespace CertificateManager.Logic
 
         private CreatePrivateCertificateResult HandleSuccess(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
-            string nonce = secrets.NewSecretBase64(32);
+            string nonce = secrets.NewSecretBase64(16);
             string password = secrets.NewSecret(64);
             X509Certificate2 cert = certificateProvider.InstallIssuedCertificate(response.IssuedCertificate);
 
