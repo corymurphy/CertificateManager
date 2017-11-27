@@ -8,9 +8,16 @@ namespace CertificateManager.Logic
 {
     public class IdentityAuthenticationLogic
     {
+        public static string RoleClaimIdentifier { get { return roleClaim; } }
+        public static string UpnClaimIdentifier { get { return nameClaim; } }
+        public static string UidClaimIdentifier { get { return uidClaim; } }
+
+
+
         private const string nameClaim = "http://certificatemanager/upn";
         private const string roleClaim = "http://certificatemanager/role";
         private const string altNameClaim = "http://certificatemanager/alternative-upn";
+        private const string uidClaim = "http://certificatemanager/uid";
 
         private const string devAuthBypass = "DevelopmentAuthority";
         private Guid localIdentityProviderId = new Guid("02abeb4c-e0b6-4231-b836-268aa40c3f1c");
@@ -31,6 +38,7 @@ namespace CertificateManager.Logic
             ClaimsIdentity id = new ClaimsIdentity(authScheme, nameClaim, roleClaim);
 
             id.AddClaim(new Claim(nameClaim, authenticablePrincipal.UserPrincipalName));
+            id.AddClaim(new Claim(uidClaim, authenticablePrincipal.Id.ToString()));
 
             if(authenticablePrincipal.AlternativeUserPrincipalNames != null)
             {

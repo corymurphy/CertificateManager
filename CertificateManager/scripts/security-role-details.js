@@ -1,4 +1,6 @@
-﻿var SecurityRoleDetails = {
+﻿var debugvar = "";
+
+var SecurityRoleDetails = {
 
     ShowAddRoleMemberModal: function (dialogType, client) {
 
@@ -12,7 +14,7 @@
 
     AddSecurityRoleMember: function (client, isNew) {
         $.extend(client, {
-            memberId: $("#memberId").val(),
+            memberId: SecurityRoleDetails.UserAddRoleMemberSelect.val(),
             roleId: $('#roleId').text()
         });
 
@@ -123,7 +125,7 @@
             var d = $.Deferred();
             $.ajax({
                 type: "POST",
-                url: "/security/role/" + $('#roleId').text() + "/member/" + $('#memberId').val()
+                url: "/security/role/" + $('#roleId').text() + "/member/" + SecurityRoleDetails.UserAddRoleMemberSelect.val()
             }).done(function (response) {
                 d.resolve(response.payload);
             }).fail(function (xhr, ajaxOptions, thrownError) {
@@ -157,5 +159,6 @@
         Services.GetSecurityRoleDetails($('#roleId').text(), SecurityRoleDetails.RenderViewData, null);
         SecurityRoleDetails.InitializeGrid();
         SecurityRoleDetails.InitializeUserAddRoleMemberSelect();
+        //SecurityRoleDetails.RegisterAddRoleMemberSelectHandler();
     }
 }

@@ -74,7 +74,7 @@ namespace CertificateManager
             if(databaseLocator.ConfigurationRepositoryExists())
             {
                 initialSetupComplete = true;
-                InitializeApp(services);
+                InitializeApp(services, appSettings);
             }
             else
             {
@@ -151,12 +151,16 @@ namespace CertificateManager
             services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(null, null));
         }
 
-        private void InitializeApp(IServiceCollection services)
+        private void InitializeApp(IServiceCollection services, AppSettings appSettings)
         {
             LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
 
+            AppConfig appConfig = configurationRepository.GetAppConfig();
+
             ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
-            
+
+            services.AddSingleton<EncryptionProvider>(new EncryptionProvider(appConfig.EncryptionKey));
+
             services.AddSingleton<IActiveDirectoryAuthenticator>(activeDirectoryAuthenticator);
 
             services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator));

@@ -76,8 +76,6 @@ namespace CertificateManager.UnitTests
         [TestMethod]
         public void EncryptionProvider_DecryptSuccessfullyDecryptsTheEncryptMethod()
         {
-            string plaintext = 
-
             EncryptionProvider cipher = new EncryptionProvider(validKey);
 
             string plaintext = cipher.Decrypt(validCiphertext, validNonce);
@@ -85,5 +83,14 @@ namespace CertificateManager.UnitTests
             Assert.AreEqual(validPlaintext, plaintext);
         }
 
+        [TestMethod]
+        public void EncryptionProvider_EncryptSuccessfullyDecrypts_EncryptMethod()
+        {
+            EncryptionProvider cipher = new EncryptionProvider(validKey);
+
+            string ciphertext = cipher.Encrypt(validPlaintext, validNonce);
+
+            Assert.AreEqual(validCiphertext, ciphertext);
+        }
     }
 }

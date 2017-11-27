@@ -7,7 +7,7 @@ namespace CertificateManager.Logic
     {
         private string auditDbName = "certificatemanager.audit.db";
         private string configDbName = "certificatemanager.config.db";
-        private string certDbName = "certificatemanager.config.db";
+        private string certDbName = "certificatemanager.certs.db";
         private string dbRoot;
 
         public DatabaseLocator(AppSettings appSettings)

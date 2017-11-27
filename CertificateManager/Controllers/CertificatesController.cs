@@ -21,13 +21,13 @@ namespace CertificateManager.Controllers
         HttpResponseHandler http;
         EncryptionProvider cipher;
 
-        public CertificatesController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository)
+        public CertificatesController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, EncryptionProvider encryptionProvider)
         {
             this.configurationRepository = configurationRepository;
             this.certificateRepository = certificateRepository;
             this.dataTransformation = new DataTransformation();
             this.secrets = new SecretKeyProvider();
-            this.cipher = new EncryptionProvider(configurationRepository.GetAppConfig().EncryptionKey);
+            this.cipher = encryptionProvider;
             this.http = new HttpResponseHandler(this);
         }
 

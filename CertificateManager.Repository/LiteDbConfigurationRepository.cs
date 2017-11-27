@@ -430,7 +430,13 @@ namespace CertificateManager.Repository
         public IEnumerable<SecurityRole> GetAuthenticablePrincipalMemberOf(Guid id)
         {
             LiteCollection<SecurityRole> col = db.GetCollection<SecurityRole>(securityRoleCollectionName);
-            return col.Find(Query.In("Member", id));
+
+            //var a = col.FindAll();
+            return col.Find(x => x.Member.Contains(id));
+            //return null;
+            //return col.Find(x => x.Member;
+            //return col.Include(x => x.Member.Contains(id)).;
+            //return col.Find(Query.In("Member", id));
         }
 
 
@@ -490,7 +496,7 @@ namespace CertificateManager.Repository
         public void SetAppConfig(AppConfig appConfig)
         {
             LiteCollection<AppConfig> col = db.GetCollection<AppConfig>(appConfigCollectionName);
-            col.Update(appConfig);
+            col.Upsert(appConfig);
         }
 
 

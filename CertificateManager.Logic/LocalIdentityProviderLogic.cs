@@ -68,7 +68,7 @@ namespace CertificateManager.Logic
             if (!BCrypt.Net.BCrypt.Verify(password, authenticablePrincipal.PasswordHash))
                 throw new CredentialsInvalidForAuthenticablePrincipalException("Authentication failed");
 
-            OnSuccessfulUserAuthentication();
+            //OnSuccessfulUserAuthentication();
 
             return authenticablePrincipal;
         }
@@ -80,7 +80,7 @@ namespace CertificateManager.Logic
             if (authenticablePrincipal == null)
                 throw new Exception("User does not exist");
 
-            OnSuccessfulUserAuthentication();
+            //OnSuccessfulUserAuthentication();
 
             return authenticablePrincipal;
         }

@@ -3,6 +3,7 @@
     <TargetFramework>net461</TargetFramework>
     <!--<TargetFramework>netstandard2.0</TargetFramework>-->
     <RuntimeIdentifier>win7-x86</RuntimeIdentifier>
+    <UserSecretsId>f1f82cf3-b94a-4ed5-a10a-7dfac8e36bd5</UserSecretsId>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -36,23 +37,23 @@
     <Content Include="scripts\security-roles.js" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="6.1.1" />
+    <PackageReference Include="AutoMapper" Version="6.2.1" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="2.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="2.0.1" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="2.0.0" />
     <PackageReference Include="Microsoft.Extensions.PlatformAbstractions" Version="1.1.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.0.1" />
     <!-- <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" /> -->
     <PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="1.0.1" />

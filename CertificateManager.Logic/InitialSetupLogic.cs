@@ -41,7 +41,8 @@ namespace CertificateManager.Logic
 
             AppConfig appConfig = new AppConfig()
             {
-                EncryptionKey = config.EncryptionKey
+                EncryptionKey = config.EncryptionKey,
+                Id = Guid.NewGuid()
             };
 
             configurationRepository.SetAppConfig(appConfig);

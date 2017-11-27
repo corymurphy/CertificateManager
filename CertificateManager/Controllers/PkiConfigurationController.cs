@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CertificateManager.Controllers
 {
+    [Authorize]
     public class PkiConfigurationController : Controller
     {
         [HttpGet]
