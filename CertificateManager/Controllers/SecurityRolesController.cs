@@ -3,7 +3,7 @@ using CertificateManager.Logic;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
-
+using System.Collections.Generic;
 
 namespace CertificateManager.Controllers
 {
@@ -11,11 +11,13 @@ namespace CertificateManager.Controllers
     {
         HttpResponseHandler http;
         RoleManagementLogic roleManagement;
+        //AuthorizationLogic authorizationLogic;
 
         public SecurityRolesController(RoleManagementLogic roleManagement)
         {
             this.http = new HttpResponseHandler(this);
             this.roleManagement = roleManagement;
+            //this.authorizationLogic = authorizationLogic;
         }
 
         [HttpGet]
@@ -51,14 +53,14 @@ namespace CertificateManager.Controllers
         [Route("security/role")]
         public JsonResult AddRole(SecurityRole entity)
         {
-            return http.RespondSuccess(roleManagement.AddRole(entity));
+            return http.RespondSuccess(roleManagement.AddRole(entity, User));
         }
 
         [HttpDelete]
         [Route("security/role")]
         public JsonResult DeleteRole(SecurityRole entity)
         {
-            roleManagement.DeleteRole(entity);
+            roleManagement.DeleteRole(entity, User);
             return http.RespondSuccess();
         }
     
@@ -66,7 +68,7 @@ namespace CertificateManager.Controllers
         [Route("security/role")]
         public JsonResult UpdateRole(SecurityRole entity)
         {
-            roleManagement.UpdateRole(entity);
+            roleManagement.UpdateRole(entity, User);
             return http.RespondSuccess();
         }
 
@@ -90,6 +92,15 @@ namespace CertificateManager.Controllers
         public JsonResult AddRoleMember(Guid roleId, Guid memberId)
         {
             return http.RespondSuccess(roleManagement.AddRoleMember(roleId, memberId));
+        }
+
+
+        [HttpPut]
+        [Route("security/role/{roleId:guid}/scopes")]
+        public JsonResult SetRoleScopes(Guid roleId, [FromBody]SetRoleScopesModel model)
+        {
+            roleManagement.SetRoleScopes(roleId, model.Scopes, User);
+            return http.RespondSuccess();
         }
     }
 }

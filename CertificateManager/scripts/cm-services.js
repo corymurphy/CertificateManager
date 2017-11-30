@@ -190,6 +190,27 @@ var Services = {
                 errorCallback(x, t, m);
             }
         });
+    },
+    SetRoleScopes: function (roleId, scopes, successCallback, errorCallback) {
+
+        UiGlobal.ResetAlertState();
+
+        $.ajax({
+            url: "/security/role/" + roleId + "/scopes",
+            type: 'put',
+            cache: false,
+            async: true,
+            data: JSON.stringify( { scopes: scopes } ),
+            dataType: "json",
+            contentType: "application/json",
+            success: function (data) {
+                successCallback();
+            },
+            error: function (x, t, m) {
+                errorCallback(x.responseJSON.message);
+                //errorCallback(x, t, m);
+            }
+        });
     }
 
 }

@@ -82,7 +82,9 @@ namespace CertificateServices.ActiveDirectory
 
             string searchFilter = string.Format("(&(objectClass={0})({1}={2}))", metadataResolver.GetSchemaClass<T>(), searchKey, searchValue);
 
-            using (DirectoryEntry entry = new DirectoryEntry(GetLdapConnectionString(namingContext), username, password))
+            string ldapConnectionString = GetLdapConnectionString(namingContext);
+
+            using (DirectoryEntry entry = new DirectoryEntry(ldapConnectionString, username, password))
             {
                 using (DirectorySearcher searcher = new DirectorySearcher(entry))
                 {

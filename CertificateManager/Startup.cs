@@ -1,6 +1,8 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateManager.Logic.ConfigurationProvider;
+using CertificateManager.Logic.Interfaces;
+using CertificateManager.Logic.MvcMiddleware;
 using CertificateManager.Logic.UXLogic;
 using CertificateManager.Repository;
 using CertificateServices;
@@ -119,6 +121,8 @@ namespace CertificateManager
             
             app.UseStaticFiles();
 
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
+
             app.UseMvc();
         }
 
@@ -169,7 +173,11 @@ namespace CertificateManager
 
             RuntimeCacheRepository runtimeCacheRepository = null;
 
-            services.AddSingleton<RoleManagementLogic>(new RoleManagementLogic(configurationRepository));
+            IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
+
+            services.AddSingleton<RoleManagementLogic>(new RoleManagementLogic(configurationRepository, authorizationLogic));
+
+            services.AddSingleton<IAuthorizationLogic>(authorizationLogic);
 
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
 
@@ -190,10 +198,8 @@ namespace CertificateManager
 
         public void ConfigureAutoMapper()
         {
-            //AutoMapper.Mapper.
-            //    CreateMap<, CertificateSubject>();
-        }
 
+        }
 
 
 

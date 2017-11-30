@@ -20,6 +20,7 @@ namespace CertificateManager.Repository
         private const string externalIdentitySourceCollectionName = "extid";
         private const string authApiCertificateCollectionName = "authcer";
         private const string appConfigCollectionName = "appcfg";
+        private const string scopesCollectionName = "scopes";
         private string path;
 
         private LiteDatabase db;
@@ -308,9 +309,9 @@ namespace CertificateManager.Repository
             return col.FindAll();
         }
 
-        public IEnumerable<AuthenticablePrincipal> GetAuthenticablePrincipals()
+        public IEnumerable<T> GetAuthenticablePrincipals<T>()
         {
-            LiteCollection<AuthenticablePrincipal> col = db.GetCollection<AuthenticablePrincipal>(authenticablePrincipalCollectionName);
+            LiteCollection<T> col = db.GetCollection<T>(authenticablePrincipalCollectionName);
             return col.FindAll();
         }
 
@@ -337,16 +338,16 @@ namespace CertificateManager.Repository
             LiteCollection<AuthenticablePrincipal> col = db.GetCollection<AuthenticablePrincipal>(authenticablePrincipalCollectionName);
 
             Query query = Query.Or(
-                Query.In("AlternativeUserPrincipalNames", upn),
-                Query.EQ("UserPrincipalName", upn)
+                Query.In("AlternativeNames", upn),
+                Query.EQ("Name", upn)
             );
 
             return col.FindOne(query);
         }
 
-        public AuthenticablePrincipal GetAuthenticablePrincipal(Guid id)
+        public T GetAuthenticablePrincipal<T>(Guid id)
         {
-            LiteCollection<AuthenticablePrincipal> col = db.GetCollection<AuthenticablePrincipal>(authenticablePrincipalCollectionName);
+            LiteCollection<T> col = db.GetCollection<T>(authenticablePrincipalCollectionName);
             return col.FindById(id);
         }
 
@@ -361,8 +362,8 @@ namespace CertificateManager.Repository
             LiteCollection<AuthenticablePrincipal> col = db.GetCollection<AuthenticablePrincipal>(authenticablePrincipalCollectionName);
 
             Query query = Query.Or(
-                    Query.In("AlternativeUserPrincipalNames", upn),
-                    Query.EQ("UserPrincipalName", upn)
+                    Query.In("AlternativeNames", upn),
+                    Query.EQ("Name", upn)
                 );
 
             IEnumerable<AuthenticablePrincipal> users = col.Find(query);
@@ -379,8 +380,8 @@ namespace CertificateManager.Repository
 
 
             Query query = Query.Or(
-                Query.In("AlternativeUserPrincipalNames", upn),
-                Query.EQ("UserPrincipalName", upn)
+                Query.In("AlternativeNames", upn),
+                Query.EQ("Name", upn)
             );
 
             return col.Exists(query);
@@ -431,12 +432,21 @@ namespace CertificateManager.Repository
         {
             LiteCollection<SecurityRole> col = db.GetCollection<SecurityRole>(securityRoleCollectionName);
 
-            //var a = col.FindAll();
-            return col.Find(x => x.Member.Contains(id));
-            //return null;
-            //return col.Find(x => x.Member;
-            //return col.Include(x => x.Member.Contains(id)).;
-            //return col.Find(Query.In("Member", id));
+
+            //var allRoles = col.FindAll();
+
+            //var matchedRoles = allRoles.Where(role => role.Member.Contains(id));
+            ////var a = col.Find(x => x.Member.Contains(id)).Any();
+            ////var a = col.FindAll();
+            ////return col.Find(x => x.Member.Contains(id));
+            ////return null;
+            ////return col.Find(x => x.Member;
+            ////return col.Include(x => x.Member.Contains(id)).;
+
+            ////var roles = col.Find(Query.In("Member", id));
+            //return matchedRoles;
+
+            return col.FindAll().Where(role => role.Member.Contains(id));
         }
 
 
@@ -499,6 +509,16 @@ namespace CertificateManager.Repository
             col.Upsert(appConfig);
         }
 
+        public IEnumerable<Scope> GetAvailibleScopes()
+        {
+            LiteCollection<Scope> col = db.GetCollection<Scope>(scopesCollectionName);
+            return col.FindAll();
+        }
 
+        public void InsertScopes(List<Scope> scopes)
+        {
+            LiteCollection<Scope> col = db.GetCollection<Scope>(scopesCollectionName);
+            col.InsertBulk(scopes);
+        }
     }
 }

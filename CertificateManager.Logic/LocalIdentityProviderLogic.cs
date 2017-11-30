@@ -8,7 +8,7 @@ namespace CertificateManager.Logic
     public class LocalIdentityProviderLogic
     {
         public delegate void AuthenticationLogicEventRaiser();
-        public event AuthenticationLogicEventRaiser OnSuccessfulUserAuthentication;
+        //public event AuthenticationLogicEventRaiser OnSuccessfulUserAuthentication;
 
         IConfigurationRepository configurationRepository;
 
@@ -30,7 +30,7 @@ namespace CertificateManager.Logic
                 LocalLogonEnabled = true,
                 Id = Guid.NewGuid(),
                 Enabled = true,
-                UserPrincipalName = "emergencyaccess@certificatemanager.local",
+                Name = "emergencyaccess@certificatemanager.local",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
@@ -46,7 +46,7 @@ namespace CertificateManager.Logic
                 LocalLogonEnabled = true,
                 Id = Guid.NewGuid(),
                 Enabled = true,
-                UserPrincipalName = "administrator@certificatemanager.local",
+                Name = "administrator@certificatemanager.local",
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
@@ -84,6 +84,9 @@ namespace CertificateManager.Logic
 
             return authenticablePrincipal;
         }
+
+        //public 
+
 
     }
 }

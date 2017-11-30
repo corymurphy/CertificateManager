@@ -10,15 +10,15 @@ namespace CertificateManager.Entities
         public AddAuthenticablePrincipalEntity(AuthenticablePrincipal entity)
         {
             this.Id = entity.Id;
-            this.UserPrincipalName = entity.UserPrincipalName;
+            this.Name = entity.Name;
             this.LocalLogonEnabled = entity.LocalLogonEnabled;
             this.Enabled = entity.Enabled;
-            this.AlternativeUserPrincipalNames = entity.AlternativeUserPrincipalNames;
+            this.AlternativeNames = entity.AlternativeNames;
         }
 
         public Guid Id { get; set; }
-        public string UserPrincipalName { get; set; }
-        public List<string> AlternativeUserPrincipalNames { get; set; }
+        public string Name { get; set; }
+        public List<string> AlternativeNames { get; set; }
         public bool Enabled { get; set; }
         public bool LocalLogonEnabled { get; set; }
     }

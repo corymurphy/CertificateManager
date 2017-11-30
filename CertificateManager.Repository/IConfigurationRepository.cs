@@ -41,12 +41,12 @@ namespace CertificateManager.Repository
 
 
         IEnumerable<SearchAuthenticablePrincipalEntity> GetAuthenticablePrincipalsSearch();
-        IEnumerable<AuthenticablePrincipal> GetAuthenticablePrincipals();
+        IEnumerable<T> GetAuthenticablePrincipals<T>();
         void UpdateAuthenticablePrincipal(AuthenticablePrincipal entity);
         void InsertAuthenticablePrincipal(AuthenticablePrincipal entity);
         void DeleteAuthenticablePrincipal(AuthenticablePrincipal entity);
         AuthenticablePrincipal GetAuthenticablePrincipal(string upn);
-        AuthenticablePrincipal GetAuthenticablePrincipal(Guid id);
+        T GetAuthenticablePrincipal<T>(Guid id);
         bool AuthenticablePrincipalExists(Guid id);
         bool UserPrincipalNameExists(string upn, Guid ignoreUserId);
         bool UserPrincipalNameExists(string upn);
@@ -69,6 +69,9 @@ namespace CertificateManager.Repository
         AuthApiCertificate GetAuthApiCertificate(Guid id);
 
 
+
+        IEnumerable<Scope> GetAvailibleScopes();
+        void InsertScopes(List<Scope> scopes);
 
         AppConfig GetAppConfig();
         void SetAppConfig(AppConfig appConfig);

@@ -33,7 +33,7 @@ namespace CertificateManager.Controllers
         [Route("security/authenticable-principal/password")]
         public ActionResult ResetUserPassword(ResetUserPasswordViewModel model)
         {
-            AuthenticablePrincipal principal = configurationRepository.GetAuthenticablePrincipal(model.Id);
+            AuthenticablePrincipal principal = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(model.Id);
             principal.PasswordHash = authenticationLogic.HashPassword(model.NewPassword);
             //principal.PasswordHash = localAuthProvider.Hash(model.NewPassword);
             configurationRepository.UpdateAuthenticablePrincipal(principal);
@@ -115,17 +115,9 @@ namespace CertificateManager.Controllers
     
         [HttpPut]
         [Route("security/authenticable-principal")]
-        public JsonResult UpdateAuthenticablePrincipal(AuthenticablePrincipal entity)
+        public JsonResult UpdateAuthenticablePrincipal(UpdateUserModel entity)
         {
-            try
-            {
-                userManagement.SetUser(entity);
-                return http.RespondSuccess();
-            }
-            catch
-            {
-                return http.RespondServerError();
-            }
+            return http.RespondSuccess(userManagement.SetUser(entity));
         }
     }
 }

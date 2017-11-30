@@ -6,6 +6,8 @@ using CertificateManager.Entities.Enumerations;
 using System.Security.Claims;
 using System;
 using System.Collections.Generic;
+using Moq;
+using CertificateManager.Repository;
 
 namespace CertificateManager.UnitTests
 {
@@ -22,6 +24,16 @@ namespace CertificateManager.UnitTests
         private const string altNameClaim = "http://certificatemanager/alternative-upn";
         private const string uidClaim = "http://certificatemanager/uid";
 
+        private ClaimsPrincipal GetClaimsPrincipalWithNoRoles()
+        {
+            ClaimsIdentity id = new ClaimsIdentity("UnitTestingAuthority", nameClaim, roleClaim);
+            id.AddClaim(new Claim(nameClaim, name));
+            id.AddClaim(new Claim(uidClaim, uid));
+            ClaimsPrincipal principal = new ClaimsPrincipal(id);
+
+            return principal;
+        }
+
         private ClaimsPrincipal GetClaimsPrincipalWithRole()
         {
             ClaimsIdentity id = new ClaimsIdentity("UnitTestingAuthority", nameClaim, roleClaim);
@@ -32,6 +44,28 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal principal = new ClaimsPrincipal(id);
 
             return principal;
+        }
+
+        private Certificate GetCertificateWithDenyRoleClaimExpiredAce()
+        {
+
+            AccessControlEntry ace = new AccessControlEntry()
+            {
+                AceType = AceType.Deny,
+                Id = Guid.NewGuid(),
+                Expires = DateTime.Now.AddYears(-1),
+                Identity = allowRoleId,
+                IdentityType = IdentityType.Role
+            };
+
+            List<AccessControlEntry> acl = new List<AccessControlEntry>();
+            acl.Add(ace);
+
+            return new Certificate()
+            {
+                Acl = acl
+            };
+
         }
 
         private Certificate GetCertificateWithAllowRoleClaimExpiredAce()
@@ -122,8 +156,16 @@ namespace CertificateManager.UnitTests
 
         }
 
+
+
+
+
+
+
+
+
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_NullClaimPrincipal_ReturnsFalse()
+        public void AuthorizationLogic_CanViewPrivateKey_NullClaimPrincipal_ReturnsFalse()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -135,9 +177,8 @@ namespace CertificateManager.UnitTests
             Assert.IsFalse(isAuthorized);
         }
 
-
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_NullCertificate_ReturnsFalse()
+        public void AuthorizationLogic_CanViewPrivateKey_NullCertificate_ReturnsFalse()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -150,7 +191,7 @@ namespace CertificateManager.UnitTests
         }
 
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_CertificateWithNoAcl_ReturnsFalse()
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithNoAcl_ReturnsFalse()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
             
@@ -162,9 +203,8 @@ namespace CertificateManager.UnitTests
             Assert.IsFalse(isAuthorized);
         }
 
-
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_CertificateWithDenyRoleAce_ReturnsFalse()
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithDenyRoleAce_ReturnsFalse()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -177,7 +217,7 @@ namespace CertificateManager.UnitTests
         }
 
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_CertificateWithAllowRoleAce_ReturnsTrue()
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithAllowRoleAce_ReturnsTrue()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -190,7 +230,7 @@ namespace CertificateManager.UnitTests
         }
 
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_CertificateWithAllowUserPrincipalAce_ReturnsTrue()
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithAllowUserPrincipalAce_ReturnsTrue()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -202,9 +242,8 @@ namespace CertificateManager.UnitTests
             Assert.IsTrue(isAuthorized);
         }
 
-
         [TestMethod]
-        public void AuthorizationLogicTests_CanViewPrivateKey_CertificateWithAllowRole_DateExpiredAce_ReturnsFalse()
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithAllowRole_DateExpiredAce_ReturnsFalse()
         {
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
 
@@ -214,6 +253,78 @@ namespace CertificateManager.UnitTests
             bool isAuthorized = authorizationLogic.CanViewPrivateKey(certificate, claimsPrincipal);
 
             Assert.IsFalse(isAuthorized);
+        }
+
+        [TestMethod]
+        public void AuthorizationLogic_CanViewPrivateKey_CertificateWithDenyRole_DateExpiredAce_ReturnsFalse()
+        {
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
+
+            Certificate certificate = GetCertificateWithDenyRoleClaimExpiredAce();
+            ClaimsPrincipal claimsPrincipal = GetClaimsPrincipalWithRole();
+
+            bool isAuthorized = authorizationLogic.CanViewPrivateKey(certificate, claimsPrincipal);
+
+            Assert.IsFalse(isAuthorized);
+        }
+
+        [TestMethod]
+        public void AuthorizationLogic_IsAuthorized_ClaimsPrincipalWithNoRoles_ReturnsFalse()
+        {
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
+            ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
+
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+
+            Assert.IsFalse(isAuthorized);
+        }
+
+        [TestMethod]
+        public void AuthorizationLogic_IsAuthorized_ClaimsPrincipalWithRoleNullScopes_ReturnsFalse()
+        {
+            SecurityRole role = new SecurityRole() { Name = "TestRole", Scopes = null };
+
+            Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
+            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
+            ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
+
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+
+            Assert.IsFalse(isAuthorized);
+        }
+
+        [TestMethod]
+        public void AuthorizationLogic_IsAuthorized_ClaimsPrincipalWithRoleEmptyScopes_ReturnsFalse()
+        {
+            SecurityRole role = new SecurityRole() { Name = "TestRole", Scopes = new List<Guid>() };
+
+            Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
+            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
+            ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
+
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+
+            Assert.IsFalse(isAuthorized);
+        }
+
+        [TestMethod]
+        public void AuthorizationLogic_IsAuthorized_ClaimsPrincipalWithRoleScopeIncluded_ReturnsTrue()
+        {
+            SecurityRole role = new SecurityRole() { Name = "TestRole", Id = new Guid(roleId), Scopes = new List<Guid>() { AuthorizationScopes.ManageRolesScope } };
+
+            Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
+            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
+            ClaimsPrincipal user = GetClaimsPrincipalWithRole();
+
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+
+            Assert.IsTrue(isAuthorized);
         }
     }
 }

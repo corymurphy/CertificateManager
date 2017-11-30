@@ -214,6 +214,7 @@
     <Compile Include="DatabaseLocatorTests.cs" />
     <Compile Include="ActiveDirectoryIdentityProviderLogicTests.cs" />
     <Compile Include="AuthorizationLogicTests.cs" />
+    <Compile Include="RoleManagementLogicTests.cs" />
     <Compile Include="X509NormalizationTests.cs" />
     <Compile Include="Win32CertificateProviderTests.cs" />
   </ItemGroup>

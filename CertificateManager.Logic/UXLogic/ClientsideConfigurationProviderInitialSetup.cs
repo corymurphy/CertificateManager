@@ -19,6 +19,11 @@ namespace CertificateManager.Logic
             return string.Empty;
         }
 
+        public string RenderScopeMap()
+        {
+            return string.Empty;
+        }
+
         public string RenderSecurityRolesJsonArray()
         {
             return string.Empty;

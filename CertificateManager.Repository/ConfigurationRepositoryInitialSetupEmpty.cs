@@ -91,7 +91,7 @@ namespace CertificateManager.Repository
             throw new NotImplementedException();
         }
 
-        public AuthenticablePrincipal GetAuthenticablePrincipal(Guid id)
+        public T GetAuthenticablePrincipal<T>(Guid id)
         {
             throw new NotImplementedException();
         }
@@ -101,7 +101,7 @@ namespace CertificateManager.Repository
             throw new NotImplementedException();
         }
 
-        public IEnumerable<AuthenticablePrincipal> GetAuthenticablePrincipals()
+        public IEnumerable<T> GetAuthenticablePrincipals<T>()
         {
             throw new NotImplementedException();
         }
@@ -240,5 +240,16 @@ namespace CertificateManager.Repository
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<Scope> GetAvailibleScopes()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void InsertScopes(List<Scope> scopes)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

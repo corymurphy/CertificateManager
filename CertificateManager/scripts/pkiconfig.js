@@ -480,6 +480,13 @@ var PkiConfig = {
     InitializeSelect2: function ()
     {
         $('.security-roles-adcs-select2').select2({ width: '100%' });
+    },
+
+    PageLoad: function ()
+    {
+        PkiConfig.InitializeSelect();
+        UiGlobal.ShowCurrentTab();
+        PkiConfig.InitializePkiConfigGrids();
     }
 }
 

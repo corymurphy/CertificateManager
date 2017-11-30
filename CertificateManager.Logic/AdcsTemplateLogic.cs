@@ -33,14 +33,15 @@ namespace CertificateManager.Logic
             return template;
         }
 
-        public AdcsTemplate AddTemplate(string name, CipherAlgorithm cipher, KeyUsage keyUsage, WindowsApi api)
+        public AdcsTemplate AddTemplate(string name, CipherAlgorithm cipher, KeyUsage keyUsage, WindowsApi api, List<Guid> rolesAllowedToIssue)
         {
             AdcsTemplate template = new AdcsTemplate()
             {
                 Name = name, 
                 Cipher = cipher,
                 KeyUsage = keyUsage,
-                WindowsApi = api
+                WindowsApi = api,
+                RolesAllowedToIssue = rolesAllowedToIssue
             };
 
             configurationRepository.InsertAdcsTemplate(template);

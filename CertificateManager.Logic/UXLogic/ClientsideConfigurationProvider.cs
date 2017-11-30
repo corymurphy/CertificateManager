@@ -61,5 +61,11 @@ namespace CertificateManager.Logic.UXLogic
         {
             return string.Empty;   
         }
+
+        public string RenderScopeMap()
+        {
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
+            return string.Format("CmOptions.Scopes = {0}", JsonConvert.SerializeObject(authorizationLogic.GetAvailibleScopes()));
+        }
     }
 }

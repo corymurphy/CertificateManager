@@ -324,7 +324,6 @@
     <Reference Include="System.Security.Principal.Windows, Version=4.1.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Security.Principal.Windows.4.4.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
     </Reference>
-
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -336,8 +335,12 @@
     <Compile Include="AdcsTemplateLogic.cs" />
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
+    <Compile Include="AuthorizeAllLogic.cs" />
     <Compile Include="CertificateAuthorityConfigurationLogic.cs" />
+    <Compile Include="CertificateManagementLogic.cs" />
     <Compile Include="EncryptionProvider.cs" />
+    <Compile Include="Interfaces\IAuthorizationLogic.cs" />
+    <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />
     <Compile Include="UXLogic\ClientsideConfigurationProviderInitialSetup.cs" />
     <Compile Include="DatabaseLocator.cs" />
     <Compile Include="DataTransformation.cs" />

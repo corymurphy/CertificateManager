@@ -10,5 +10,7 @@
 
         string RenderSecurityRolesJsonArray();
 
+        string RenderScopeMap();
+
     }
 }

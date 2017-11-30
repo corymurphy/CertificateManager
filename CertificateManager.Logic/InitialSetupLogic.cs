@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace CertificateManager.Logic
         CertificateAuthorityConfigurationLogic certificateAuthorityConfigurationLogic;
         AdcsTemplateLogic templateLogic;
         RoleManagementLogic roleManagement;
+        IAuthorizationLogic authorizationLogic;
         //SecretKeyProvider keyProvider;
 
         public InitialSetupLogic(IConfigurationRepository configurationRepository)
@@ -24,7 +26,8 @@ namespace CertificateManager.Logic
             this.templateLogic = new AdcsTemplateLogic(configurationRepository);
             this.certificateAuthorityConfigurationLogic = new CertificateAuthorityConfigurationLogic(configurationRepository);
             this.idpLogic = new ActiveDirectoryIdentityProviderLogic(configurationRepository);
-            this.roleManagement = new RoleManagementLogic(configurationRepository);
+            this.authorizationLogic = new AuthorizeAllLogic(configurationRepository);
+            this.roleManagement = new RoleManagementLogic(configurationRepository, authorizationLogic);
             this.localIdpLogic = new LocalIdentityProviderLogic(configurationRepository);
         }
         
@@ -34,9 +37,10 @@ namespace CertificateManager.Logic
 
             ExternalIdentitySource idp = idpLogic.Add(config.AdName, config.AdServer, config.AdSearchBase, config.AdServiceAccountUsername, config.AdServiceAccountPassword, config.AdUseAppPoolIdentity);
             certificateAuthorityConfigurationLogic.AddPrivateCertificateAuthority(config.AdcsServerName, config.AdcsCommonName, config.AdcsHashAlgorithm, idp.Id);
-            AdcsTemplate adcsTemplate = templateLogic.AddTemplate(config.AdcsTemplateName, config.AdcsTemplateCipher, config.AdcsTemplateKeyUsage, config.AdcsTemplateWindowsApi);
+            AdcsTemplate adcsTemplate = templateLogic.AddTemplate(config.AdcsTemplateName, config.AdcsTemplateCipher, config.AdcsTemplateKeyUsage, config.AdcsTemplateWindowsApi, RoleManagementLogic.DefaultTemplateIssuerRoles);
             AuthenticablePrincipal emergencyAccess = localIdpLogic.InitializeEmergencyAccess(config.EmergencyAccessKey);
             AuthenticablePrincipal admin = localIdpLogic.InitializeLocalAdministrator(config.LocalAdminPassword);
+            authorizationLogic.InitializeScopes();
             roleManagement.InitializeRoles(new List<Guid>() { emergencyAccess.Id, admin.Id });
 
             AppConfig appConfig = new AppConfig()

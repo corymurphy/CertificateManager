@@ -2,6 +2,30 @@
 
 var SecurityRoleDetails = {
 
+    GetScopesForRole: function ()
+    {
+        var selectedScopes = [];
+
+        CmOptions.Scopes.forEach(function (item) {
+
+            var selector = "#" + item.Id + ".scope";
+
+            if ($(selector).is(":checked"))
+            {
+                selectedScopes.push(item.Id);
+            }
+        });
+
+        return selectedScopes;
+
+    },
+
+    SaveScopes: function ()
+    {
+        var selectedScopes = SecurityRoleDetails.GetScopesForRole();
+        Services.SetRoleScopes(SecurityRoleDetails.Role.id, selectedScopes, UiGlobal.ShowSuccess, UiGlobal.ShowError);
+    },
+
     ShowAddRoleMemberModal: function (dialogType, client) {
 
         $('#addSecurityRoleMemberButton').click(function () {
@@ -23,9 +47,40 @@ var SecurityRoleDetails = {
         $("#addSecurityRoleMemberModal").modal("hide");
     },
 
+    RenderScopes: function ()
+    {
+        CmOptions.Scopes.forEach(function (item) {
+
+            var formRow = UiGlobal.GetFormRowDiv();
+
+            formRow.append(UiGlobal.GetFormColLabel(item.Name));
+
+            if (SecurityRoleDetails.Role.scopes == null)
+            {
+                var checked = false;
+            }
+            else
+            {
+                var checked = SecurityRoleDetails.Role.scopes.indexOf(item.Id) >= 0;
+            }
+
+            
+
+            formRow.append(UiGlobal.GetFormCheckbox(item.Id, checked));
+
+            SecurityRoleDetails.ScopesTab.append(formRow);
+
+        });
+
+        SecurityRoleDetails.ScopesTab.append(UiGlobal.GetButton('SecurityRoleDetails.SaveScopes()'));
+
+    },
+
     RenderViewData: function (data)
     {
+        SecurityRoleDetails.Role = data.payload;
         $('#roleName').text(data.payload.name);
+        SecurityRoleDetails.RenderScopes();
     },
 
     InitializeGrid: function () {
@@ -43,7 +98,7 @@ var SecurityRoleDetails = {
             controller: SecurityRoleDetails.MembersController,
 
             fields: [
-                { name: "userPrincipalName", type: "text", title: "userPrincipalName", editing: false },
+                { name: "name", type: "text", title: "Name", editing: false },
                 { name: "enabled", type: "checkbox", title: "Enabled", sorting: false, editing: false },
                 {
                     type: "control",
@@ -156,9 +211,14 @@ var SecurityRoleDetails = {
     PageLoad: function ()
     {
         UiGlobal.ShowCurrentTab();
+        SecurityRoleDetails.ScopesTab = $('#roleScopes.tabcontent');
         Services.GetSecurityRoleDetails($('#roleId').text(), SecurityRoleDetails.RenderViewData, null);
         SecurityRoleDetails.InitializeGrid();
         SecurityRoleDetails.InitializeUserAddRoleMemberSelect();
         //SecurityRoleDetails.RegisterAddRoleMemberSelectHandler();
-    }
+    },
+
+    Role: null,
+
+    ScopesTab: null
 }

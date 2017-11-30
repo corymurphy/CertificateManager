@@ -24,7 +24,7 @@ namespace CertificateManager.IntegrationTests
             LiteDbConfigurationRepository repo =  new LiteDbConfigurationRepository(path);
             //var result = repo.ExternalIdentitySourceExists(domainId);
 
-            var allUsers = repo.GetAuthenticablePrincipals();
+            var allUsers = repo.GetAuthenticablePrincipals<GetUserModel>();
 
             var b = repo.UserPrincipalNameExists(upn);
             var a = repo.UserPrincipalNameExists(upn, cmurphyId);
@@ -81,7 +81,7 @@ namespace CertificateManager.IntegrationTests
         {
             Guid id = new Guid("afa19bf8-562f-4744-baf1-ad04ac085874");
             LiteDbConfigurationRepository config = new LiteDbConfigurationRepository(@"D:\db\config.db");
-            AuthenticablePrincipal principal = config.GetAuthenticablePrincipal(id);
+            AuthenticablePrincipal principal = config.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
             //IEnumerable<SecurityRole> memberOf = config.GetAuthenticablePrincipalMemberOf(principal.Id);
 
 

@@ -117,5 +117,35 @@ var UiGlobal = {
 
     GetDateString(arg) {
         return (new Date(arg)).toDateString();
+    },
+
+
+    GetFormRowDiv: function ()
+    {
+        return $('<div>').addClass('form-group row');
+    },
+
+    GetFormColLabel: function (displayText)
+    {
+        return $('<div>').addClass('col-sm-6').text(displayText);
+    },
+
+    GetFormCheckbox: function (inputId, isChecked)
+    {
+        var input = $('<input>').addClass('form-check-input scope').attr('type', 'checkbox').attr('id', inputId).attr("checked", isChecked);
+        var label = $('<label>').addClass('form-check-label');
+        var inputDiv = $('<div>').addClass('form-check');
+        var inputCol = $('<div>').addClass('col-sm-4');
+
+        return inputCol.append(inputDiv.append(label.append(input)));
+    },
+
+    GetButton: function (onclick)
+    {
+        return $('<button>')
+            .attr('type', 'button')
+            .addClass('btn btn-primary')
+            .attr('onclick', onclick)
+            .text('Save');
     }
 }

@@ -16,12 +16,16 @@
 
 <div class="alert alert-danger" id="error-alert" style="display:none;"></div>
 
+<div class="alert alert-success" id="success-alert" style="display:none;">
+    Security role was saved successfully
+</div>
+
 <div class="background-panel">
 
 
     <div class="tab">
         <button class="roleDetails tablinks" onclick="openTab(event, 'roleDetails')" id="defaultOpen">Details</button>
-        <button class="rolePermissions tablinks" onclick="openTab(event, 'rolePermissions')">Permissions</button>
+        <button class="roleScopes tablinks" onclick="openTab(event, 'roleScopes')">Scopes</button>
         <button class="roleMembers tablinks" onclick="openTab(event, 'roleMembers')">Members</button>
     </div>
 
@@ -39,8 +43,8 @@
         </table>
     </div>
 
-    <div id="rolePermissions" class="tabcontent">
-
+    <div id="roleScopes" class="tabcontent">
+        @Html.Partial("~/Views/SecurityRoles/_ScopeDetails.cshtml")
     </div>
     
     <div id="roleMembers" class="tabcontent">

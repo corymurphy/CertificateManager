@@ -23,7 +23,9 @@
     <div id="authenticablePrincipalTable"></div>
 </div>
 
-@Html.Partial("~/Views/AuthenticablePrincipal/_ImportUsersModal.cshtml")
+<input type="text" id="targetUserId" name="targetUserId" style="display:none;" hidden="hidden" />
+
+@Html.Partial("~/Views/AuthenticablePrincipal/_ImportUsersModal.cshtml") 
 @Html.Partial("~/Views/AuthenticablePrincipal/_AuthenticablePrincipalActionModal.cshtml")
 @Html.Partial("~/Views/AuthenticablePrincipal/_ResetUserPasswordModal.cshtml")
     

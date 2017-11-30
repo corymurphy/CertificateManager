@@ -11,23 +11,23 @@
                 <div class="container">
 
                     <div class="form-group row">
-                        <label for="authPrincipalUpn" class="col-sm-3 col-form-label">Name</label>
+                        <label for="principalName" class="col-sm-3 col-form-label">Name</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="authPrincipalUpn" name="authPrincipalUpn" placeholder="cmurphy@microsoft.com">
+                            <input type="text" class="form-control modal-input" id="principalName" name="principalName" placeholder="cmurphy@microsoft.com" >
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label for="authPrincipalEnabled" class="col-sm-3 col-form-label">Local Logon Enabled</label>
+                        <label for="userLocalLogonEnabled" class="col-sm-3 col-form-label">Local Logon Enabled</label>
                         <div class="col-sm-10">
-                            <input id="localLogonEnabled" name="localLogonEnabled" type="checkbox">
+                            <input id="userLocalLogonEnabled" name="userLocalLogonEnabled" type="checkbox" class="modal-input">
                         </div>
                     </div>
 
                     <div class="form-group row">
-                        <label for="authPrincipalEnabled" class="col-sm-3 col-form-label">Enabled</label>
+                        <label for="userEnabled" class="col-sm-3 col-form-label">Enabled</label>
                         <div class="col-sm-10">
-                            <input id="authPrincipalEnabled" name="authPrincipalEnabled" type="checkbox">
+                            <input id="userEnabled" name="userEnabled" type="checkbox" class="modal-input">
                         </div>
                     </div>
 
@@ -43,7 +43,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="commitAuthenticablePrincipalButton" data-dismiss="modal">Commit</button>
+                <button type="button" class="btn btn-primary" id="commitAuthenticablePrincipalButton" onclick="AuthenticablePrincipal.EditAuthPrincipal(AuthenticablePrincipal.GetUpdatedUserData());" data-dismiss="modal">Commit</button>
             </div>
         </div>
     </div>

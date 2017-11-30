@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Enumerations;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace CertificateManager.Logic
                     Name = displayName,
                     Domain = domain,
                     Enabled = true,
-                    ExternalIdentitySourceType = Entities.Enumerations.ExternalIdentitySourceType.ActiveDirectoryIwa,
+                    ExternalIdentitySourceType = ExternalIdentitySourceType.ActiveDirectoryIwa,
                     Id = Guid.NewGuid(),
                     SearchBase = searchBase
                 };
@@ -50,9 +51,11 @@ namespace CertificateManager.Logic
                     Name = displayName,
                     Domain = domain,
                     Enabled = true,
-                    ExternalIdentitySourceType = Entities.Enumerations.ExternalIdentitySourceType.ActiveDirectoryIwa,
+                    ExternalIdentitySourceType = ExternalIdentitySourceType.ActiveDirectoryBasic,
                     Id = Guid.NewGuid(),
-                    SearchBase = searchBase
+                    SearchBase = searchBase,
+                    Username = username,
+                    Password = password
                 };
             }
 

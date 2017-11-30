@@ -16,6 +16,11 @@ namespace CertificateManager.Logic
             this.configurationRepository = configurationRepository;
         }
 
+        public AuthenticablePrincipal GetUser(Guid id)
+        {
+            return configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
+        }
+
         public void ImportUser(ImportUsersExternalIdentitySourceModel entity)
         {
             if (entity == null)
@@ -28,6 +33,23 @@ namespace CertificateManager.Logic
             else
                 ImportWithoutMerge(entity);
 
+        }
+
+        public bool UserExists(Guid id)
+        {
+            try
+            {
+                AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
+
+                if (authenticablePrincipal != null)
+                    return true;
+                else
+                    return false;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private void ValidateImportEntity(ImportUsersExternalIdentitySourceModel entity)
@@ -56,7 +78,7 @@ namespace CertificateManager.Logic
                 {
                     Enabled = true,
                     Id = Guid.NewGuid(),
-                    UserPrincipalName = user.SamAccountName
+                    Name = user.SamAccountName
                 });
             }
         }
@@ -66,27 +88,27 @@ namespace CertificateManager.Logic
             if (entity.MergeWith == null)
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
             
-            if (!configurationRepository.AuthenticablePrincipalExists(entity.MergeWith))
+            if (!this.UserExists(entity.MergeWith))
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
 
-            AuthenticablePrincipal existingUser = configurationRepository.GetAuthenticablePrincipal(entity.MergeWith);
+            AuthenticablePrincipal existingUser = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(entity.MergeWith);
 
             foreach (var user in entity.Users)
             {
                 if (!configurationRepository.ExternalIdentitySourceExists(user.DomainId))
                     throw new ReferencedObjectDoesNotExistException("The authentication realm specified by the importing user does not exist");
 
-                if (existingUser.AlternativeUserPrincipalNames == null)
-                    existingUser.AlternativeUserPrincipalNames = new List<string>();
+                if (existingUser.AlternativeNames == null)
+                    existingUser.AlternativeNames = new List<string>();
 
                 if (string.IsNullOrWhiteSpace(user.SamAccountName) && string.IsNullOrWhiteSpace(user.UserPrincipalName))
                     throw new InsufficientDataException("UserPrincipalName or SamAccountName must be specified to import a user");
 
                 if (!string.IsNullOrWhiteSpace(user.SamAccountName))
-                    existingUser.AlternativeUserPrincipalNames.Add(user.SamAccountName);
+                    existingUser.AlternativeNames.Add(user.SamAccountName);
 
                 if (!string.IsNullOrWhiteSpace(user.UserPrincipalName))
-                    existingUser.AlternativeUserPrincipalNames.Add(user.UserPrincipalName);
+                    existingUser.AlternativeNames.Add(user.UserPrincipalName);
             }
 
             configurationRepository.UpdateAuthenticablePrincipal(existingUser);
@@ -95,6 +117,7 @@ namespace CertificateManager.Logic
         public AddAuthenticablePrincipalEntity NewUser(AuthenticablePrincipal entity)
         {
             entity.Id = Guid.NewGuid();
+            entity.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1@");
             configurationRepository.InsertAuthenticablePrincipal(entity);
             return new AddAuthenticablePrincipalEntity(entity);
         }
@@ -116,33 +139,49 @@ namespace CertificateManager.Logic
             }
         }
 
-        public void SetUser(AuthenticablePrincipal entity)
+        public GetUserModel SetUser(UpdateUserModel entity)
         {
-            if (string.IsNullOrWhiteSpace(entity.UserPrincipalName))
+            if (!UserExists(entity.Id))
+                throw new ReferencedObjectDoesNotExistException("User does not exist");
+
+
+            if (string.IsNullOrWhiteSpace(entity.Name))
             {
                 throw new InsufficientDataException("A user must have a userprincipalname");
             }
             else
             {
-                if (configurationRepository.UserPrincipalNameExists(entity.UserPrincipalName, entity.Id))
+                if (configurationRepository.UserPrincipalNameExists(entity.Name, entity.Id))
                     throw new ReferencedObjectNotUniqueException("UserPrincipalName must be unique.");
             }
-            
-            if (entity.AlternativeUserPrincipalNames != null)
+
+            List<string> altNames = new List<string>();
+
+
+            if (entity.AlternativeNames != null)
             {
-                foreach (string upn in entity.AlternativeUserPrincipalNames)
+                altNames = entity.AlternativeNames.Distinct().ToList();
+                foreach (string upn in altNames)
                 {
                     if (configurationRepository.UserPrincipalNameExists(upn, entity.Id))
                         throw new ReferencedObjectNotUniqueException("UserPrincipalName must be unique.");
                 }
             }
 
-            configurationRepository.UpdateAuthenticablePrincipal(entity);
+            AuthenticablePrincipal authenticablePrincipal = GetUser(entity.Id);
+            authenticablePrincipal.Name = entity.Name;
+            authenticablePrincipal.LocalLogonEnabled = entity.LocalLogonEnabled;
+            authenticablePrincipal.Enabled = entity.Enabled;
+            authenticablePrincipal.AlternativeNames = altNames;
+
+            configurationRepository.UpdateAuthenticablePrincipal(authenticablePrincipal);
+
+            return configurationRepository.GetAuthenticablePrincipal<GetUserModel>(authenticablePrincipal.Id);
         }
 
-        public IEnumerable<AuthenticablePrincipal> GetUsers()
+        public IEnumerable<GetUserModel> GetUsers()
         {
-            return configurationRepository.GetAuthenticablePrincipals();
+            return configurationRepository.GetAuthenticablePrincipals<GetUserModel>();
         }
 
         public IEnumerable<SearchAuthenticablePrincipalEntity> SearchUsers()

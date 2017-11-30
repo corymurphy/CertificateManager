@@ -33,9 +33,10 @@ namespace CertificateManager.Controllers
         {
             try
             {
-                return http.RespondSuccess(adcsTemplateLogic.GetTemplates());
+                IEnumerable<AdcsTemplateGetModel> templates = adcsTemplateLogic.GetTemplates();
+                return http.RespondSuccess(templates);
             }
-            catch
+            catch(Exception e)
             {
                 return http.RespondServerError();
             }

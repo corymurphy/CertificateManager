@@ -8,7 +8,7 @@ namespace CertificateManager.Entities
     {
         public Guid Id { get; set; }
 
-        [BsonField("UserPrincipalName")]
+        [BsonField("Name")]
         public string Name { get; set; }
     }
 }

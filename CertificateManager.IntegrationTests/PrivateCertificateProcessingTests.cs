@@ -26,6 +26,7 @@ namespace CertificateManager.IntegrationTests
         LiteDbCertificateRepository certDb;
         X509Normalization x509Normalization = new X509Normalization();
         Mock<ClaimsPrincipal> user;
+        RoleManagementLogic roleManagementLogic;
 
         [TestMethod]
         public void PrivateCertificateProcessing_CreateCertificate_CngRsa2048_ClientServerAuth_Success()
@@ -329,7 +330,6 @@ namespace CertificateManager.IntegrationTests
             configDb.Insert<MicrosoftCertificateAuthorityOptions>(caConfig);
 
             var config = configDb.GetAdcsTemplate(HashAlgorithm.SHA256, CipherAlgorithm.RSA, WindowsApi.Cng, KeyUsage.ClientAuthentication | KeyUsage.ServerAuthentication);
-            
 
             string certDbPath = Path.GetTempFileName();
             certDb = new LiteDbCertificateRepository(certDbPath);

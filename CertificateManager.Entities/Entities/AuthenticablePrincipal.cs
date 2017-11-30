@@ -1,19 +1,23 @@
-﻿using System;
+﻿using CertificateManager.Entities.Interfaces;
+using System;
 using System.Collections.Generic;
+using CertificateManager.Entities.Enumerations;
+using LiteDB;
 
 namespace CertificateManager.Entities
 {
-    public class AuthenticablePrincipal
+    public class AuthenticablePrincipal : ISecurityPrincipal
     {
         public Guid Id { get; set; }
-        public string UserPrincipalName { get; set; }
-        public List<string> AlternativeUserPrincipalNames { get; set; }
+        public string Name { get; set; }
+        public List<string> AlternativeNames { get; set; }
         public DateTime LastLogonDate { get; set; }
         public bool Enabled { get; set; }
         public Guid LastLogonRealm { get; set; }
         public bool LocalLogonEnabled { get; set; }
         public string PasswordHash { get; set; }
-        //public byte[] PasswordSalt { get; set; }
-        //public byte[] PasswordHash { get; set; }
+
+        [BsonIgnore]
+        public IdentityType IdentityType { get { return IdentityType.User; } }
     }
 }

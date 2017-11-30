@@ -5,9 +5,10 @@
         document.getElementById("defaultOpen").click();
 
         ViewCertificate.SubjectAlternativeNameTable = $('#subjectAlternativeNameTable');
+        ViewCertificate.AclTable = $('#certificateAclTable');
+        ViewCertificate.CertificateAceModal = $('#addCertificateAceModal');
         Services.GetCertificateDetails(ViewCertificate.GetCertificateId(), ViewCertificate.GetCertificateSuccessCallback, ViewCertificate.GetCertificateErrorCallback);
         ViewCertificate.InitializeDownloadUx();
-
     },
 
     GetCertificateId: function ()
@@ -18,6 +19,10 @@
     CertificateData: null,
 
     SubjectAlternativeNameTable: null,
+
+    AclTable: null,
+
+    CertificateAceModal: null,
 
     GetCertificateSuccessCallback: function (data)
     {
@@ -33,12 +38,19 @@
         $('#keySize').text(data.keySize);
         $('#storageFormat').text(data.certificateStorageFormat);
 
-        ViewCertificate.InitializeSubjectAlternativeNamesTable(ViewCertificate.SubjectAlternativeNameTable, data.subject.subjectAlternativeName)
+        ViewCertificate.InitializeSubjectAlternativeNamesTable(ViewCertificate.SubjectAlternativeNameTable, data.subject.subjectAlternativeName);
+
+        ViewCertificate.InitialzeAclTable(ViewCertificate.AclTable, data.acl);
     },
 
     GetCertificateErrorCallback: function ()
     {
         UiGlobal.ShowError();
+    },
+
+    ShowAddCertificateAceModal: function ()
+    {
+        ViewCertificate.CertificateAceModal.modal("show");
     },
 
     InitializeDownloadUx: function ()
@@ -133,7 +145,6 @@
             controller: {
                 loadData: function () {
                     return { data: sanList }
-                    //return { data: sanList, itemsCount: 1 }
                 }
             },
 
@@ -143,14 +154,42 @@
                     itemTemplate: function (value, item) {
                         return item;
                     }
-                },
+                }
             ]
         });
     },
 
-    InitialzeAclTable: function ()
+    InitialzeAclTable: function (table, acl)
     {
+        table.jsGrid({
+            width: "100%",
+            paging: true,
+            autoload: true,
+            pageLoading: true,
 
+            controller: {
+                loadData: function () {
+                    return { data: acl }
+                }
+            },
+
+            fields: [
+                { title: "Identity", name: "identity", type: "text" },
+                { title: "IdentityType", name: "identityType", type: "text" },
+                { title: "AceType", name: "aceType", type: "text" },
+                {
+                    width: 25,
+                    editButton: false,
+                    type: "control",
+                    headerTemplate: function () {
+                        return $("<button>").attr("type", "button").text("Add")
+                            .on("click", function () {
+                                ViewCertificate.ShowAddCertificateAceModal("Add", {});
+                            });
+                    }
+                }
+            ]
+        });
     }
 
 }

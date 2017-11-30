@@ -2,6 +2,7 @@
 using CertificateManager.Repository;
 using CertificateServices.ActiveDirectory;
 using System;
+using System.Linq;
 using System.Security.Claims;
 
 namespace CertificateManager.Logic
@@ -37,12 +38,12 @@ namespace CertificateManager.Logic
         {
             ClaimsIdentity id = new ClaimsIdentity(authScheme, nameClaim, roleClaim);
 
-            id.AddClaim(new Claim(nameClaim, authenticablePrincipal.UserPrincipalName));
+            id.AddClaim(new Claim(nameClaim, authenticablePrincipal.Name));
             id.AddClaim(new Claim(uidClaim, authenticablePrincipal.Id.ToString()));
 
-            if(authenticablePrincipal.AlternativeUserPrincipalNames != null)
+            if(authenticablePrincipal.AlternativeNames != null)
             {
-                foreach (string altUpn in authenticablePrincipal.AlternativeUserPrincipalNames)
+                foreach (string altUpn in authenticablePrincipal.AlternativeNames)
                 {
                     id.AddClaim(new Claim(altNameClaim, altUpn));
                 }
@@ -50,12 +51,17 @@ namespace CertificateManager.Logic
 
             var roles = configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id);
 
-            if (roles != null)
+
+            if (roles != null || roles.Any() != false)
             {
+
+
                 foreach (SecurityRole role in configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id))
                 {
                     id.AddClaim(new Claim(roleClaim, role.Id.ToString()));
                 }
+
+
             }
 
             

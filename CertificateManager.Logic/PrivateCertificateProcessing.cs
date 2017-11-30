@@ -105,16 +105,7 @@ namespace CertificateManager.Logic
                 
             };
 
-            List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
-
-            defaultAcl.Add(new AccessControlEntry()
-            {
-                Expires = DateTime.MaxValue,
-                AceType = Entities.Enumerations.AceType.Allow,
-                Id = new Guid(),
-                IdentityType = Entities.Enumerations.IdentityType.Role,
-                Identity = user.Identity.Name
-            });
+            List<AccessControlEntry> defaultAcl = GetAcl();
 
             Certificate storedCert = new Certificate()
             {
@@ -141,6 +132,30 @@ namespace CertificateManager.Logic
             certificateRepository.Insert(storedCert);
 
             return result;
+        }
+
+        private List<AccessControlEntry> GetAcl()
+        {
+            List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
+
+            defaultAcl.Add(new AccessControlEntry()
+            {
+                Expires = DateTime.MaxValue,
+                AceType = Entities.Enumerations.AceType.Allow,
+                Id = new Guid(),
+                IdentityType = Entities.Enumerations.IdentityType.User,
+                Identity = user.Identity.Name
+            });
+
+            defaultAcl.Add(new AccessControlEntry() {
+                Expires = DateTime.MaxValue,
+                AceType = Entities.Enumerations.AceType.Allow,
+                Id = new Guid(),
+                IdentityType = Entities.Enumerations.IdentityType.Role,
+                Identity = RoleManagementLogic.WellKnownAdministratorRoleId.ToString()
+            });
+
+            return defaultAcl;
         }
 
         private CreatePrivateCertificateResult HandlePending(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response)

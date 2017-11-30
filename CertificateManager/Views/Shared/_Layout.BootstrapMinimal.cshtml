@@ -17,7 +17,7 @@
     <link href="~/css/jsgrid.min.css" rel="stylesheet">
     <link href="~/css/jsgrid-theme.min.css" rel="stylesheet">
     <link href="~/css/select2.min.css" rel="stylesheet"/>
-
+    <link href="~/css/font-awesome.css" rel="stylesheet" />
 
     <link href="~/css/cm.min.css" rel="stylesheet" />
 
@@ -111,11 +111,11 @@
     <script src="~/js/cm.min.js"></script>
 
     <script>
-
         @Html.Raw(jsConfig.RenderDynamicScript())
         @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
         @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())
+        @Html.Raw(jsConfig.RenderScopeMap())
     </script>
 
     @RenderSection("Script", required: false);
