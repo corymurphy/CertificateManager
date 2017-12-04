@@ -274,7 +274,7 @@ namespace CertificateManager.UnitTests
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(null);
             ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
 
-            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user);
 
             Assert.IsFalse(isAuthorized);
         }
@@ -290,7 +290,7 @@ namespace CertificateManager.UnitTests
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
 
-            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user);
 
             Assert.IsFalse(isAuthorized);
         }
@@ -306,7 +306,7 @@ namespace CertificateManager.UnitTests
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
 
-            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user);
 
             Assert.IsFalse(isAuthorized);
         }
@@ -314,7 +314,7 @@ namespace CertificateManager.UnitTests
         [TestMethod]
         public void AuthorizationLogic_IsAuthorized_ClaimsPrincipalWithRoleScopeIncluded_ReturnsTrue()
         {
-            SecurityRole role = new SecurityRole() { Name = "TestRole", Id = new Guid(roleId), Scopes = new List<Guid>() { AuthorizationScopes.ManageRolesScope } };
+            SecurityRole role = new SecurityRole() { Name = "TestRole", Id = new Guid(roleId), Scopes = new List<Guid>() { AuthorizationScopes.ManageRoles } };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
@@ -322,7 +322,7 @@ namespace CertificateManager.UnitTests
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithRole();
 
-            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user);
+            bool isAuthorized = authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user);
 
             Assert.IsTrue(isAuthorized);
         }

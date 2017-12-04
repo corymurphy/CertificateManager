@@ -26,7 +26,7 @@ namespace CertificateManager.Logic
             this.templateLogic = new AdcsTemplateLogic(configurationRepository);
             this.certificateAuthorityConfigurationLogic = new CertificateAuthorityConfigurationLogic(configurationRepository);
             this.idpLogic = new ActiveDirectoryIdentityProviderLogic(configurationRepository);
-            this.authorizationLogic = new AuthorizeAllLogic(configurationRepository);
+            this.authorizationLogic = new AuthorizeInitialSetup(configurationRepository);
             this.roleManagement = new RoleManagementLogic(configurationRepository, authorizationLogic);
             this.localIdpLogic = new LocalIdentityProviderLogic(configurationRepository);
         }

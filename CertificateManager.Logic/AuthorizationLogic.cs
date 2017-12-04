@@ -115,26 +115,7 @@ namespace CertificateManager.Logic
 
         public bool IsAuthorized(Guid scopeId, ClaimsPrincipal user)
         {
-            IEnumerable<Claim> claims = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier);
-
-            List<SecurityRole> roles;
-            try
-            {
-                roles = GetSecurityRolesFromClaims(claims);
-            }
-            catch(Exception e)
-            {
-                return false;
-            }
-
-            foreach(SecurityRole role in roles)
-            {
-                if (role.Scopes.Contains(scopeId))
-                    return true;
-            }
-
-            return false;
-
+            return isAuthorized(scopeId, user);
         }
 
         public List<SecurityRole> GetSecurityRolesFromClaims(IEnumerable<Claim> claims)
@@ -153,6 +134,38 @@ namespace CertificateManager.Logic
                 throw new Exception("Current user does not have any security roles");
             else
                 return roles;
+        }
+
+        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user)
+        {
+            if(!isAuthorized(scopeId, user))
+            {
+                string message = string.Format("Access denied: The current user context is not authorized for the scope {0}", AuthorizationScopes.GetScope(scopeId).Name);
+                throw new UnauthorizedAccessException(message);
+            }
+        }
+
+        private bool isAuthorized(Guid scopeId, ClaimsPrincipal user)
+        {
+            IEnumerable<Claim> claims = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier);
+
+            List<SecurityRole> roles;
+            try
+            {
+                roles = GetSecurityRolesFromClaims(claims);
+            }
+            catch (Exception e)
+            {
+                return false;
+            }
+
+            foreach (SecurityRole role in roles)
+            {
+                if (role.Scopes.Contains(scopeId))
+                    return true;
+            }
+
+            return false;
         }
     }
 }

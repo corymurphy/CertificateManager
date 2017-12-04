@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
+using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,11 @@ namespace CertificateManager.Controllers
         UserManagementLogic userManagement;
         IdentityAuthenticationLogic authenticationLogic;
 
-        public AuthenticablePrincipalController(IConfigurationRepository configurationRepository, IActiveDirectoryAuthenticator activeDirectoryAuthenticator)
+        public AuthenticablePrincipalController(IConfigurationRepository configurationRepository, IActiveDirectoryAuthenticator activeDirectoryAuthenticator, IAuthorizationLogic authorizationLogic)
         {
             this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
-            this.userManagement = new UserManagementLogic(configurationRepository);
+            this.userManagement = new UserManagementLogic(configurationRepository, authorizationLogic);
             this.authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
         }
 
@@ -74,7 +75,7 @@ namespace CertificateManager.Controllers
         {
             try
             {
-                userManagement.ImportUser(entity);
+                userManagement.ImportUser(entity, User);
                 return http.RespondSuccess();
             }
             catch(Exception e)
@@ -89,7 +90,7 @@ namespace CertificateManager.Controllers
         {
             try
             {
-                AddAuthenticablePrincipalEntity result = userManagement.NewUser(entity);
+                AddAuthenticablePrincipalEntity result = userManagement.NewUser(entity, User);
                 return http.RespondSuccess(result);
             }
             catch
@@ -104,7 +105,7 @@ namespace CertificateManager.Controllers
         {
             try
             {
-                userManagement.DeleteUser(entity);
+                userManagement.DeleteUser(entity, User);
                 return http.RespondSuccess();
             }
             catch
@@ -117,7 +118,7 @@ namespace CertificateManager.Controllers
         [Route("security/authenticable-principal")]
         public JsonResult UpdateAuthenticablePrincipal(UpdateUserModel entity)
         {
-            return http.RespondSuccess(userManagement.SetUser(entity));
+            return http.RespondSuccess(userManagement.SetUser(entity, User));
         }
     }
 }

@@ -37,6 +37,9 @@ namespace CertificateManager.Logic
 
         public SecurityRole AddRole(SecurityRole entity, ClaimsPrincipal user)
         {
+            if(!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
+                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+
             entity.Id = Guid.NewGuid();
             configurationRepository.InsertSecurityRole(entity);
             return entity;
@@ -44,7 +47,7 @@ namespace CertificateManager.Logic
 
         public void DeleteRole(SecurityRole securityRole, ClaimsPrincipal user)
         {
-            if (authorizationLogic.AuthorizedToManageRoles(user))
+            if (!authorizationLogic.AuthorizedToManageRoles(user))
                 throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
 
             if (securityRole.Id == RoleManagementLogic.WellKnownAdministratorRoleId)
@@ -55,6 +58,9 @@ namespace CertificateManager.Logic
 
         public void UpdateRole(SecurityRole securityRole, ClaimsPrincipal user)
         {
+            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
+                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+
             configurationRepository.UpdateSecurityRole(securityRole);
         }
 
@@ -88,8 +94,11 @@ namespace CertificateManager.Logic
             configurationRepository.UpdateSecurityRole(role);
         }
 
-        public AuthenticablePrincipal AddRoleMember(Guid roleId, Guid memberId)
+        public AuthenticablePrincipal AddRoleMember(Guid roleId, Guid memberId, ClaimsPrincipal user)
         {
+            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
+                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+
             AuthenticablePrincipal principal = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(memberId);
 
             if (principal == null)
@@ -116,7 +125,7 @@ namespace CertificateManager.Logic
 
         public void SetRoleScopes(Guid roleId, List<Guid> scopes, ClaimsPrincipal user)
         {
-            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRolesScope, user))
+            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
                 throw new UnauthorizedAccessException("Access denied: scope change will not be performed.");
 
             SecurityRole role = configurationRepository.GetSecurityRole(roleId);

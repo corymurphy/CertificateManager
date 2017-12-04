@@ -1,19 +1,23 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace CertificateManager.Logic
 {
     public class UserManagementLogic
     {
         IConfigurationRepository configurationRepository;
+        IAuthorizationLogic authorizationLogic;
 
-        public UserManagementLogic(IConfigurationRepository configurationRepository)
+        public UserManagementLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic)
         {
             this.configurationRepository = configurationRepository;
+            this.authorizationLogic = authorizationLogic;
         }
 
         public AuthenticablePrincipal GetUser(Guid id)
@@ -21,11 +25,13 @@ namespace CertificateManager.Logic
             return configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
         }
 
-        public void ImportUser(ImportUsersExternalIdentitySourceModel entity)
+        public void ImportUser(ImportUsersExternalIdentitySourceModel entity, ClaimsPrincipal user)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+               
             ValidateImportEntity(entity);
 
             if (entity.Merge)
@@ -46,7 +52,7 @@ namespace CertificateManager.Logic
                 else
                     return false;
             }
-            catch
+            catch(Exception e)
             {
                 return false;
             }
@@ -88,10 +94,10 @@ namespace CertificateManager.Logic
             if (entity.MergeWith == null)
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
             
-            if (!this.UserExists(entity.MergeWith))
+            if (!this.UserExists(entity.MergeWith.Value))
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
 
-            AuthenticablePrincipal existingUser = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(entity.MergeWith);
+            AuthenticablePrincipal existingUser = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(entity.MergeWith.Value);
 
             foreach (var user in entity.Users)
             {
@@ -101,7 +107,7 @@ namespace CertificateManager.Logic
                 if (existingUser.AlternativeNames == null)
                     existingUser.AlternativeNames = new List<string>();
 
-                if (string.IsNullOrWhiteSpace(user.SamAccountName) && string.IsNullOrWhiteSpace(user.UserPrincipalName))
+                if (string.IsNullOrWhiteSpace(user.SamAccountName) || string.IsNullOrWhiteSpace(user.UserPrincipalName))
                     throw new InsufficientDataException("UserPrincipalName or SamAccountName must be specified to import a user");
 
                 if (!string.IsNullOrWhiteSpace(user.SamAccountName))
@@ -114,16 +120,20 @@ namespace CertificateManager.Logic
             configurationRepository.UpdateAuthenticablePrincipal(existingUser);
         }
 
-        public AddAuthenticablePrincipalEntity NewUser(AuthenticablePrincipal entity)
+        public AddAuthenticablePrincipalEntity NewUser(AuthenticablePrincipal entity, ClaimsPrincipal user)
         {
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+
             entity.Id = Guid.NewGuid();
             entity.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1@");
             configurationRepository.InsertAuthenticablePrincipal(entity);
             return new AddAuthenticablePrincipalEntity(entity);
         }
 
-        public void DeleteUser(AuthenticablePrincipal entity)
+        public void DeleteUser(AuthenticablePrincipal entity, ClaimsPrincipal user)
         {
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+
             configurationRepository.DeleteAuthenticablePrincipal(entity);
 
             IEnumerable<SecurityRole> memberOf = configurationRepository.GetAuthenticablePrincipalMemberOf(entity.Id);
@@ -139,8 +149,10 @@ namespace CertificateManager.Logic
             }
         }
 
-        public GetUserModel SetUser(UpdateUserModel entity)
+        public GetUserModel SetUser(UpdateUserModel entity, ClaimsPrincipal user)
         {
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+
             if (!UserExists(entity.Id))
                 throw new ReferencedObjectDoesNotExistException("User does not exist");
 

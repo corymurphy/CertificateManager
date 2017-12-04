@@ -20,5 +20,7 @@ namespace CertificateManager.Logic.Interfaces
         ClaimsPrincipal UserContext();
 
         bool IsAuthorized(Guid scopeId, ClaimsPrincipal user);
+
+        void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user);
     }
 }

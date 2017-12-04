@@ -335,7 +335,7 @@
     <Compile Include="AdcsTemplateLogic.cs" />
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
-    <Compile Include="AuthorizeAllLogic.cs" />
+    <Compile Include="AuthorizeInitialSetup.cs" />
     <Compile Include="CertificateAuthorityConfigurationLogic.cs" />
     <Compile Include="CertificateManagementLogic.cs" />
     <Compile Include="EncryptionProvider.cs" />

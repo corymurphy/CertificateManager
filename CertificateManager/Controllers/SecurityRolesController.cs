@@ -91,7 +91,7 @@ namespace CertificateManager.Controllers
         [Route("security/role/{roleId:guid}/member/{memberId:guid}")]
         public JsonResult AddRoleMember(Guid roleId, Guid memberId)
         {
-            return http.RespondSuccess(roleManagement.AddRoleMember(roleId, memberId));
+            return http.RespondSuccess(roleManagement.AddRoleMember(roleId, memberId, User));
         }
 
 
