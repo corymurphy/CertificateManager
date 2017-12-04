@@ -31,9 +31,19 @@ namespace CertificateManager.Logic
                 return false;
         }
 
+        private bool IncludesRole(ClaimsPrincipal user, Guid roleId)
+        {
+            return user.Claims
+                .Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier && claim.Value == roleId.ToString())
+                .Any();
+        }
+
         private bool IsAdministrator(ClaimsPrincipal user)
         {
-            return user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier && claim.Value == RoleManagementLogic.WellKnownAdministratorRoleId.ToString()).ToList().Any();
+            return user.Claims
+                .Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier && claim.Value == RoleManagementLogic.WellKnownAdministratorRoleId.ToString())
+                .ToList()
+                .Any();
         }
 
         public bool CanViewPrivateKey(Certificate certificate, ClaimsPrincipal user)
@@ -166,6 +176,35 @@ namespace CertificateManager.Logic
             }
 
             return false;
+        }
+
+        public bool IsAuthorized(AdcsTemplate template, ClaimsPrincipal user)
+        {
+            if(template == null || template.RolesAllowedToIssue == null)
+            {
+                throw new ArgumentNullException(nameof(template));
+            }
+
+            if(user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            if(template.RolesAllowedToIssue.Count < 1 )
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            foreach(Guid roleId in template.RolesAllowedToIssue)
+            {
+                if(IncludesRole(user, roleId))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+
         }
     }
 }

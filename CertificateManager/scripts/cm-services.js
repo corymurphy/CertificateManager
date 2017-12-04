@@ -82,6 +82,21 @@ var Services = {
         });
     },
 
+    GetPendingCertificates: function (successCallback, errorCallback) {
+        $.ajax({
+            url: "/certificate/request/pending",
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+            }
+        });
+    },
+
     GetEnumMapping: async function () {
         const response = await axios.get("/view/enum-mapping");
         localStorage.setItem("uiEnumMap", JSON.stringify(response.data));

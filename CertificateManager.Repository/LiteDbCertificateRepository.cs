@@ -1,7 +1,6 @@
-﻿using System;
-using CertificateManager.Entities;
+﻿using CertificateManager.Entities;
 using LiteDB;
-using System.Collections;
+using System;
 using System.Collections.Generic;
 
 namespace CertificateManager.Repository
@@ -12,6 +11,7 @@ namespace CertificateManager.Repository
         private const string certificateCollection = "Certificate";
 
         private LiteDatabase db;
+        private CollectionDiscoveryLogic collectionDiscoveryLogic;
 
         public LiteDbCertificateRepository(string path)
         {
@@ -20,6 +20,8 @@ namespace CertificateManager.Repository
 
             db = new LiteDatabase(path);
             this.path = path;
+
+            this.collectionDiscoveryLogic = new CollectionDiscoveryLogic();
         }
 
         public void DeleteAllCertificates()
@@ -77,6 +79,18 @@ namespace CertificateManager.Repository
         public IEnumerable<AllCertificatesViewModel> FindAllCertificates()
         {
             LiteCollection<AllCertificatesViewModel> col = db.GetCollection<AllCertificatesViewModel>(certificateCollection);
+            return col.FindAll();
+        }
+
+        public T Get<T>(Guid id)
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            return col.FindById(id);
+        }
+
+        public IEnumerable<T> GetAll<T>()
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             return col.FindAll();
         }
     }

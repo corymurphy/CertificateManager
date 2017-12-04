@@ -52,7 +52,6 @@ namespace CertificateServices.ActiveDirectory
             }
         }
 
-
         public List<T> Search<T>(NamingContext namingContext)
         {
             List<T> list = new List<T>();
@@ -74,7 +73,6 @@ namespace CertificateServices.ActiveDirectory
             }
             return list;
         }
-
 
         public List<T> Search<T>(string searchKey, string searchValue, NamingContext namingContext)
         {

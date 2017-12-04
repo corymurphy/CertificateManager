@@ -58,5 +58,10 @@ namespace CertificateManager.Logic
         {
             
         }
+
+        public bool IsAuthorized(AdcsTemplate template, ClaimsPrincipal user)
+        {
+            return true;
+        }
     }
 }

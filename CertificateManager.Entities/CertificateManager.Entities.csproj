@@ -190,12 +190,18 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\RepositoryAttribute.cs" />
     <Compile Include="Entities\AuthorizationScopes.cs" />
+    <Compile Include="Entities\PendingCertificateViewModel.cs" />
+    <Compile Include="Entities\PendingCertificateSigning.cs" />
+    <Compile Include="Entities\PendingCertificate.cs" />
     <Compile Include="Entities\GetUserModel.cs" />
     <Compile Include="Entities\Scope.cs" />
     <Compile Include="Entities\SetRoleScopesModel.cs" />
     <Compile Include="Entities\UpdateUserModel.cs" />
+    <Compile Include="Enumerations\PendingCertificateRequestType.cs" />
     <Compile Include="Exceptions\AuthenticablePrincipalDeniedLoginByPolicyException.cs" />
+    <Compile Include="Exceptions\CertificateAuthorityDeniedRequestException.cs" />
     <Compile Include="Exceptions\CredentialsInvalidForAuthenticablePrincipalException.cs" />
     <Compile Include="Exceptions\AuthenticablePrincipalDoesNotExistException.cs" />
     <Compile Include="Exceptions\PrivateCertificateAuthorityDoesNotExistException.cs" />
@@ -260,6 +266,7 @@
     <Compile Include="Exceptions\ReferencedObjectDoesNotExistException.cs" />
     <Compile Include="Exceptions\MergeRequiresMergeTargetException.cs" />
     <Compile Include="Exceptions\ConfigurationItemNotFoundException.cs" />
+    <Compile Include="Exceptions\RepositoryAttributeIsInvalidException.cs" />
     <Compile Include="Interfaces\ISecurityPrincipal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\StoredCertificateEntity.cs" />

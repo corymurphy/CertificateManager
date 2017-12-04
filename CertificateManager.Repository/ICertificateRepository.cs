@@ -12,6 +12,10 @@ namespace CertificateManager.Repository
 
         T GetCertificate<T>(Guid id);
 
+        T Get<T>(Guid id);
+
+        IEnumerable<T> GetAll<T>();
+
         void DeleteCertificate();
 
         void UpdateCertificate();
@@ -23,7 +27,5 @@ namespace CertificateManager.Repository
         IEnumerable<SearchCertificatesEntity> FindCertificates(string query);
 
         IEnumerable<SearchCertificatesEntity> FindCertificatesAmbiguousNameResolution(string query);
-
-
     }
 }

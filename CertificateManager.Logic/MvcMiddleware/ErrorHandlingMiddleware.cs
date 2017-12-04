@@ -44,6 +44,8 @@ namespace CertificateManager.Logic.MvcMiddleware
         {
             switch (exception)
             {
+                case ArgumentNullException argumentNullExceptionType:
+                    return HttpStatusCode.InternalServerError;
                 case UnauthorizedAccessException unauthorizedExceptionType:
                     return HttpStatusCode.Forbidden;
                 default:

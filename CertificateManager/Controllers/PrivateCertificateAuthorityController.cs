@@ -1,5 +1,6 @@
 using CertificateManager.Entities;
 using CertificateManager.Logic;
+using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using CertificateServices.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -15,14 +16,16 @@ namespace CertificateManager.Controllers
         private ICertificateRepository certificateRepository;
         private IConfigurationRepository configurationRepository;
         private ICertificateProvider certificateProvider;
+        private IAuthorizationLogic authorizationLogic;
         private HttpResponseHandler response;
         private AuditLogic audit;
 
-        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, AuditLogic auditLogic)
+        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic)
         {
             this.certificateRepository = certRepo;
             this.configurationRepository = configRepo;
             this.certificateProvider = certProvider;
+            this.authorizationLogic = authorizationLogic;
             this.response = new HttpResponseHandler(this);
             this.audit = auditLogic;
         }
@@ -34,7 +37,7 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult CreateCertificate(CreatePrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, User);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
 
             CreatePrivateCertificateResult result;
             try
@@ -56,7 +59,7 @@ namespace CertificateManager.Controllers
         public JsonResult SignCertificaste(SignPrivateCertificateModel model)
         {
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, User);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
 
             SignPrivateCertificateResult result;
             try
