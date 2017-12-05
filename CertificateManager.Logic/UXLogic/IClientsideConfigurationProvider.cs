@@ -12,5 +12,9 @@
 
         string RenderScopeMap();
 
+        string RenderIdentityTypes();
+
+        string RenderAceTypes();
+
     }
 }

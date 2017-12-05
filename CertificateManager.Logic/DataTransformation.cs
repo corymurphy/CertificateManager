@@ -1,4 +1,6 @@
-﻿using CertificateServices.Enumerations;
+﻿using CertificateManager.Entities.Interfaces;
+using CertificateServices;
+using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
 
@@ -104,6 +106,29 @@ namespace CertificateManager.Logic
             return list;
         }
 
+        public CertificateSubject NewCertificateSubjectFromModel(ICertificateSubjectRaw model)
+        {
+            List<string> san = this.ParseSubjectAlternativeName(model.SubjectAlternativeNamesRaw);
+
+            CertificateSubject subject = new CertificateSubject(model.SubjectCommonName, san);
+
+            if (string.IsNullOrWhiteSpace(model.SubjectCity))
+                subject.City = model.SubjectCity;
+
+            if (string.IsNullOrWhiteSpace(model.SubjectCountry))
+                subject.Country = model.SubjectCountry;
+
+            if (string.IsNullOrWhiteSpace(model.SubjectDepartment))
+                subject.Department = model.SubjectDepartment;
+
+            if (string.IsNullOrWhiteSpace(model.SubjectOrganization))
+                subject.Organization = model.SubjectOrganization;
+
+            if (string.IsNullOrWhiteSpace(model.SubjectState))
+                subject.State = model.SubjectState;
+
+            return subject;
+        }
 
     }
 }

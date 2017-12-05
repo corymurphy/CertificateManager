@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using CertificateServices;
@@ -22,6 +23,8 @@ namespace CertificateManager.Logic
         SecretKeyProvider secrets;
         ClaimsPrincipal user;
         EncryptionProvider cipher;
+
+
 
         public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, ClaimsPrincipal user)
         {
@@ -65,13 +68,15 @@ namespace CertificateManager.Logic
 
             if(authorizationLogic.IsAuthorized(template, user))
             {
-                CertificateRequest csr = certificateProvider.CreateCsrKeyPair(NewCertificateSubjectFromModel(model), model.CipherAlgorithm, model.KeySize, model.Provider, SigningRequestProtocol.Pkcs10);
+                CertificateRequest csr = certificateProvider.CreateCsrKeyPair(dataTransformation.NewCertificateSubjectFromModel(model), model.CipherAlgorithm, model.KeySize, model.Provider, SigningRequestProtocol.Pkcs10);
 
                 MicrosoftCertificateAuthority ca = configurationRepository.GetPrivateCertificateAuthority(model.HashAlgorithm);
 
                 CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
 
-                return ProcessCertificateAuthorityResponse(model, response, csr.Subject);
+                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(model, response, csr.Subject);
+
+                return result;
             }
             else
             {
@@ -80,6 +85,33 @@ namespace CertificateManager.Logic
   
         }
 
+        public CreatePrivateCertificateResult IssuePendingCertificate(Guid id)
+        {
+            PendingCertificate pendingCertificate = certificateRepository.Get<PendingCertificate>(id);
+
+            KeyUsage keyUsage = dataTransformation.ParseKeyUsage(pendingCertificate.KeyUsage);
+
+            AdcsTemplate template = configurationRepository.GetAdcsTemplate(pendingCertificate.HashAlgorithm, pendingCertificate.CipherAlgorithm, pendingCertificate.Provider, keyUsage);
+
+            if(authorizationLogic.IsAuthorized(template, user))
+            {
+                CertificateRequest csr = certificateProvider.CreateCsrKeyPair(dataTransformation.NewCertificateSubjectFromModel(pendingCertificate), pendingCertificate.CipherAlgorithm, pendingCertificate.KeySize, pendingCertificate.Provider, SigningRequestProtocol.Pkcs10);
+
+                MicrosoftCertificateAuthority ca = configurationRepository.GetPrivateCertificateAuthority(pendingCertificate.HashAlgorithm);
+
+                CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
+
+                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(pendingCertificate, response, csr.Subject);
+
+                certificateRepository.Delete<PendingCertificate>(id);
+
+                return result;
+            }
+            else
+            {
+                throw new UnauthorizedAccessException("Current user is not authorized to issue pending certificates");
+            }
+        }
 
 
 
@@ -95,7 +127,7 @@ namespace CertificateManager.Logic
             return result;
         }
 
-        private CreatePrivateCertificateResult ProcessCertificateAuthoritySuccessResponse(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
+        private CreatePrivateCertificateResult ProcessCertificateAuthoritySuccessResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             string nonce = secrets.NewSecretBase64(16);
             string password = secrets.NewSecret(64);
@@ -111,7 +143,7 @@ namespace CertificateManager.Logic
 
             };
 
-            List<AccessControlEntry> defaultAcl = GetAcl();
+            List<AccessControlEntry> defaultAcl = authorizationLogic.GetDefaultCertificateAcl(user);
 
             Certificate storedCert = new Certificate()
             {
@@ -140,7 +172,7 @@ namespace CertificateManager.Logic
             return result;
         }
 
-        private CreatePrivateCertificateResult ProcessCertificateAuthorityResponse(CreatePrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
+        private CreatePrivateCertificateResult ProcessCertificateAuthorityResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {
             CreatePrivateCertificateResult result;
 
@@ -202,57 +234,5 @@ namespace CertificateManager.Logic
             return result;
         }
 
-
-
-
-
-        private List<AccessControlEntry> GetAcl()
-        {
-            List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
-
-            defaultAcl.Add(new AccessControlEntry()
-            {
-                Expires = DateTime.MaxValue,
-                AceType = Entities.Enumerations.AceType.Allow,
-                Id = new Guid(),
-                IdentityType = Entities.Enumerations.IdentityType.User,
-                Identity = user.Identity.Name
-            });
-
-            defaultAcl.Add(new AccessControlEntry()
-            {
-                Expires = DateTime.MaxValue,
-                AceType = Entities.Enumerations.AceType.Allow,
-                Id = new Guid(),
-                IdentityType = Entities.Enumerations.IdentityType.Role,
-                Identity = RoleManagementLogic.WellKnownAdministratorRoleId.ToString()
-            });
-
-            return defaultAcl;
-        }
-
-        public CertificateSubject NewCertificateSubjectFromModel(CreatePrivateCertificateModel model)
-        {
-            List<string> san = dataTransformation.ParseSubjectAlternativeName(model.SubjectAlternativeNamesRaw);
-
-            CertificateSubject subject = new CertificateSubject(model.SubjectCommonName, san);
-
-            if (string.IsNullOrWhiteSpace(model.SubjectCity))
-                subject.City = model.SubjectCity;
-
-            if (string.IsNullOrWhiteSpace(model.SubjectCountry))
-                subject.Country = model.SubjectCountry;
-
-            if (string.IsNullOrWhiteSpace(model.SubjectDepartment))
-                subject.Department = model.SubjectDepartment;
-
-            if (string.IsNullOrWhiteSpace(model.SubjectOrganization))
-                subject.Organization = model.SubjectOrganization;
-
-            if (string.IsNullOrWhiteSpace(model.SubjectState))
-                subject.State = model.SubjectState;
-
-            return subject;
-        }
     }
 }

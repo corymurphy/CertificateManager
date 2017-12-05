@@ -68,6 +68,7 @@ var UiGlobal = {
     {
         UiGlobal.HideError();
         UiGlobal.HideSuccess();
+        UiGlobal.HideWarning();
     },
     ShowSuccess: function (msg)
     {
@@ -83,9 +84,18 @@ var UiGlobal = {
         $('#error-alert').text(msg)
         $('#error-alert').show();
     },
+    ShowWarning: function (msg)
+    {
+        $('#warning-alert').text(msg);
+        $('#warning-alert').show();
+    },
     HideError: function ()
     {
         $('#error-alert').hide();
+    },
+    HideWarning: function ()
+    {
+        $('#warning-alert').hide();
     },
     ShowCurrentTab: function ()
     {

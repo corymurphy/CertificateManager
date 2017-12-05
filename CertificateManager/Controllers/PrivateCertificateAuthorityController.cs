@@ -17,7 +17,8 @@ namespace CertificateManager.Controllers
         private IConfigurationRepository configurationRepository;
         private ICertificateProvider certificateProvider;
         private IAuthorizationLogic authorizationLogic;
-        private HttpResponseHandler response;
+        private PrivateCertificateProcessing processor;
+        private HttpResponseHandler http;
         private AuditLogic audit;
 
         public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic)
@@ -26,11 +27,25 @@ namespace CertificateManager.Controllers
             this.configurationRepository = configRepo;
             this.certificateProvider = certProvider;
             this.authorizationLogic = authorizationLogic;
-            this.response = new HttpResponseHandler(this);
+            this.http = new HttpResponseHandler(this);
             this.audit = auditLogic;
+
         }
 
-       
+        [HttpPost]
+        [Route("ca/private/certificate/request/issue-pending/{id:guid}")]
+        [SwaggerResponse(HttpStatusCode.OK, Description = "Certificate was successfully issued with privte key included in response.")]
+        [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
+        public JsonResult IssuePendingCertificate(Guid id)
+        {
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
+
+            CreatePrivateCertificateResult result = processor.IssuePendingCertificate(id);
+
+            return http.RespondSuccess(result);
+        }
+
+
         [HttpPost]
         [Route("ca/private/certificate/request/includeprivatekey")]
         [SwaggerResponse(HttpStatusCode.OK, Description = "Certificate was successfully issued with privte key included in response.")]
@@ -39,18 +54,9 @@ namespace CertificateManager.Controllers
         {
             PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
 
-            CreatePrivateCertificateResult result;
-            try
-            {
-                result = processor.CreateCertificateWithPrivateKey(model);
-                
-            }
-            catch(Exception e)
-            {
-                return response.RespondBadRequest(e.Message);
-            }
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
-            return Json(new { id = result.Id, message = result.Message });
+            return http.RespondSuccess(result);
         }
 
         [HttpPost]
@@ -58,19 +64,11 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Certificate was successfully signed by the certificate authority.")]
         public JsonResult SignCertificaste(SignPrivateCertificateModel model)
         {
-
             PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
 
-            SignPrivateCertificateResult result;
-            try
-            {
-                result = processor.SignCertificate(model);
-            }
-            catch (Exception e)
-            {
-                return response.RespondBadRequest(e.Message);
-            }
-            return null;
+            SignPrivateCertificateResult result = processor.SignCertificate(model);
+
+            return http.RespondSuccess(result);
         }
 
         [HttpGet]

@@ -65,7 +65,7 @@
                         <a class="nav-link" href="">New Public Certificate</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Pending Certificates</a>
+                        <a class="nav-link" href="/view/certificate/request/pending">Pending Certificates</a>
                     </li>
                 </ul>
 
@@ -116,6 +116,8 @@
         @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
         @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())
         @Html.Raw(jsConfig.RenderScopeMap())
+        @Html.Raw(jsConfig.RenderIdentityTypes())
+        @Html.Raw(jsConfig.RenderAceTypes())
     </script>
 
     @RenderSection("Script", required: false);

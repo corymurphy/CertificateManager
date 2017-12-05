@@ -110,11 +110,6 @@ namespace CertificateManager.Logic
                 
         }
 
-        public string HashPassword(string password)
-        {
-            return BCrypt.Net.BCrypt.HashPassword(password);
-        }
-
         public ClaimsPrincipal Authenticate(string upn)
         {
             AuthenticablePrincipal authenticablePrincipal = localIdentityProviderLogic.Authenticate(upn);

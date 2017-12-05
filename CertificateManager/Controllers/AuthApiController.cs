@@ -31,7 +31,7 @@ namespace CertificateManager.Controllers
         [Route("identity-sources/local-authapi/trustedcertificate")]
         public ActionResult InsertTrustedCertificates(AuthApiCertificate entity)
         {
-            Certificate cert = certificateRepository.GetCertificate<Certificate>(entity.Id);
+            Certificate cert = certificateRepository.Get<Certificate>(entity.Id);
 
             entity.HasPrivateKey = cert.HasPrivateKey;
             entity.Thumbprint = cert.Thumbprint;

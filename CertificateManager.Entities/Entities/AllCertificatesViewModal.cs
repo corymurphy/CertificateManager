@@ -1,12 +1,10 @@
-﻿using CertificateServices;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateServices;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CertificateManager.Entities
 {
+    [Repository("Certificate")]
     public class AllCertificatesViewModel
     {
         public Guid Id { get; set; }

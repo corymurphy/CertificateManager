@@ -18,6 +18,8 @@ namespace CertificateManager.Entities
         public string Thumbprint { get; set; }
         public string Message { get; set; }
         public string RequestId { get; set; }
-        public byte[] PfxByte { get { return Convert.FromBase64String(this.Pfx); } }
+        public byte[] PfxByte { get { if (this.Status == PrivateCertificateRequestStatus.Success) { return Convert.FromBase64String(this.Pfx); } else { return new byte[0]; } } }
+        
+
     }
 }

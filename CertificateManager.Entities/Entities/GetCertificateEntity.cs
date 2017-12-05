@@ -2,9 +2,11 @@
 using CertificateServices.Enumerations;
 using CertificateServices;
 using System.Collections.Generic;
+using CertificateManager.Entities.Attributes;
 
 namespace CertificateManager.Entities
 {
+    [Repository("Certificate")]
     public class GetCertificateEntity
     {
         public Guid Id { get; set; }

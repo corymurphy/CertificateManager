@@ -10,17 +10,15 @@ namespace CertificateManager.Controllers
 {
     public class AuthenticablePrincipalController : Controller
     {
-        IConfigurationRepository configurationRepository;
         HttpResponseHandler http;
         UserManagementLogic userManagement;
         IdentityAuthenticationLogic authenticationLogic;
 
-        public AuthenticablePrincipalController(IConfigurationRepository configurationRepository, IActiveDirectoryAuthenticator activeDirectoryAuthenticator, IAuthorizationLogic authorizationLogic)
+        public AuthenticablePrincipalController( UserManagementLogic userManagement, IdentityAuthenticationLogic identityAuthenticationLogic)
         {
-            this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
-            this.userManagement = new UserManagementLogic(configurationRepository, authorizationLogic);
-            this.authenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
+            this.userManagement = userManagement;
+            this.authenticationLogic = identityAuthenticationLogic;
         }
 
         [HttpGet]
@@ -34,10 +32,7 @@ namespace CertificateManager.Controllers
         [Route("security/authenticable-principal/password")]
         public ActionResult ResetUserPassword(ResetUserPasswordViewModel model)
         {
-            AuthenticablePrincipal principal = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(model.Id);
-            principal.PasswordHash = authenticationLogic.HashPassword(model.NewPassword);
-            //principal.PasswordHash = localAuthProvider.Hash(model.NewPassword);
-            configurationRepository.UpdateAuthenticablePrincipal(principal);
+            userManagement.SetPassword(model);
             return http.RespondSuccess();
         }
 

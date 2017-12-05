@@ -67,5 +67,20 @@ namespace CertificateManager.Logic.UXLogic
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
             return string.Format("CmOptions.Scopes = {0}", JsonConvert.SerializeObject(authorizationLogic.GetAvailibleScopes()));
         }
+
+        public string RenderIdentityTypes()
+        {
+            string[] identityTypes = new string[2] { "Role", "User" };
+
+            return string.Format("CmOptions.IdentityTypes = {0}", JsonConvert.SerializeObject(identityTypes));
+
+        }
+
+        public string RenderAceTypes()
+        {
+            string[] aceTypes = new string[2] { "Allow", "Deny" };
+
+            return string.Format("CmOptions.AceTypes = {0}", JsonConvert.SerializeObject(aceTypes));
+        }
     }
 }

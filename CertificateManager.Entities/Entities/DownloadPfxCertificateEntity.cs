@@ -1,8 +1,10 @@
-﻿using System;
+﻿using CertificateManager.Entities.Attributes;
+using System;
 using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
+    [Repository("Certificate")]
     public class DownloadPfxCertificateEntity
     {
         public Guid Id { get; set; }

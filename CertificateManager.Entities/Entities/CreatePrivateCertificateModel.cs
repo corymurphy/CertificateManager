@@ -1,9 +1,10 @@
-﻿using CertificateServices;
+﻿using CertificateManager.Entities.Interfaces;
+using CertificateServices;
 using System;
 
 namespace CertificateManager.Entities
 {
-    public class CreatePrivateCertificateModel
+    public class CreatePrivateCertificateModel : ICertificateSubjectRaw, ICertificateRequestPublicPrivateKeyPair
     {
         public DateTime RequestDate { get; set; }
         public string SubjectCommonName { get; set; }

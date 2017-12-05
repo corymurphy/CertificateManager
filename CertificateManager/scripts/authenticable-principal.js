@@ -285,6 +285,7 @@ var AuthenticablePrincipal = {
         AuthenticablePrincipal.ImportUserSelect = $(".user-search-select");
 
         AuthenticablePrincipal.ImportUserSelect.select2({
+            dropdownAutoWidth: true,
             placeholder: 'search for an ad object',
             ajax: {
 
@@ -496,6 +497,7 @@ var AuthenticablePrincipal = {
     InitializeExistingUserMergeSelect2: function ()
     {
         AuthenticablePrincipal.ExistingUserMergeSelect2().select2({
+            dropdownAutoWidth: true,
             width: '100%',
             placeholder: 'Search for a Certificate Manager user',
             ajax: {

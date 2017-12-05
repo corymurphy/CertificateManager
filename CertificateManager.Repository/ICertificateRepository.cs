@@ -10,19 +10,17 @@ namespace CertificateManager.Repository
 
         StoredCertificateEntity GetCertificate();
 
-        T GetCertificate<T>(Guid id);
-
         T Get<T>(Guid id);
 
         IEnumerable<T> GetAll<T>();
 
         void DeleteCertificate();
 
-        void UpdateCertificate();
+        void Update<T>(T item);
 
         void DeleteAllCertificates();
 
-        IEnumerable<AllCertificatesViewModel> FindAllCertificates();
+        void Delete<T>(Guid id);
 
         IEnumerable<SearchCertificatesEntity> FindCertificates(string query);
 

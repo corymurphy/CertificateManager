@@ -1,33 +1,19 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using CertificateManager.Repository;
-using CertificateManager.Logic;
-using CertificateServices.Interfaces;
 using CertificateManager.Entities;
+using CertificateManager.Logic;
+using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace CertificateManager.Controllers
 {
     public class CertificatesController : Controller
     {
 
-        ICertificateRepository certificateRepository;
-        IConfigurationRepository configurationRepository;
-        DataTransformation dataTransformation;
-        SecretKeyProvider secrets;
         HttpResponseHandler http;
-        EncryptionProvider cipher;
+        CertificateManagementLogic certificateManagementLogic;
 
-        public CertificatesController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, EncryptionProvider encryptionProvider)
+        public CertificatesController(CertificateManagementLogic certificateManagementLogic)
         {
-            this.configurationRepository = configurationRepository;
-            this.certificateRepository = certificateRepository;
-            this.dataTransformation = new DataTransformation();
-            this.secrets = new SecretKeyProvider();
-            this.cipher = encryptionProvider;
+            this.certificateManagementLogic = certificateManagementLogic;
             this.http = new HttpResponseHandler(this);
         }
 
@@ -35,9 +21,36 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}")]
         public JsonResult GetCertificate(Guid id)
         {
-            GetCertificateEntity cert = certificateRepository.GetCertificate<GetCertificateEntity>(id);
+            return http.RespondSuccess(certificateManagementLogic.GetCertificate(id));
+        }
 
-            return Json(cert);
+        [HttpDelete]
+        [Route("certificate/{certId:guid}/acl/{aceId:guid}")]
+        public JsonResult DeleteCertificateAce(Guid certId, Guid aceId)
+        {
+            certificateManagementLogic.DeleteCertificateAce(certId, aceId);
+            return http.RespondSuccess();
+        }
+
+        [HttpPut]
+        [Route("certificate/{id:guid}/acl")]
+        public JsonResult AddCertificateAce(Guid id, [FromBody]AddCertificateAceEntity entity)
+        {         
+            return http.RespondSuccess(certificateManagementLogic.AddCertificateAce(id, entity));
+        }
+
+        [HttpGet]
+        [Route("certificate/{id:guid}/password")]
+        public JsonResult GetCertificatePassword(Guid id)
+        {
+            return http.RespondSuccess(certificateManagementLogic.GetCertificatePassword(id, User));
+        }
+
+        [HttpPut]
+        [Route("certificate/{id:guid}/password")]
+        public JsonResult ResetCertificatePassword(Guid id)
+        {
+            return http.RespondSuccess(certificateManagementLogic.ResetCertificatePassword(id, User));
         }
 
         [Route("view/certificate/{id:guid}")]
@@ -56,7 +69,7 @@ namespace CertificateManager.Controllers
         [Route("certificates")]
         public JsonResult AllCertificates()
         {
-            return http.RespondSuccess(certificateRepository.FindAllCertificates());
+            return http.RespondSuccess(certificateManagementLogic.GetAllCertificates());
         }
 
         [HttpDelete]

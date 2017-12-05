@@ -1,13 +1,13 @@
 ﻿using CertificateManager.Entities.Attributes;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Interfaces;
 using CertificateServices;
-using LiteDB;
 using System;
 
 namespace CertificateManager.Entities
 {
     [Repository("PendingCerts")]
-    public class PendingCertificate
+    public class PendingCertificate : ICertificateSubjectRaw, ICertificateRequestPublicPrivateKeyPair
     {
         public PendingCertificate() { }
         public PendingCertificate(CreatePrivateCertificateModel requestObject)

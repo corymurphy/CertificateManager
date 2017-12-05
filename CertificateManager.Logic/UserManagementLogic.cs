@@ -20,6 +20,15 @@ namespace CertificateManager.Logic
             this.authorizationLogic = authorizationLogic;
         }
 
+        public void SetPassword(ResetUserPasswordViewModel model)
+        {
+            AuthenticablePrincipal principal = this.GetUser(model.Id);
+
+            principal.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+
+            configurationRepository.UpdateAuthenticablePrincipal(principal);
+        }
+
         public AuthenticablePrincipal GetUser(Guid id)
         {
             return configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);

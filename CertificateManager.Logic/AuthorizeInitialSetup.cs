@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
@@ -29,7 +30,7 @@ namespace CertificateManager.Logic
             return true;
         }
 
-        public bool CanViewPrivateKey(Certificate certificate, ClaimsPrincipal user)
+        public bool CanViewPrivateKey(ICertificatePasswordEntity certificate, ClaimsPrincipal user)
         {
             return true;
         }
@@ -62,6 +63,11 @@ namespace CertificateManager.Logic
         public bool IsAuthorized(AdcsTemplate template, ClaimsPrincipal user)
         {
             return true;
+        }
+
+        public List<AccessControlEntry> GetDefaultCertificateAcl(ClaimsPrincipal user)
+        {
+            throw new NotImplementedException();
         }
     }
 }

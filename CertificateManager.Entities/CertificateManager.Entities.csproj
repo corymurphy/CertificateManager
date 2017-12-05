@@ -191,7 +191,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\RepositoryAttribute.cs" />
+    <Compile Include="Entities\AccessControlEntryViewModel.cs" />
+    <Compile Include="Entities\AccessControlEntry.cs" />
     <Compile Include="Entities\AuthorizationScopes.cs" />
+    <Compile Include="Entities\GetCertificatePasswordResponseEntity.cs" />
+    <Compile Include="Entities\GetCertificatePasswordEntity.cs" />
     <Compile Include="Entities\PendingCertificateViewModel.cs" />
     <Compile Include="Entities\PendingCertificateSigning.cs" />
     <Compile Include="Entities\PendingCertificate.cs" />
@@ -205,7 +209,7 @@
     <Compile Include="Exceptions\CredentialsInvalidForAuthenticablePrincipalException.cs" />
     <Compile Include="Exceptions\AuthenticablePrincipalDoesNotExistException.cs" />
     <Compile Include="Exceptions\PrivateCertificateAuthorityDoesNotExistException.cs" />
-    <Compile Include="Entities\AccessControlEntry.cs" />
+    <Compile Include="Entities\AddCertificateAceEntity.cs" />
     <Compile Include="Entities\ActiveDirectoryAuthenticablePrincipal.cs" />
     <Compile Include="Entities\AdcsTemplateGetModel.cs" />
     <Compile Include="Entities\AdcsTemplateUpdateModel.cs" />
@@ -267,6 +271,9 @@
     <Compile Include="Exceptions\MergeRequiresMergeTargetException.cs" />
     <Compile Include="Exceptions\ConfigurationItemNotFoundException.cs" />
     <Compile Include="Exceptions\RepositoryAttributeIsInvalidException.cs" />
+    <Compile Include="Interfaces\ICertificatePasswordEntity.cs" />
+    <Compile Include="Interfaces\ICertificateRequestPublicPrivateKeyPair.cs" />
+    <Compile Include="Interfaces\ICertificateSubjectRaw.cs" />
     <Compile Include="Interfaces\ISecurityPrincipal.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\StoredCertificateEntity.cs" />

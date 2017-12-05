@@ -1,18 +1,12 @@
 ﻿using CertificateManager.Entities.Enumerations;
+using LiteDB;
 using System;
 
 namespace CertificateManager.Entities
 {
     public class AccessControlEntry
     {
-        public AccessControlEntry()
-        {
-            this.Identity = string.Empty;
-            this.Expires = DateTime.MinValue;
-            this.AceType = AceType.Deny;
-            this.IdentityType = IdentityType.User;
-            this.Id = Guid.NewGuid();
-        }
+        public AccessControlEntry() { }
 
         public AccessControlEntry(string identity)
         {
@@ -49,10 +43,45 @@ namespace CertificateManager.Entities
             this.Expires = expires;
         }
 
+        public AccessControlEntry(AddCertificateAceEntity ace)
+        {
+            this.AceType = ace.AceType;
+            this.IdentityType = ace.IdentityType;
+            this.Identity = ace.Identity;
+            this.Expires = DateTime.MaxValue;
+            this.Id = Guid.NewGuid();
+        }
+
+        public AccessControlEntry(AccessControlEntry ace, string identityDisplayName)
+        {
+            this.IdentityDisplayName = identityDisplayName;
+            this.AceType = ace.AceType;
+            this.IdentityType = ace.IdentityType;
+            this.Identity = ace.Identity;
+            this.Expires = ace.Expires;
+            this.Id = ace.Id;
+        }
+
         public AceType AceType { get; set; }
         public IdentityType IdentityType { get; set; }
         public string Identity { get; set; }
         public DateTime Expires { get; set; }
         public Guid Id { get; set; }
+
+        [BsonIgnore]
+        public string IdentityDisplayName { get; set; }
+
+        public static AccessControlEntry New()
+        {
+            return new AccessControlEntry()
+            {
+                Id = Guid.NewGuid(),
+                Expires = DateTime.MinValue,
+                AceType = AceType.Deny,
+                IdentityType = IdentityType.User,
+                Identity = string.Empty
+            };
+
+        }
     }
 }

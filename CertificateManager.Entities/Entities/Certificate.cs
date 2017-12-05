@@ -1,4 +1,6 @@
-﻿using CertificateManager.Entities.Enumerations;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Interfaces;
 using CertificateServices;
 using CertificateServices.Enumerations;
 using System;
@@ -6,7 +8,8 @@ using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
-    public class Certificate
+    [Repository("Certificate")]
+    public class Certificate : ICertificatePasswordEntity
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }

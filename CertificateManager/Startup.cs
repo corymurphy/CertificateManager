@@ -163,11 +163,15 @@ namespace CertificateManager
 
             ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
 
-            services.AddSingleton<EncryptionProvider>(new EncryptionProvider(appConfig.EncryptionKey));
+            EncryptionProvider cipher = new EncryptionProvider(appConfig.EncryptionKey);
+
+            services.AddSingleton<EncryptionProvider>(cipher);
 
             services.AddSingleton<IActiveDirectoryAuthenticator>(activeDirectoryAuthenticator);
 
-            services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator));
+            IdentityAuthenticationLogic identityAuthenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
+
+            services.AddSingleton<IdentityAuthenticationLogic>();
 
             ICertificateRepository certificateRepository = new LiteDbCertificateRepository(databaseLocator.GetCertificateRepositoryConnectionString());
 
@@ -175,7 +179,17 @@ namespace CertificateManager
 
             IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
 
-            services.AddSingleton<RoleManagementLogic>(new RoleManagementLogic(configurationRepository, authorizationLogic));
+            RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository, authorizationLogic);
+
+            services.AddSingleton<RoleManagementLogic>(roleManagementLogic);
+
+            UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository, authorizationLogic);
+
+            services.AddSingleton<UserManagementLogic>(userManagementLogic);
+
+            SecurityPrincipalLogic securityPrincipalLogic = new SecurityPrincipalLogic(roleManagementLogic, userManagementLogic);
+
+            services.AddSingleton<SecurityPrincipalLogic>();
 
             services.AddSingleton<IAuthorizationLogic>(authorizationLogic);
 
@@ -192,6 +206,15 @@ namespace CertificateManager
                 });
 
             services.AddSingleton<IClientsideConfigurationProvider>(new ClientsideConfigurationProvider(configurationRepository));
+
+            CertificateManagementLogic certificateManagementLogic = new CertificateManagementLogic(
+                    configurationRepository,
+                    certificateRepository,
+                    authorizationLogic,
+                    securityPrincipalLogic,
+                    cipher);
+
+            services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
 
             services.AddSingleton<AuditLogic>(new AuditLogic(new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString())));
         }

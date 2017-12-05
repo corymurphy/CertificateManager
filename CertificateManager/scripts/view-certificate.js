@@ -4,17 +4,93 @@
     {
         document.getElementById("defaultOpen").click();
 
+        UiGlobal.ShowCurrentTab();
+
         ViewCertificate.SubjectAlternativeNameTable = $('#subjectAlternativeNameTable');
         ViewCertificate.AclTable = $('#certificateAclTable');
+        ViewCertificate.InitialzeAclTable();
         ViewCertificate.CertificateAceModal = $('#addCertificateAceModal');
         Services.GetCertificateDetails(ViewCertificate.GetCertificateId(), ViewCertificate.GetCertificateSuccessCallback, ViewCertificate.GetCertificateErrorCallback);
         ViewCertificate.InitializeDownloadUx();
+        ViewCertificate.InitializeShowPassword();
+        ViewCertificate.InitializeSelects();
     },
 
     GetCertificateId: function ()
     {
         return $('#certificate-id-hidden').val();
     },
+
+    InitializeSelects: function ()
+    {
+        ViewCertificate.AceTypeChangeAceSelect = $('#aceType');
+        ViewCertificate.IdentityTypeChangeAceSelect = $('#aceIdentityType');
+        ViewCertificate.AceIdentitySelect = $('#identity-select');
+
+        CmOptions.AceTypes.forEach(function (item) {
+            ViewCertificate.AceTypeChangeAceSelect.append(
+                $('<option>', { value: item, text: item })
+            );
+        });
+
+        CmOptions.IdentityTypes.forEach(function (item) {
+            ViewCertificate.IdentityTypeChangeAceSelect.append(
+                $('<option>', { value: item, text: item })
+            );
+        });
+
+
+        ViewCertificate.AceIdentitySelect.select2({
+            width: 'resolve',
+            dropdownAutoWidth: true,
+            placeholder: 'search for a certificate manager security principal',
+            ajax: {
+                url: ("/security/principals"),
+                dataType: 'json',
+                type: 'get',
+                delay: 30,
+                data: function (params) {
+                    return {
+                        query: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data.payload,
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 2,
+            templateResult: ViewCertificate.FormatSelectResults, // omitted for brevity, see the source of this page
+            templateSelection: ViewCertificate.FormatSelection // omitted for brevity, see the source of this page
+        });
+        
+    },
+
+    FormatSelectResults: function (repo) {
+
+        var markup = '<div class="user-select-container">'
+        markup = markup + '<div class="user-select-title">' + repo.name + '</div>';
+        markup = markup + '<div class="user-select-details">Type: <span class="user-select-details-value">' + repo.identityType + '</span></div>';
+        markup = markup + '</div>';
+        return markup;
+    },
+
+    FormatSelection: function (repo)
+    {
+        return repo.name;
+    },
+
+    AceIdentitySelect: null,
+
+    AceTypeChangeAceSelect: null,
+
+    IdentityTypeChangeAceSelect: null,
 
     CertificateData: null,
 
@@ -40,7 +116,7 @@
 
         ViewCertificate.InitializeSubjectAlternativeNamesTable(ViewCertificate.SubjectAlternativeNameTable, data.subject.subjectAlternativeName);
 
-        ViewCertificate.InitialzeAclTable(ViewCertificate.AclTable, data.acl);
+        //ViewCertificate.InitialzeAclTable(ViewCertificate.AclTable, data.acl);
     },
 
     GetCertificateErrorCallback: function ()
@@ -159,22 +235,69 @@
         });
     },
 
-    InitialzeAclTable: function (table, acl)
+    ChangeList: function ()
     {
-        table.jsGrid({
+
+    },
+
+
+    InitialzeAclTable: function (table)
+    {
+        ViewCertificate.AclTable.jsGrid({
             width: "100%",
             paging: true,
             autoload: true,
-            pageLoading: true,
-
+            //pageLoading: true,
+            deleteConfirm: "Are you sure you want to remove this ACE from the Access Control List?",
+            //"certificate/{certId:guid}/acl/{aceId:guid}"
             controller: {
-                loadData: function () {
-                    return { data: acl }
+
+                loadData: function (filter) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: "GET",
+                        url: "/certificate/" + ViewCertificate.GetCertificateId(),
+                        dataType: "json"
+                    }).done(function (response) {
+                        d.resolve(response.payload.acl);
+                    });
+                    return d.promise();
+                },
+                //loadData: function () {
+                //    return { data: acl }
+                //},
+
+                insertItem: function (item) {
+                    var d = $.Deferred();
+                    $.ajax({
+                        type: "PUT",
+                        url: "/certificate/" + item.id + "/acl",
+                        dataType: "json",
+                        contentType: 'application/json; charset=UTF-8',
+                        data: JSON.stringify({
+                            identityType: item.identityType,
+                            aceType: item.aceType,
+                            identity: item.identity
+                        })
+                    }).done(function (response) {
+                        d.resolve(response.payload);
+                    });
+                    return d.promise();
+
+                },
+
+                deleteItem: function (item) {
+                    $.ajax({
+                        type: "DELETE",
+                        url: "/certificate/" + ViewCertificate.GetCertificateId() + "/acl/" + item.id
+                    }).fail(function (xhr, ajaxOptions, thrownError) {
+                        ViewCertificate.HandleError(xhr.responseJSON.message, AuthenticablePrincipal.Grid);
+                    });
                 }
             },
 
             fields: [
-                { title: "Identity", name: "identity", type: "text" },
+                { title: "Identity", name: "identityDisplayName", type: "text" },
                 { title: "IdentityType", name: "identityType", type: "text" },
                 { title: "AceType", name: "aceType", type: "text" },
                 {
@@ -190,6 +313,42 @@
                 }
             ]
         });
-    }
+    },
 
+    InitializeShowPassword: function ()
+    {
+        $('#showPasswordButton').click(function () {
+            $('#password').empty();
+            Services.GetCertificatePassword(ViewCertificate.GetCertificateId(), ViewCertificate.GetCertificatePasswordSuccessCallback, ViewCertificate.GetCertificatePasswordErrorCallback);
+        });
+    },
+
+    InitializeResetPassword: function ()
+    {
+        $('#resetPasswordButton').click(function () {
+            //$('#password').empty();
+            Services.ResetCertificatePassword(ViewCertificate.GetCertificateId());
+        });
+    },
+
+    GetCertificatePasswordSuccessCallback: function (data)
+    {
+        $('#password').text(data.decryptedPassword);
+    },
+
+    GetCertificatePasswordErrorCallback: function (x, t, m) {
+        $('#password').text("Could not retrieved password, access denied.");
+        $('#password').css("color", "red");
+    },
+
+    AddCertificateAce: function () {
+        var data = {
+            id: ViewCertificate.GetCertificateId(),
+            identity: ViewCertificate.AceIdentitySelect.val(),
+            identityType: $('#aceIdentityType').val(),
+            aceType: $('#aceType').val()
+        };
+
+        ViewCertificate.AclTable.jsGrid("insertItem", data);
+    }
 }

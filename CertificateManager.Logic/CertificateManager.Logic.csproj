@@ -341,6 +341,7 @@
     <Compile Include="EncryptionProvider.cs" />
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />
+    <Compile Include="SecurityPrincipalLogic.cs" />
     <Compile Include="UXLogic\ClientsideConfigurationProviderInitialSetup.cs" />
     <Compile Include="DatabaseLocator.cs" />
     <Compile Include="DataTransformation.cs" />

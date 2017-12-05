@@ -4,12 +4,22 @@ namespace CertificateManager.Logic
 {
     public class ClientsideConfigurationProviderInitialSetup : IClientsideConfigurationProvider
     {
+        public string RenderAceTypes()
+        {
+            return string.Empty;
+        }
+
         public string RenderDynamicScript()
         {
             return "document.location = '/initial-setup';";
         }
 
         public string RenderIdentitySourcesJsonArray()
+        {
+            return string.Empty;
+        }
+
+        public string RenderIdentityTypes()
         {
             return string.Empty;
         }

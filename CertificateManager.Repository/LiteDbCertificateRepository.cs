@@ -8,7 +8,6 @@ namespace CertificateManager.Repository
     public class LiteDbCertificateRepository : ICertificateRepository
     {
         private string path;
-        private const string certificateCollection = "Certificate";
 
         private LiteDatabase db;
         private CollectionDiscoveryLogic collectionDiscoveryLogic;
@@ -26,7 +25,7 @@ namespace CertificateManager.Repository
 
         public void DeleteAllCertificates()
         {
-            db.DropCollection(certificateCollection);
+            db.DropCollection(collectionDiscoveryLogic.GetName<Certificate>());
         }
 
         public void DeleteCertificate()
@@ -39,16 +38,15 @@ namespace CertificateManager.Repository
             throw new NotImplementedException();
         }
 
-        public T GetCertificate<T>(Guid id)
+        public void Update<T>(T item)
         {
-            LiteCollection<T> col = db.GetCollection<T>(certificateCollection);
-            return col.FindById(id);
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            col.Update(item);
         }
 
         public void Insert<T>(T item)
         {
-
-            LiteCollection<T> col = db.GetCollection<T>();
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             col.Insert(item);
         }
 
@@ -59,7 +57,7 @@ namespace CertificateManager.Repository
 
         public IEnumerable<SearchCertificatesEntity> FindCertificates(string query)
         {
-            LiteCollection<SearchCertificatesEntity> col = db.GetCollection<SearchCertificatesEntity>(certificateCollection);
+            LiteCollection<SearchCertificatesEntity> col = db.GetCollection<SearchCertificatesEntity>(collectionDiscoveryLogic.GetName<SearchCertificatesEntity>());
             return col.FindAll();
         }
 
@@ -70,16 +68,10 @@ namespace CertificateManager.Repository
                     Query.Contains("DisplayName", args)
                 );
 
-            LiteCollection<SearchCertificatesEntity> col = db.GetCollection<SearchCertificatesEntity>(certificateCollection);
+            LiteCollection<SearchCertificatesEntity> col = db.GetCollection<SearchCertificatesEntity>(collectionDiscoveryLogic.GetName<SearchCertificatesEntity>());
 
             return col.Find(left);
 
-        }
-
-        public IEnumerable<AllCertificatesViewModel> FindAllCertificates()
-        {
-            LiteCollection<AllCertificatesViewModel> col = db.GetCollection<AllCertificatesViewModel>(certificateCollection);
-            return col.FindAll();
         }
 
         public T Get<T>(Guid id)
@@ -92,6 +84,12 @@ namespace CertificateManager.Repository
         {
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             return col.FindAll();
+        }
+
+        public void Delete<T>(Guid id)
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            col.Delete(id);
         }
     }
 }

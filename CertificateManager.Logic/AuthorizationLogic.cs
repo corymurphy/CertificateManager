@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
@@ -46,7 +47,7 @@ namespace CertificateManager.Logic
                 .Any();
         }
 
-        public bool CanViewPrivateKey(Certificate certificate, ClaimsPrincipal user)
+        public bool CanViewPrivateKey(ICertificatePasswordEntity certificate, ClaimsPrincipal user)
         {
             if (certificate == null || certificate.Acl == null)
                 return false;
@@ -205,6 +206,31 @@ namespace CertificateManager.Logic
 
             return false;
 
+        }
+
+        public List<AccessControlEntry> GetDefaultCertificateAcl(ClaimsPrincipal user)
+        {
+            List<AccessControlEntry> defaultAcl = new List<AccessControlEntry>();
+
+            defaultAcl.Add(new AccessControlEntry()
+            {
+                Expires = DateTime.MaxValue,
+                AceType = AceType.Allow,
+                Id = Guid.NewGuid(),
+                IdentityType = IdentityType.User,
+                Identity = user.Identity.Name
+            });
+
+            defaultAcl.Add(new AccessControlEntry()
+            {
+                Expires = DateTime.MaxValue,
+                AceType = AceType.Allow,
+                Id = Guid.NewGuid(),
+                IdentityType = IdentityType.Role,
+                Identity = RoleManagementLogic.WellKnownAdministratorRoleId.ToString()
+            });
+
+            return defaultAcl;
         }
     }
 }

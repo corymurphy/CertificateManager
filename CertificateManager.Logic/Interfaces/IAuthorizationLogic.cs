@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
@@ -7,7 +8,7 @@ namespace CertificateManager.Logic.Interfaces
 {
     public interface IAuthorizationLogic
     {
-        bool CanViewPrivateKey(Certificate certificate, ClaimsPrincipal user);
+        bool CanViewPrivateKey(ICertificatePasswordEntity certificate, ClaimsPrincipal user);
 
         bool AuthorizedIssueCertificate();
 
@@ -24,5 +25,7 @@ namespace CertificateManager.Logic.Interfaces
         void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user);
 
         bool IsAuthorized(AdcsTemplate template, ClaimsPrincipal user);
+
+        List<AccessControlEntry> GetDefaultCertificateAcl(ClaimsPrincipal user);
     }
 }

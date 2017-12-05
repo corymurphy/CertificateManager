@@ -1,9 +1,11 @@
-﻿using CertificateServices;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateServices;
 using LiteDB;
 using System;
 
 namespace CertificateManager.Entities
 {
+    [Repository("Certificate")]
     public class SearchCertificatesEntity
     {
         public string DisplayName { get; set; }

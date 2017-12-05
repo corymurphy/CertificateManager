@@ -28,7 +28,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/pfx/nochain")]
         public FileContentResult DownloadPfxWithoutChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
 
             if(!cert.HasPrivateKey || cert.CertificateStorageFormat != CertificateStorageFormat.Pfx)
@@ -45,7 +45,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/pfx/includechain")]
         public FileContentResult DownloadPfxWithChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
 
             if (!cert.HasPrivateKey || cert.CertificateStorageFormat != CertificateStorageFormat.Pfx)
@@ -83,7 +83,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/cer/base64/nochain")]
         public FileContentResult DownloadCerBase64WithoutChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
             X509Certificate2 x509;
             switch (cert.CertificateStorageFormat)
@@ -111,7 +111,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/cer/base64/includechain")]
         public FileContentResult DownloadCerBase64WithChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
             X509Certificate2 x509;
             switch (cert.CertificateStorageFormat)
@@ -156,7 +156,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/cer/binary/nochain")]
         public FileContentResult DownloadCerBinaryWithoutChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
             X509Certificate2 x509;
             switch (cert.CertificateStorageFormat)
@@ -180,7 +180,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/download/cer/binary/includechain")]
         public FileContentResult DownloadCerBinaryWithChain(Guid id)
         {
-            DownloadPfxCertificateEntity cert = certificateRepository.GetCertificate<DownloadPfxCertificateEntity>(id);
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
 
             X509Certificate2 x509;
             switch (cert.CertificateStorageFormat)

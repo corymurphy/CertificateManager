@@ -25,7 +25,7 @@ var Services = {
             async: true,
             dataType: "json",
             success: function (data) {
-                successCallback(data);
+                successCallback(data.payload);
             },
             error: function (x, t, m) {
                 errorCallback(x, t, m);
@@ -33,6 +33,46 @@ var Services = {
         });
     },
 
+    ResetCertificatePassword(id) {
+        $.ajax({
+            url: "/certificate/" + id + "/password",
+            type: 'put',
+            cache: false,
+            async: true
+        });
+    },
+
+    GetCertificatePassword(id, successCallback, errorCallback) {
+        $.ajax({
+            url: "/certificate/" + id + "/password",
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
+    IssuePendingCertificate(id, successCallback, errorCallback) {
+        $.ajax({
+            url: "/ca/private/certificate/request/issue-pending/" + id,
+            type: 'post',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
     GetCertificateDetails: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/certificate/" + id,
@@ -41,7 +81,7 @@ var Services = {
             async: true,
             dataType: "json",
             success: function (data) {
-                successCallback(data);
+                successCallback(data.payload);
             },
             error: function (x, t, m) {
                 errorCallback(x, t, m);

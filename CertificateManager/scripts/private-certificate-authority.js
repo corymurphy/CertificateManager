@@ -125,9 +125,21 @@ var PrivateCertificateAuthority = {
 
     CreateCertificateSuccessCallback: function (data) {
 
-        window.sessionStorage.setItem("certificateId", data.id);
-        $('#create-private-certificate-btn').prop('disabled', false);
-        window.location.replace("/view/certificate/" + data.id);
+        if (data.status == "Success")
+        {
+            window.sessionStorage.setItem("certificateId", data.id);
+            $('#create-private-certificate-btn').prop('disabled', false);
+            window.location.replace("/view/certificate/" + data.id);
+        }
+        else if(data.status == "Pending")
+        {
+            window.location.replace('/view/certificate/request/pending');
+        }
+        else
+        {
+            //error thing
+        }
+ 
     },
 
     CreateCertificateErrorCallback: function (x, t, m) {

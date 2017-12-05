@@ -1,4 +1,4 @@
-﻿<div class="modal fade" id="addCertificateAceModal" tabindex="-1" role="dialog" aria-labelledby="addCertificateAceModal" aria-hidden="true">
+﻿<div class="modal fade" id="addCertificateAceModal" role="dialog" aria-labelledby="addCertificateAceModal" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -11,9 +11,9 @@
                 <div class="container">
 
                     <div class="form-group row">
-                        <label for="aceIdentity" class="col-sm-3 col-form-label">Identity</label>
+                        <label for="identity-select" class="col-sm-3 col-form-label">Identity</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="aclIdentity" placeholder="ServerAuthentication-CapiRsa">
+                            <select class="form-control identity-select" name="identity-select" id="identity-select" style="width:280px;"></select>
                         </div>
                     </div>
 
@@ -21,7 +21,7 @@
                     <div class="form-group row">
                         <label for="aceIdentityType" class="col-sm-3 col-form-label">Identity Type</label>
                         <div class="col-sm-10">
-                            <select id="aclIdentityType" class="form-control"></select>
+                            <select id="aceIdentityType" class="form-control"></select>
                         </div>
                     </div>
 
@@ -44,7 +44,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="addCertificateAceButton" data-dismiss="modal">Add</button>
+                <button type="button" class="btn btn-primary" id="addCertificateAceButton" onclick="ViewCertificate.AddCertificateAce()" data-dismiss="modal">Add</button>
             </div>
         </div>
     </div>

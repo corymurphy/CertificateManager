@@ -3,6 +3,7 @@ using CertificateManager.Logic;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace CertificateManager.Controllers
 {
@@ -29,6 +30,22 @@ namespace CertificateManager.Controllers
         public JsonResult GetAllPendingCertificates()
         {
             return http.RespondSuccess(certificateRepository.GetAll<PendingCertificate>());
+        }
+
+        [HttpDelete]
+        [Route("certificate/request/pending/{id:guid}")]
+        public JsonResult DenyPendingCertificate(Guid id)
+        {
+            certificateRepository.Delete<PendingCertificate>(id);
+            return http.RespondSuccess();
+        }
+
+        [HttpPost]
+        [Route("certificate/request/pending/{id:guid}")]
+        public JsonResult IssuePendingCertificate(Guid id)
+        {
+            return http.RespondSuccess();
+            //return http.RespondSuccess(certificateRepository.GetAll<PendingCertificate>());
         }
 
         [Route("view/certificate/request/pending")]
