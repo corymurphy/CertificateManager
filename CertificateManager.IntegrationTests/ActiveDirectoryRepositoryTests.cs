@@ -5,12 +5,13 @@ using CertificateServices.ActiveDirectory.Entities;
 using CertificateManager.Repository;
 using CertificateManager.Entities;
 using System.Collections.Generic;
-
+using System.Linq;
 namespace CertificateManager.IntegrationTests
 {
     [TestClass]
     public class ActiveDirectoryRepositoryTests
     {
+        private string domain = "cm.local";
         private string domainDn = "DC=cm,DC=local";
         private string domainController = "srv14.cm.local";
         //private string caServerName = "srv14.cm.local";
@@ -23,43 +24,33 @@ namespace CertificateManager.IntegrationTests
         [TestMethod]
         public void ActiveDirectoryRepositoryTests_Search_ActiveDirectoryAuthenticablePrincipal_ReturnsResults_Success()
         {
-            LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(@"D:\db\config.db");
+            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
 
-            IEnumerable<ExternalIdentitySource> sources = configurationRepository.GetExternalIdentitySources();
-            ExternalIdentitySource source = new ExternalIdentitySource();
-            foreach (var a in sources)
-            {
-                if(a.Name == "cm.local")
-                    source = a;
-            }
-            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(source.Domain, source.Domain, source.Username, source.Password);
-
-            var results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>(NamingContext.Default);
-
-            Console.Write("a");
-        }
-
-
-        [TestMethod]
-        public void ActiveDirectoryRepositoryTests_Search_PkiCertificateTemplate_ReturnsResults_Success()
-        {
-            ActiveDirectoryRepository ad = new ActiveDirectoryRepository(domainDn, domainController, username, password);
-            var results = ad.Search<AdcsCertificateTemplate>(NamingContext.Configuration);
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>(NamingContext.Default);
 
             Assert.IsNotNull(results);
-
         }
 
         [TestMethod]
-        public void ActiveDirectoryRepositoryTests_SearchWithFilter_PkiCertificateTemplate_ReturnsResults_Success()
+        public void ActiveDirectoryRepositoryTests_Search_SearchForAdministrator_ReturnsAdminAccount()
         {
-            //string schemaClass = ActiveDirectorySchemaClass.PkiCertificateTemplate;
-            //string searchKey = "name";
-            //string searchValue = "WebServer";
-            //ActiveDirectoryRepository ad = new ActiveDirectoryRepository(domainDn, domainController, username, password);
-            //var results = ad.Search<PkiCertificateTemplate>(searchKey, searchValue, NamingContext.Configuration);
+            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
 
-            //Assert.IsNotNull(results);
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default);
+
+            Assert.IsTrue(results.Any());
+        }
+
+        [TestMethod]
+        public void ActiveDirectoryRepositoryTests_Search_SearchForAdministrator_ReturnAdminAccount_CheckName()
+        {
+            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
+
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default);
+
+            ActiveDirectoryAuthenticablePrincipal adminAccount = results.FirstOrDefault();
+
+            Assert.AreEqual(username, adminAccount.SamAccountName);
 
         }
     }

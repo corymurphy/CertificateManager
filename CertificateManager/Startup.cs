@@ -191,6 +191,7 @@ namespace CertificateManager
 
             services.AddSingleton<SecurityPrincipalLogic>();
 
+
             services.AddSingleton<IAuthorizationLogic>(authorizationLogic);
 
             services.AddSingleton<IConfigurationRepository>(configurationRepository);

@@ -1,10 +1,12 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Exceptions;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CertificateManager.Logic
 {
@@ -15,7 +17,8 @@ namespace CertificateManager.Logic
         IAuthorizationLogic authorizationLogic;
         SecurityPrincipalLogic securityPrincipalLogic;
         EncryptionProvider cipher;
-        SecretKeyProvider keygenProvider;
+        SecretKeyProvider keygen;
+        IHashProvider hashProvider;
 
         public CertificateManagementLogic(
             IConfigurationRepository configurationRepository, 
@@ -30,6 +33,26 @@ namespace CertificateManager.Logic
             this.certificateRepository = certificateRepository;
             this.authorizationLogic = authorizationLogic;
             this.cipher = cipher;
+            this.hashProvider = new HashProvider();
+            this.keygen = new SecretKeyProvider();
+        }
+
+        public CertificateManagementLogic(
+            IConfigurationRepository configurationRepository,
+            ICertificateRepository certificateRepository,
+            IAuthorizationLogic authorizationLogic,
+            SecurityPrincipalLogic securityPrincipalLogic,
+            EncryptionProvider cipher,
+            IHashProvider hashProvider
+        )
+        {
+            this.securityPrincipalLogic = securityPrincipalLogic;
+            this.configurationRepository = configurationRepository;
+            this.certificateRepository = certificateRepository;
+            this.authorizationLogic = authorizationLogic;
+            this.cipher = cipher;
+            this.hashProvider = hashProvider;
+            this.keygen = new SecretKeyProvider();
         }
 
         public GetCertificateEntity GetCertificate(Guid id)
@@ -49,10 +72,6 @@ namespace CertificateManager.Logic
 
                 cert.Acl = acl;  
             }
-            
-
-            
-
 
             return cert;
         }
@@ -86,8 +105,6 @@ namespace CertificateManager.Logic
                 return;
             }
 
-            //bool a = cert.Acl[2].Id == aceId;
-
             cert.Acl = cert.Acl.Where(ace => ace.Id != aceId).ToList();
 
             certificateRepository.Update<Certificate>(cert);
@@ -111,25 +128,41 @@ namespace CertificateManager.Logic
             }
         }
 
-
         public void ResetCertificatePassword(Guid id, ClaimsPrincipal user)
         {
             Certificate cert = certificateRepository.Get<Certificate>(id);
 
-            if (authorizationLogic.CanViewPrivateKey(cert, user))
-            {
-
-                //cert.
-                GetCertificatePasswordResponseEntity response = new GetCertificatePasswordResponseEntity();
-
-                response.DecryptedPassword = cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce);
-
-                //return response;
-            }
-            else
+            if (!authorizationLogic.CanViewPrivateKey(cert, user))
             {
                 throw new UnauthorizedAccessException();
             }
+
+            if(!hashProvider.ValidateData(cert.Content, cert.ContentDigest))
+            {
+                throw new InvalidOperationException("Certificate data is corrupt");
+            }
+
+            if (!cert.HasPrivateKey || cert.CertificateStorageFormat != CertificateStorageFormat.Pfx)
+            {
+                throw new ObjectNotInCorrectStateException("Certificate does not have a private key");
+            }
+
+            byte[] certBytes = cert.Content;
+
+            X509Certificate2 x509 = new X509Certificate2();
+            x509.Import(certBytes, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce), X509KeyStorageFlags.Exportable);
+
+            string nonce = keygen.NewSecretBase64(16);
+            string password = keygen.NewSecret(64);
+
+            byte[] newBytes = x509.Export(X509ContentType.Pfx, password);
+
+            cert.ContentDigest = hashProvider.ComputeHash(newBytes);
+            cert.Content = newBytes;
+            cert.PfxPassword = cipher.Encrypt(password, nonce);
+            cert.PasswordNonce = nonce;
+
+            certificateRepository.Update<Certificate>(cert);
         }
 
         public IEnumerable<AllCertificatesViewModel> GetAllCertificates()

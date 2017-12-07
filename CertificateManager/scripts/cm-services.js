@@ -33,16 +33,22 @@ var Services = {
         });
     },
 
-    ResetCertificatePassword(id) {
+    ResetCertificatePassword: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/certificate/" + id + "/password",
             type: 'put',
             cache: false,
-            async: true
+            async: true,
+            success: function (data) {
+                successCallback();
+            },
+            error: function (x, t, m) {
+                errorCallback();
+            }
         });
     },
 
-    GetCertificatePassword(id, successCallback, errorCallback) {
+    GetCertificatePassword: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/certificate/" + id + "/password",
             type: 'get',
@@ -58,7 +64,7 @@ var Services = {
         });
     },
 
-    IssuePendingCertificate(id, successCallback, errorCallback) {
+    IssuePendingCertificate: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/ca/private/certificate/request/issue-pending/" + id,
             type: 'post',
@@ -73,6 +79,7 @@ var Services = {
             }
         });
     },
+
     GetCertificateDetails: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/certificate/" + id,
@@ -246,6 +253,7 @@ var Services = {
             }
         });
     },
+
     SetRoleScopes: function (roleId, scopes, successCallback, errorCallback) {
 
         UiGlobal.ResetAlertState();

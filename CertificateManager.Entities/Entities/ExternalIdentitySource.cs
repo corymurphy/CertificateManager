@@ -1,9 +1,11 @@
-﻿using CertificateManager.Entities.Enumerations;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Enumerations;
 using System;
-using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
+
+    [Repository("extid")]
     public class ExternalIdentitySource
     {
         public Guid Id { get; set; }
@@ -13,8 +15,6 @@ namespace CertificateManager.Entities
         public string Domain { get; set; }
         public string SearchBase { get; set; }
         public bool Enabled { get; set; }
-        public ExternalIdentitySourceType ExternalIdentitySourceType { get; set; }
-        
-        //public Dictionary<ExternalIdentitySourceMetadataOption, string> Metadata { get; set; }
+        public ExternalIdentitySourceType ExternalIdentitySourceType { get; set; }      
     }
 }

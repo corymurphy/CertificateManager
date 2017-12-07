@@ -15,7 +15,7 @@ namespace CertificateManager.Logic.UXLogic
 
         public string RenderSecurityRolesJsonArray()
         {
-            IEnumerable<SecurityRole> roles = configurationRepository.GetSecurityRoles();
+            IEnumerable<SecurityRole> roles = configurationRepository.GetAll<SecurityRole>();
 
             if (roles == null)
                 return string.Empty;
@@ -35,7 +35,7 @@ namespace CertificateManager.Logic.UXLogic
 
         public string RenderIdentitySourcesJsonArray()
         {
-            IEnumerable<ExternalIdentitySource> idps = configurationRepository.GetExternalIdentitySources();
+            IEnumerable<ExternalIdentitySource> idps = configurationRepository.GetAll<ExternalIdentitySource>();
 
             if (idps == null)
                 return string.Empty;

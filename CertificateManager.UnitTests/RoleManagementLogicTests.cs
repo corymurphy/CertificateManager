@@ -40,7 +40,7 @@ namespace CertificateManager.UnitTests
             SecurityRole role = new SecurityRole() { Name = "TestRole", Id = Guid.NewGuid() };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+            configurationRepository.Setup(x => x.Get<SecurityRole>(It.IsAny<Guid>())).Returns(role);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, authorizationLogic.Object);
 
@@ -58,7 +58,7 @@ namespace CertificateManager.UnitTests
             Guid roleId = Guid.NewGuid();
             ClaimsPrincipal user = new ClaimsPrincipal();
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(memberId)).Returns((AuthenticablePrincipal)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns((AuthenticablePrincipal)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -74,8 +74,8 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal user = new ClaimsPrincipal();
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.GetSecurityRole(roleId)).Returns((SecurityRole)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Get<SecurityRole>(roleId)).Returns((SecurityRole)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -94,8 +94,8 @@ namespace CertificateManager.UnitTests
             authorizationLogic.Setup(x => x.IsAuthorized(AuthorizationScopes.ManageRoles, user)).Returns(false);
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.GetSecurityRole(roleId)).Returns((SecurityRole)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Get<SecurityRole>(roleId)).Returns((SecurityRole)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, authorizationLogic.Object);
 

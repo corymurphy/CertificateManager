@@ -92,7 +92,7 @@ namespace CertificateManager.Logic
         {
             AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
 
-            ExternalIdentitySource externalIdentitySource = configurationRepository.GetExternalIdentitySource(domain);
+            ExternalIdentitySource externalIdentitySource = configurationRepository.Get<ExternalIdentitySource>(domain);
 
             if (externalIdentitySource == null || externalIdentitySource.Enabled != true)
                 throw new Exception("Authentication failed");
@@ -122,7 +122,7 @@ namespace CertificateManager.Logic
             authenticablePrincipal.LastLogonDate = DateTime.Now;
             authenticablePrincipal.LastLogonRealm = realm;
 
-            configurationRepository.UpdateAuthenticablePrincipal(authenticablePrincipal);
+            configurationRepository.Update<AuthenticablePrincipal>(authenticablePrincipal);
         }
     }
 }

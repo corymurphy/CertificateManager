@@ -1,7 +1,9 @@
-﻿using System;
+﻿using CertificateManager.Entities.Attributes;
+using System;
 
 namespace CertificateManager.Entities
 {
+    [Repository("extid")]
     public class ExternalIdentitySourceDomains
     {
         public Guid Id { get; set; }

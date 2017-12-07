@@ -338,7 +338,9 @@
     <Compile Include="AuthorizeInitialSetup.cs" />
     <Compile Include="CertificateAuthorityConfigurationLogic.cs" />
     <Compile Include="CertificateManagementLogic.cs" />
+    <Compile Include="HashProvider.cs" />
     <Compile Include="EncryptionProvider.cs" />
+    <Compile Include="IHashProvider.cs" />
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />
     <Compile Include="SecurityPrincipalLogic.cs" />

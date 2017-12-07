@@ -10,6 +10,7 @@ using System.Security.Cryptography.X509Certificates;
 using Moq;
 using System.Security.Claims;
 using CertificateManager.Logic.Interfaces;
+using CertificateManager.Entities.Enumerations;
 
 namespace CertificateManager.IntegrationTests
 {
@@ -332,20 +333,39 @@ namespace CertificateManager.IntegrationTests
                 Name = "ServerAuthentication-CngEcdsa"
             });
 
+            Logic.SecretKeyProvider secretKeyProvider = new Logic.SecretKeyProvider();
 
-            MicrosoftCertificateAuthorityOptions caConfig = new MicrosoftCertificateAuthorityOptions()
-                {
-                    AuthenticationType = MicrosoftCertificateAuthorityAuthenticationType.UsernamePassword,
-                    CommonName = caCommonName, 
-                    ServerName = caServerName,
-                    HashAlgorithm = HashAlgorithm.SHA256,
-                    AuthenticationRealm = domain,
-                    Password = password, 
-                    Username = username
-                };
-            
-            
-            configDb.Insert<MicrosoftCertificateAuthorityOptions>(caConfig);
+            AppConfig appConfig = new AppConfig(){ EncryptionKey = secretKeyProvider.NewSecretBase64(32) };
+
+            configDb.SetAppConfig(appConfig);
+
+
+            ExternalIdentitySource identitySource = new ExternalIdentitySource()
+            {
+                Domain = "cm.local",
+                Enabled = true,
+                ExternalIdentitySourceType = ExternalIdentitySourceType.ActiveDirectoryBasic,
+                Id = Guid.NewGuid(),
+                Name = "cm.local",
+                Password = password,
+                Username = username,
+                SearchBase = "DC=cm,DC=local"
+
+            };
+
+
+            PrivateCertificateAuthorityConfig caConfig = new PrivateCertificateAuthorityConfig()
+            {
+                CommonName = caCommonName,
+                ServerName = caServerName,
+                HashAlgorithm = HashAlgorithm.SHA256,
+                Id = Guid.NewGuid(),
+                IdentityProviderId = identitySource.Id
+            };
+
+            configDb.Insert<PrivateCertificateAuthorityConfig>(caConfig);
+
+            configDb.Insert<ExternalIdentitySource>(identitySource);
 
             var config = configDb.GetAdcsTemplate(HashAlgorithm.SHA256, CipherAlgorithm.RSA, WindowsApi.Cng, KeyUsage.ClientAuthentication | KeyUsage.ServerAuthentication);
 

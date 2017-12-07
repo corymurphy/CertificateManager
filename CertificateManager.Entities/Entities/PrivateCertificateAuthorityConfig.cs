@@ -1,8 +1,10 @@
-﻿using CertificateServices;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateServices;
 using System;
 
 namespace CertificateManager.Entities
 {
+    [Repository("PrivateCa")]
     public class PrivateCertificateAuthorityConfig
     {
         public Guid Id { get; set; }

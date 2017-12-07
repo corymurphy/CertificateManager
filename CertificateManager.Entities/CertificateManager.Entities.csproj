@@ -266,6 +266,7 @@
     <Compile Include="Enumerations\ViewEnumOptions.cs" />
     <Compile Include="Exceptions\InsufficientDataException.cs" />
     <Compile Include="Exceptions\ReferencedObjectAlreadyExistsException.cs" />
+    <Compile Include="Exceptions\ObjectNotInCorrectStateException.cs" />
     <Compile Include="Exceptions\ReferencedObjectNotUniqueException.cs" />
     <Compile Include="Exceptions\ReferencedObjectDoesNotExistException.cs" />
     <Compile Include="Exceptions\MergeRequiresMergeTargetException.cs" />

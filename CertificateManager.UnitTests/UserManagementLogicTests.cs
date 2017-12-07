@@ -69,7 +69,7 @@ namespace CertificateManager.UnitTests
             UpdateUserModel updateUserModel = new UpdateUserModel(){ Id = Guid.NewGuid() };
             
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -85,7 +85,7 @@ namespace CertificateManager.UnitTests
             AuthenticablePrincipal validUser = new AuthenticablePrincipal();
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(validUser);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(validUser);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -96,7 +96,7 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_UserExists_RepositoryThrowsException_ReturnsFalse()
         {
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Throws(new Exception());
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Throws(new Exception());
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -109,7 +109,7 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_UserExists_RepositoryReturnsNull_ReturnsFalse()
         {
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -167,7 +167,7 @@ namespace CertificateManager.UnitTests
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -195,7 +195,7 @@ namespace CertificateManager.UnitTests
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -223,8 +223,8 @@ namespace CertificateManager.UnitTests
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.ExternalIdentitySourceExists(It.IsAny<Guid>())).Returns(true);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Exists<ExternalIdentitySource>(It.IsAny<Guid>())).Returns(true);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -252,8 +252,8 @@ namespace CertificateManager.UnitTests
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
-            configurationRepository.Setup(x => x.GetAuthenticablePrincipal<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.ExternalIdentitySourceExists(It.IsAny<Guid>())).Returns(true);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Exists<ExternalIdentitySource>(It.IsAny<Guid>())).Returns(true);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 

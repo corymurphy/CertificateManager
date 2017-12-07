@@ -20,6 +20,8 @@ namespace CertificateManager.Controllers
         private PrivateCertificateProcessing processor;
         private HttpResponseHandler http;
         private AuditLogic audit;
+        //private AdcsTemplateLogic templateLogic;
+
 
         public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic)
         {
@@ -29,6 +31,7 @@ namespace CertificateManager.Controllers
             this.authorizationLogic = authorizationLogic;
             this.http = new HttpResponseHandler(this);
             this.audit = auditLogic;
+            //this.templateLogic = new AdcsTemplateLogic(configurationRepository);
 
         }
 

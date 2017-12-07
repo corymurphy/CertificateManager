@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Exceptions;
 using LiteDB;
 using System;
 using System.Collections.Generic;
@@ -77,7 +78,16 @@ namespace CertificateManager.Repository
         public T Get<T>(Guid id)
         {
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
-            return col.FindById(id);
+            T item = col.FindById(id);
+
+            if(item == null)
+            {
+                throw new ReferencedObjectDoesNotExistException();
+            }
+            else
+            {
+                return item;
+            }
         }
 
         public IEnumerable<T> GetAll<T>()

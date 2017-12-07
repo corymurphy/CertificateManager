@@ -15,7 +15,7 @@ namespace CertificateManager.Entities
         public string DisplayName { get; set; }
         public CertificateSubject Subject { get; set; }
         public CertificateStorageFormat CertificateStorageFormat { get; set; }
-        public string Content { get; set; }
+        public byte[] Content { get; set; }
         public string SubjectKeyIdentifier { get; set; }
         public string Thumbprint { get; set; }
         public CertificateAuthorityType CertificateAuthorityType { get; set; }
@@ -49,5 +49,7 @@ namespace CertificateManager.Entities
         public bool IsCertificateAuthority { get; set; }
         public List<AccessControlEntry> Acl { get; set; }
         public KeyUsage KeyUsage { get; set; }
+
+        public byte[] ContentDigest { get; set; }
     }
 }

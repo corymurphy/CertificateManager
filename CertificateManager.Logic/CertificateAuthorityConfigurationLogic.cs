@@ -17,26 +17,27 @@ namespace CertificateManager.Logic
 
         public IEnumerable<PrivateCertificateAuthorityConfig> GetPrivateCertificateAuthorities()
         {
-            return configurationRepository.GetPrivateCertificateAuthorities();
+            return configurationRepository.GetAll<PrivateCertificateAuthorityConfig>();
         }
 
         public void DeletePrivateCertificateAuthority(Guid id)
         {
-            configurationRepository.DeletePrivateCertificateAuthority(id);
+            configurationRepository.Delete<PrivateCertificateAuthorityConfig>(id);
         }
 
         public void UpdatePrivateCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
-            PrivateCertificateAuthorityConfig existingCa = configurationRepository.GetPrivateCertificateAuthority(ca.Id);
+            PrivateCertificateAuthorityConfig existingCa = configurationRepository.Get<PrivateCertificateAuthorityConfig>(ca.Id);
 
             ca.Id = existingCa.Id;
 
-            configurationRepository.UpdatePrivateCertificateAuthority(ca);
+            configurationRepository.Update<PrivateCertificateAuthorityConfig>(ca);
         }
+
         public void AddPrivateCertificateAuthority(PrivateCertificateAuthorityConfig ca)
         {
             ca.Id = Guid.NewGuid();
-            configurationRepository.InsertPrivateCertificateAuthorityConfig(ca);
+            configurationRepository.Insert<PrivateCertificateAuthorityConfig>(ca);
         }
 
         public void AddPrivateCertificateAuthority(string serverName, string commonName, HashAlgorithm hash, Guid activeDirectoryIdentityProviderId)
@@ -56,7 +57,7 @@ namespace CertificateManager.Logic
                 IdentityProviderId = activeDirectoryIdentityProviderId
             };
 
-            configurationRepository.InsertPrivateCertificateAuthorityConfig(ca);
+            configurationRepository.Insert<PrivateCertificateAuthorityConfig>(ca);
         }
     }
 }

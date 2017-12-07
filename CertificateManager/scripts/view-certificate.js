@@ -13,6 +13,7 @@
         Services.GetCertificateDetails(ViewCertificate.GetCertificateId(), ViewCertificate.GetCertificateSuccessCallback, ViewCertificate.GetCertificateErrorCallback);
         ViewCertificate.InitializeDownloadUx();
         ViewCertificate.InitializeShowPassword();
+        ViewCertificate.InitializeResetPassword();
         ViewCertificate.InitializeSelects();
     },
 
@@ -326,9 +327,19 @@
     InitializeResetPassword: function ()
     {
         $('#resetPasswordButton').click(function () {
-            //$('#password').empty();
-            Services.ResetCertificatePassword(ViewCertificate.GetCertificateId());
+            UiGlobal.ResetAlertState();
+            Services.ResetCertificatePassword(ViewCertificate.GetCertificateId(), ViewCertificate.ResetCertificatePasswordSuccessCallback, ViewCertificate.ResetCertificatePasswordErrorCallback);
         });
+    },
+
+    ResetCertificatePasswordSuccessCallback: function ()
+    {
+        UiGlobal.ShowSuccess("Certificate password was reset successfully");
+    },
+
+    ResetCertificatePasswordErrorCallback: function ()
+    {
+        UiGlobal.ShowError("Could not process certificate password reset request");
     },
 
     GetCertificatePasswordSuccessCallback: function (data)

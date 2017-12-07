@@ -1,10 +1,12 @@
-﻿using CertificateServices;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateServices;
 using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
+    [Repository("AdcsTemplate")]
     public class AdcsTemplate
     {
         public Guid Id { get; set; }

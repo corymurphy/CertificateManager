@@ -23,7 +23,7 @@ namespace CertificateManager.Logic
         {
             ExternalIdentitySource idp = NewExternalIdentitySource(displayName, domain, searchBase, username, password, useProcessContext);
 
-            configurationRepository.InsertExternalIdentitySource(idp);
+            configurationRepository.Insert<ExternalIdentitySource>(idp);
 
             return idp;
         }

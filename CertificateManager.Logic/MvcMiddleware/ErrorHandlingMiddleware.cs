@@ -1,9 +1,11 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CertificateManager.Entities.Exceptions;
+using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -44,6 +46,12 @@ namespace CertificateManager.Logic.MvcMiddleware
         {
             switch (exception)
             {
+                case CryptographicException cryptographicException:
+                    return HttpStatusCode.InternalServerError;
+                case FormatException formatException:
+                    return HttpStatusCode.BadRequest;
+                case ObjectNotInCorrectStateException objectNotInCorrectStateException:
+                    return HttpStatusCode.BadRequest;
                 case ArgumentNullException argumentNullExceptionType:
                     return HttpStatusCode.InternalServerError;
                 case UnauthorizedAccessException unauthorizedExceptionType:

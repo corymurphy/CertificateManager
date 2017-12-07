@@ -22,13 +22,13 @@ namespace CertificateManager.Logic
 
         public AdcsTemplate AddTemplate(AdcsTemplate template)
         {
-            IEnumerable<PrivateCertificateAuthorityConfig> ca = configurationRepository.GetPrivateCertificateAuthorities();
+            IEnumerable<PrivateCertificateAuthorityConfig> ca = configurationRepository.GetAll<PrivateCertificateAuthorityConfig>();
 
             if (ca == null)
                 throw new PrivateCertificateAuthorityDoesNotExistException("A certificate authority must exist before adding a template");
 
             template.Id = Guid.NewGuid();
-            configurationRepository.InsertAdcsTemplate(template);
+            configurationRepository.Insert<AdcsTemplate>(template);
             //runtimeConfigurationState.ClearAlert(AlertType.NoTemplatesConfigured);
             return template;
         }
@@ -44,7 +44,7 @@ namespace CertificateManager.Logic
                 RolesAllowedToIssue = rolesAllowedToIssue
             };
 
-            configurationRepository.InsertAdcsTemplate(template);
+            configurationRepository.Insert<AdcsTemplate>(template);
 
             return template;
         }
@@ -54,22 +54,20 @@ namespace CertificateManager.Logic
             if (updateEntity.Name == "error")
                 throw new PrivateCertificateAuthorityDoesNotExistException("A certificate authority must exist before adding a template");
 
-            AdcsTemplate template = configurationRepository.GetAdcsTemplate(updateEntity.Id);
+            AdcsTemplate template = configurationRepository.Get<AdcsTemplate>(updateEntity.Id);
 
             template.Name = updateEntity.Name;
             template.RolesAllowedToIssue = dataTransform.ParseGuidList(updateEntity.RolesAllowedToIssue);
-            //template.Hash = updateEntity.Hash;
             template.KeyUsage = updateEntity.KeyUsage;
             template.WindowsApi = updateEntity.WindowsApi;
             template.Cipher = updateEntity.Cipher;
 
-            configurationRepository.UpdateAdcsTemplate(template);
+            configurationRepository.Update<AdcsTemplate>(template);
 
 
             AdcsTemplateGetModel response = new AdcsTemplateGetModel();
 
             response.Name = template.Name;
-            //response.Hash = template.Hash;
             response.Cipher = template.Cipher;
             response.KeyUsage = template.KeyUsage;
             response.WindowsApi = template.WindowsApi;
@@ -78,7 +76,7 @@ namespace CertificateManager.Logic
             response.RolesAllowedToIssueSelectView = new List<SecurityRoleSelectView>();
             foreach (Guid roleId in template.RolesAllowedToIssue)
             {
-                var role = configurationRepository.GetSecurityRole(roleId);
+                var role = configurationRepository.Get<SecurityRole>(roleId);
 
                 response.RolesAllowedToIssueSelectView.Add(
                     new SecurityRoleSelectView()
@@ -93,12 +91,12 @@ namespace CertificateManager.Logic
 
         public void DeleteTemplate(Guid id)
         {
-            configurationRepository.DeleteAdcsTemplates(id);
+            configurationRepository.Delete<AdcsTemplate>(id);
         }
 
         public List<AdcsTemplateGetModel> GetTemplates()
         {
-            IEnumerable<AdcsTemplate> result = configurationRepository.GetAdcsTemplates();
+            IEnumerable<AdcsTemplate> result = configurationRepository.GetAll<AdcsTemplate>();
             List<AdcsTemplateGetModel> response = new List<AdcsTemplateGetModel>();
 
             foreach (var template in result)
@@ -114,7 +112,7 @@ namespace CertificateManager.Logic
                 foreach (Guid roleId in template.RolesAllowedToIssue)
                 {
 
-                    var role = configurationRepository.GetSecurityRole(roleId);
+                    var role = configurationRepository.Get<SecurityRole>(roleId);
 
                     item.RolesAllowedToIssueSelectView.Add(
                         new SecurityRoleSelectView()

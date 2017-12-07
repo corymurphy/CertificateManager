@@ -45,9 +45,9 @@ namespace CertificateManager.Logic
                     });
                 }
             }
-            ExternalIdentitySource idp = configDb.GetExternalIdentitySources().FirstOrDefault();
+            ExternalIdentitySource idp = configDb.GetAll<ExternalIdentitySource>().FirstOrDefault();
 
-            configDb.DropPrivateCertificateAuthorityCollection();
+            configDb.DropCollection<PrivateCertificateAuthorityConfig>();
 
             PrivateCertificateAuthorityConfig caConfig = new PrivateCertificateAuthorityConfig()
             {

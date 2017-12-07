@@ -23,7 +23,7 @@ namespace CertificateManager.Controllers
         [Route("identity-sources/local-authapi/trustedcertificates")]
         public ActionResult GetTrustedCertificates()
         {
-            return http.RespondSuccess(configurationRepository.GetAuthApiCertificates());
+            return http.RespondSuccess(configurationRepository.GetAll<AuthApiCertificate>());
         }
 
 
@@ -37,7 +37,7 @@ namespace CertificateManager.Controllers
             entity.Thumbprint = cert.Thumbprint;
             entity.DisplayName = cert.DisplayName;
 
-            configurationRepository.InsertAuthApiCertificate(entity);
+            configurationRepository.Insert<AuthApiCertificate>(entity);
             return http.RespondSuccess(entity);
         }
 
@@ -46,7 +46,7 @@ namespace CertificateManager.Controllers
         [Route("identity-sources/local-authapi/trustedcertificate")]
         public ActionResult UpdateTrustedCertificates(AuthApiCertificate entity)
         {
-            configurationRepository.UpdateAuthApiCertificate(entity);
+            configurationRepository.Update<AuthApiCertificate>(entity);
             return http.RespondSuccess();
         }
 
@@ -54,7 +54,7 @@ namespace CertificateManager.Controllers
         [Route("identity-sources/local-authapi/trustedcertificate")]
         public ActionResult DeleteTrustedCertificates(AuthApiCertificate entity)
         {
-            configurationRepository.DeleteAuthApiCertificate(entity);
+            configurationRepository.Delete<AuthApiCertificate>(entity.Id);
             return http.RespondSuccess();
         }
     }

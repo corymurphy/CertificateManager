@@ -74,7 +74,7 @@ namespace CertificateManager.Logic
 
         public void ValidateAtLeastOneCertificateAuthority()
         {
-            IEnumerable<PrivateCertificateAuthorityConfig> found = configurationRepository.GetPrivateCertificateAuthorities();
+            IEnumerable<PrivateCertificateAuthorityConfig> found = configurationRepository.GetAll<PrivateCertificateAuthorityConfig>();
 
             if(found == null && !runtimeCacheRepository.ConfigurationAlertExists(AlertType.NoCertificateAuthoritiesConfigured))
             {
@@ -96,7 +96,7 @@ namespace CertificateManager.Logic
 
         public void ValidateAtLeastOneTemplate()
         {
-            IEnumerable<AdcsTemplate> found = configurationRepository.GetAdcsTemplates();
+            IEnumerable<AdcsTemplate> found = configurationRepository.GetAll<AdcsTemplate>();
 
             if (!found.Any() && !runtimeCacheRepository.ConfigurationAlertExists(AlertType.NoTemplatesConfigured))
             {

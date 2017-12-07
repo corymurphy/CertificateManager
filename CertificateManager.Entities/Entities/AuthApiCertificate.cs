@@ -1,7 +1,9 @@
-﻿using System;
+﻿using CertificateManager.Entities.Attributes;
+using System;
 
 namespace CertificateManager.Entities
 {
+    [Repository("authapicert")]
     public class AuthApiCertificate
     {
         public Guid Id { get; set; }

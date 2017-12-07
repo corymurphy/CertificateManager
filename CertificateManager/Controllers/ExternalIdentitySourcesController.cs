@@ -31,7 +31,7 @@ namespace CertificateManager.Controllers
         [Route("identity-source/external/query/users")]
         public JsonResult QueryUsers(string query)
         {
-            IEnumerable<ExternalIdentitySource> sources = configurationRepository.GetExternalIdentitySources();
+            IEnumerable<ExternalIdentitySource> sources = configurationRepository.GetAll<ExternalIdentitySource>();
 
             List<ExternalIdentitySourceAuthPrincipalQueryResultModel> results = new List<ExternalIdentitySourceAuthPrincipalQueryResultModel>();
             foreach(var source in sources)
@@ -87,7 +87,7 @@ namespace CertificateManager.Controllers
         public JsonResult GetExternalIdentitySources()
         {
             List<ExternalIdentitySource> modified = new List<ExternalIdentitySource>();
-            IEnumerable<ExternalIdentitySource> actual = configurationRepository.GetExternalIdentitySources();
+            IEnumerable<ExternalIdentitySource> actual = configurationRepository.GetAll<ExternalIdentitySource>();
 
             foreach (ExternalIdentitySource item in actual)
             {
@@ -103,7 +103,7 @@ namespace CertificateManager.Controllers
         [Route("cm-config/external-identity-sources/domains")]
         public JsonResult GetExternalIdentitySourceDomains()
         {
-            return Json(configurationRepository.GetExternalIdentitySourceDomains());
+            return Json(configurationRepository.GetAll<ExternalIdentitySourceDomains>());
         }
 
 
@@ -112,7 +112,7 @@ namespace CertificateManager.Controllers
         [Route("cm-config/external-identity-source")]
         public JsonResult DeleteExternalIdentitySource(ExternalIdentitySource entity)
         {
-            configurationRepository.DeleteExternalIdentitySource(entity);
+            configurationRepository.Delete<ExternalIdentitySource>(entity.Id);
 
             return Json(new { status = "success" });
         }
@@ -121,7 +121,7 @@ namespace CertificateManager.Controllers
         [Route("cm-config/external-identity-source")]
         public JsonResult AddExternalIdentitySource(ExternalIdentitySource entity)
         {
-            configurationRepository.InsertExternalIdentitySource(entity);
+            configurationRepository.Insert<ExternalIdentitySource>(entity);
 
             return Json(new { status = "success" });
         }
@@ -131,10 +131,10 @@ namespace CertificateManager.Controllers
         [Route("cm-config/external-identity-source")]
         public JsonResult UpdateExternalIdentitySource(ExternalIdentitySource entity)
         {
-            ExternalIdentitySource existing = configurationRepository.GetExternalIdentitySource(entity.Id);
+            ExternalIdentitySource existing = configurationRepository.Get<ExternalIdentitySource>(entity.Id);
             entity.Password = existing.Password;
 
-            configurationRepository.UpdateExternalIdentitySource(entity);
+            configurationRepository.Update<ExternalIdentitySource>(entity);
 
             return Json(new { status = "success" });
         }

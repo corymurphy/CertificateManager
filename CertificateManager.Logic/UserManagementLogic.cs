@@ -26,12 +26,12 @@ namespace CertificateManager.Logic
 
             principal.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
 
-            configurationRepository.UpdateAuthenticablePrincipal(principal);
+            configurationRepository.Update<AuthenticablePrincipal>(principal);
         }
 
         public AuthenticablePrincipal GetUser(Guid id)
         {
-            return configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
+            return configurationRepository.Get<AuthenticablePrincipal>(id);
         }
 
         public void ImportUser(ImportUsersExternalIdentitySourceModel entity, ClaimsPrincipal user)
@@ -54,7 +54,7 @@ namespace CertificateManager.Logic
         {
             try
             {
-                AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(id);
+                AuthenticablePrincipal authenticablePrincipal = configurationRepository.Get<AuthenticablePrincipal>(id);
 
                 if (authenticablePrincipal != null)
                     return true;
@@ -86,10 +86,10 @@ namespace CertificateManager.Logic
         {
             foreach (var user in entity.Users)
             {
-                if (!configurationRepository.ExternalIdentitySourceExists(user.DomainId))
+                if (!configurationRepository.Exists<ExternalIdentitySource>(user.DomainId))
                     throw new ReferencedObjectDoesNotExistException("The authentication realm specified by the importing user does not exist");
 
-                configurationRepository.InsertAuthenticablePrincipal(new AuthenticablePrincipal()
+                configurationRepository.Insert<AuthenticablePrincipal>(new AuthenticablePrincipal()
                 {
                     Enabled = true,
                     Id = Guid.NewGuid(),
@@ -106,11 +106,11 @@ namespace CertificateManager.Logic
             if (!this.UserExists(entity.MergeWith.Value))
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
 
-            AuthenticablePrincipal existingUser = configurationRepository.GetAuthenticablePrincipal<AuthenticablePrincipal>(entity.MergeWith.Value);
+            AuthenticablePrincipal existingUser = configurationRepository.Get<AuthenticablePrincipal>(entity.MergeWith.Value);
 
             foreach (var user in entity.Users)
             {
-                if (!configurationRepository.ExternalIdentitySourceExists(user.DomainId))
+                if (!configurationRepository.Exists<ExternalIdentitySource>(user.DomainId))
                     throw new ReferencedObjectDoesNotExistException("The authentication realm specified by the importing user does not exist");
 
                 if (existingUser.AlternativeNames == null)
@@ -126,7 +126,7 @@ namespace CertificateManager.Logic
                     existingUser.AlternativeNames.Add(user.UserPrincipalName);
             }
 
-            configurationRepository.UpdateAuthenticablePrincipal(existingUser);
+            configurationRepository.Update<AuthenticablePrincipal>(existingUser);
         }
 
         public AddAuthenticablePrincipalEntity NewUser(AuthenticablePrincipal entity, ClaimsPrincipal user)
@@ -135,7 +135,7 @@ namespace CertificateManager.Logic
 
             entity.Id = Guid.NewGuid();
             entity.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1@");
-            configurationRepository.InsertAuthenticablePrincipal(entity);
+            configurationRepository.Insert<AuthenticablePrincipal>(entity);
             return new AddAuthenticablePrincipalEntity(entity);
         }
 
@@ -143,7 +143,7 @@ namespace CertificateManager.Logic
         {
             authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
 
-            configurationRepository.DeleteAuthenticablePrincipal(entity);
+            configurationRepository.Delete<AuthenticablePrincipal>(entity.Id);
 
             IEnumerable<SecurityRole> memberOf = configurationRepository.GetAuthenticablePrincipalMemberOf(entity.Id);
 
@@ -152,8 +152,8 @@ namespace CertificateManager.Logic
                 foreach (var role in memberOf)
                 {
                     role.Member = role.Member.Where(member => member != entity.Id).ToList();
-                    configurationRepository.DeleteSecurityRole(role);
-                    configurationRepository.InsertSecurityRole(role);
+                    configurationRepository.Delete<SecurityRole>(role.Id);
+                    configurationRepository.Insert<SecurityRole>(role);
                 }
             }
         }
@@ -195,19 +195,19 @@ namespace CertificateManager.Logic
             authenticablePrincipal.Enabled = entity.Enabled;
             authenticablePrincipal.AlternativeNames = altNames;
 
-            configurationRepository.UpdateAuthenticablePrincipal(authenticablePrincipal);
+            configurationRepository.Update<AuthenticablePrincipal>(authenticablePrincipal);
 
-            return configurationRepository.GetAuthenticablePrincipal<GetUserModel>(authenticablePrincipal.Id);
+            return configurationRepository.Get<GetUserModel>(authenticablePrincipal.Id);
         }
 
         public IEnumerable<GetUserModel> GetUsers()
         {
-            return configurationRepository.GetAuthenticablePrincipals<GetUserModel>();
+            return configurationRepository.GetAll<GetUserModel>();
         }
 
         public IEnumerable<SearchAuthenticablePrincipalEntity> SearchUsers()
         {
-            return configurationRepository.GetAuthenticablePrincipalsSearch();
+            return configurationRepository.GetAll<SearchAuthenticablePrincipalEntity>();
         }
     }
 }

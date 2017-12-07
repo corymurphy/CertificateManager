@@ -1,4 +1,5 @@
-﻿using CertificateManager.Entities.Enumerations;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Enumerations;
 using CertificateManager.Entities.Interfaces;
 using LiteDB;
 using System;
@@ -6,6 +7,7 @@ using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
+    [Repository("usr")]
     public class GetUserModel : ISecurityPrincipal
     {
         public Guid Id { get; set; }

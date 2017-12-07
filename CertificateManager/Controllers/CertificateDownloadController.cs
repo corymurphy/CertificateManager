@@ -36,7 +36,7 @@ namespace CertificateManager.Controllers
                 throw new Exception("No private key");
             }
 
-            return new FileContentResult(Convert.FromBase64String(cert.Content), pfxMimeType)
+            return new FileContentResult(cert.Content, pfxMimeType)
             {
                 FileDownloadName = String.Format("{0}.pfx", cert.Thumbprint)
             };
@@ -53,7 +53,7 @@ namespace CertificateManager.Controllers
                 throw new Exception("No private key");
             }
 
-            X509Certificate2 x509 = new X509Certificate2(Convert.FromBase64String(cert.Content), cert.PfxPassword);
+            X509Certificate2 x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
 
             bool buildResult;
             X509Chain chain = new X509Chain();
@@ -89,10 +89,10 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content), cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
                     break;
                 case CertificateStorageFormat.Cer:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content));
+                    x509 = new X509Certificate2(cert.Content);
                     break;
                 default:
                     throw new Exception("TODO: handle this");
@@ -117,10 +117,10 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content), cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
                     break;
                 case CertificateStorageFormat.Cer:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content));
+                    x509 = new X509Certificate2(cert.Content);
                     break;
                 default:
                     throw new Exception("TODO: handle this");
@@ -162,10 +162,10 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content), cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
                     break;
                 case CertificateStorageFormat.Cer:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content));
+                    x509 = new X509Certificate2(cert.Content);
                     break;
                 default:
                     throw new Exception("TODO: handle this");
@@ -186,10 +186,10 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content), cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
                     break;
                 case CertificateStorageFormat.Cer:
-                    x509 = new X509Certificate2(Convert.FromBase64String(cert.Content));
+                    x509 = new X509Certificate2(cert.Content);
                     break;
                 default:
                     throw new Exception("TODO: handle this");
@@ -210,7 +210,10 @@ namespace CertificateManager.Controllers
             }
 
             if (!buildResult)
+            {
                 throw new Exception("DownloadCertificateWithChain: Failed to build chain");
+            }
+                
 
 
             return new FileContentResult(x509Col.Export(X509ContentType.Pkcs7), cerMimeType)

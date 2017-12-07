@@ -50,7 +50,8 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/password")]
         public JsonResult ResetCertificatePassword(Guid id)
         {
-            return http.RespondSuccess(certificateManagementLogic.ResetCertificatePassword(id, User));
+            certificateManagementLogic.ResetCertificatePassword(id, User);
+            return http.RespondSuccess();
         }
 
         [Route("view/certificate/{id:guid}")]

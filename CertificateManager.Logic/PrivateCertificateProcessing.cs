@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Security.Cryptography.X509Certificates;
 
+
 namespace CertificateManager.Logic
 {
     public class PrivateCertificateProcessing
@@ -21,18 +22,20 @@ namespace CertificateManager.Logic
         IAuthorizationLogic authorizationLogic;
         DataTransformation dataTransformation;
         SecretKeyProvider secrets;
-        ClaimsPrincipal user;
         EncryptionProvider cipher;
+        HashProvider hashProvider;
+        ClaimsPrincipal user;
+        AdcsTemplateLogic templateLogic;
 
-
-
-        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, ClaimsPrincipal user)
+        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, ClaimsPrincipal user, AdcsTemplateLogic templateLogic)
         {
             this.configurationRepository = configurationRepository;
             this.certificateRepository = certificateRepository;
             this.certificateProvider = certificateProvider;
             this.authorizationLogic = authorizationLogic;
+            this.templateLogic = templateLogic;
             this.dataTransformation = new DataTransformation();
+            this.hashProvider = new HashProvider();
             this.secrets = new SecretKeyProvider();
             this.cipher = new EncryptionProvider(configurationRepository.GetAppConfig().EncryptionKey);
             this.user = user;
@@ -133,10 +136,12 @@ namespace CertificateManager.Logic
             string password = secrets.NewSecret(64);
             X509Certificate2 cert = certificateProvider.InstallIssuedCertificate(response.IssuedCertificate);
 
+            byte[] certContent = cert.Export(X509ContentType.Pfx, password);
+
             CreatePrivateCertificateResult result = new CreatePrivateCertificateResult()
             {
                 Password = password,
-                Pfx = Convert.ToBase64String(cert.Export(X509ContentType.Pfx, password)),
+                Pfx = Convert.ToBase64String(certContent),
                 Status = PrivateCertificateRequestStatus.Success,
                 Thumbprint = cert.Thumbprint,
                 Id = Guid.NewGuid(),
@@ -151,7 +156,7 @@ namespace CertificateManager.Logic
                 Thumbprint = cert.Thumbprint,
                 PfxPassword = cipher.Encrypt(password, nonce),
                 WindowsApi = model.Provider,
-                Content = result.Pfx,
+                Content = certContent,
                 CertificateStorageFormat = CertificateStorageFormat.Pfx,
                 HashAlgorithm = model.HashAlgorithm,
                 CipherAlgorithm = model.CipherAlgorithm,
@@ -163,7 +168,8 @@ namespace CertificateManager.Logic
                 KeyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage),
                 Subject = subject,
                 Acl = defaultAcl,
-                PasswordNonce = nonce
+                PasswordNonce = nonce,
+                ContentDigest = hashProvider.ComputeHash(certContent)
 
             };
 

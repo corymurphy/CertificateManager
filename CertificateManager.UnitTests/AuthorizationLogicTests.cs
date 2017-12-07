@@ -285,7 +285,7 @@ namespace CertificateManager.UnitTests
             SecurityRole role = new SecurityRole() { Name = "TestRole", Scopes = null };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+            configurationRepository.Setup(x => x.Get<SecurityRole>(It.IsAny<Guid>())).Returns(role);
 
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
@@ -301,7 +301,7 @@ namespace CertificateManager.UnitTests
             SecurityRole role = new SecurityRole() { Name = "TestRole", Scopes = new List<Guid>() };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+            configurationRepository.Setup(x => x.Get<SecurityRole>(It.IsAny<Guid>())).Returns(role);
 
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithNoRoles();
@@ -317,7 +317,7 @@ namespace CertificateManager.UnitTests
             SecurityRole role = new SecurityRole() { Name = "TestRole", Id = new Guid(roleId), Scopes = new List<Guid>() { AuthorizationScopes.ManageRoles } };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.GetSecurityRole(It.IsAny<Guid>())).Returns(role);
+            configurationRepository.Setup(x => x.Get<SecurityRole>(It.IsAny<Guid>())).Returns(role);
 
             AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository.Object);
             ClaimsPrincipal user = GetClaimsPrincipalWithRole();

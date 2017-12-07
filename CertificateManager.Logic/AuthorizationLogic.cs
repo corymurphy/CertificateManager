@@ -138,7 +138,7 @@ namespace CertificateManager.Logic
 
             foreach(Claim claim in claims)
             {
-                roles.Add(configurationRepository.GetSecurityRole( new Guid(claim.Value) ));
+                roles.Add(configurationRepository.Get<SecurityRole>( new Guid(claim.Value) ));
             }
 
             if(roles == null || !roles.Any())

@@ -34,7 +34,7 @@ namespace CertificateManager.Logic
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
-            configurationRepository.InsertAuthenticablePrincipal(authenticablePrincipal);
+            configurationRepository.Insert<AuthenticablePrincipal>(authenticablePrincipal);
 
             return authenticablePrincipal;
         }
@@ -50,7 +50,7 @@ namespace CertificateManager.Logic
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(secret)
             };
 
-            configurationRepository.InsertAuthenticablePrincipal(authenticablePrincipal);
+            configurationRepository.Insert<AuthenticablePrincipal>(authenticablePrincipal);
 
             return authenticablePrincipal;
         }
