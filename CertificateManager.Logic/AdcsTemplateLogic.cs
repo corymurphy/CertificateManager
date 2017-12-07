@@ -20,6 +20,7 @@ namespace CertificateManager.Logic
             this.dataTransform = new DataTransformation();
         }
 
+
         public AdcsTemplate AddTemplate(AdcsTemplate template)
         {
             IEnumerable<PrivateCertificateAuthorityConfig> ca = configurationRepository.GetAll<PrivateCertificateAuthorityConfig>();
@@ -127,5 +128,6 @@ namespace CertificateManager.Logic
 
             return response;
         }
+
     }
 }
