@@ -1,6 +1,6 @@
 ﻿namespace CertificateManager.Entities.Enumerations
 {
-    public enum ExternalIdentitySourceMetadataOption
+    public enum ActiveDirectoryMetadataMetadataOption
     {
         Username,
         Password,

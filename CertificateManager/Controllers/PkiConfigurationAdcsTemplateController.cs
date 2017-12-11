@@ -11,18 +11,19 @@ namespace CertificateManager.Controllers
 {
     public class PkiConfigurationAdcsTemplateController : Controller
     {
-        AdcsTemplateLogic AdcsTemplateLogic;
-        IConfigurationRepository configurationRepository;
-        IRuntimeConfigurationState runtimeConfigurationState;
+        //AdcsTemplateLogic AdcsTemplateLogic;
+        //IConfigurationRepository configurationRepository;
+        //IRuntimeConfigurationState runtimeConfigurationState;
         AdcsTemplateLogic adcsTemplateLogic;
         HttpResponseHandler http;
         DataTransformation dataTransform;
 
-        public PkiConfigurationAdcsTemplateController(IConfigurationRepository configurationRepository)
+        public PkiConfigurationAdcsTemplateController(AdcsTemplateLogic templateLogic)
         {
-            this.configurationRepository = configurationRepository;
+            //this.configurationRepository = configurationRepository;
             //this.runtimeConfigurationState = runtimeConfigurationState;
-            this.adcsTemplateLogic = new AdcsTemplateLogic(configurationRepository);
+            //this.adcsTemplateLogic = new AdcsTemplateLogic(configurationRepository, null);
+            this.adcsTemplateLogic = templateLogic;
             this.http = new HttpResponseHandler(this);
             this.dataTransform = new DataTransformation();
         }
@@ -31,60 +32,29 @@ namespace CertificateManager.Controllers
         [Route("pki-config/templates")]
         public JsonResult GetTemplates()
         {
-            try
-            {
-                IEnumerable<AdcsTemplateGetModel> templates = adcsTemplateLogic.GetTemplates();
-                return http.RespondSuccess(templates);
-            }
-            catch(Exception e)
-            {
-                return http.RespondServerError();
-            }
+            return http.RespondSuccess(adcsTemplateLogic.GetTemplates());
         }
 
         [HttpDelete]
         [Route("pki-config/template")]
         public JsonResult DeletePkiTemplate(Guid id)
         {
-            try
-            {
-                adcsTemplateLogic.DeleteTemplate(id);
-                return http.RespondSuccess();
-            }
-            catch
-            {
-                return http.RespondServerError();
-            }
+            adcsTemplateLogic.DeleteTemplate(id);
+            return http.RespondSuccess();
         }
 
         [HttpPut]
         [Route("pki-config/template")]
         public JsonResult UpdateAdcsTemplate(AdcsTemplateUpdateModel updateEntity)
         {
-            try
-            {
-                AdcsTemplateGetModel result = adcsTemplateLogic.UpdateTemplate(updateEntity);
-                return http.RespondSuccess(result);
-            }
-            catch(Exception e)
-            {
-                return http.RespondPreconditionFailed(e.Message);
-            }
+            return http.RespondSuccess(adcsTemplateLogic.UpdateTemplate(updateEntity));
         }
 
         [HttpPost]
         [Route("pki-config/template")]
         public JsonResult AddAdcsTemplate(AdcsTemplate template)
         {
-            try
-            {
-                adcsTemplateLogic.AddTemplate(template);
-                return Json(template);
-            }
-            catch(Exception e)
-            {
-                return http.RespondPreconditionFailed(e.Message);
-            }
+            return http.RespondSuccess(adcsTemplateLogic.AddTemplate(template));    
         }
     }
 }

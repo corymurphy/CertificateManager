@@ -22,7 +22,7 @@ namespace CertificateManager.Entities
         public string AdServer { get; set; }
         public string AdName { get; set; }
         public bool AdUseAppPoolIdentity { get; set; }
-        //public ExternalIdentitySourceType ExternalIdentitySourceType { get; set; }
+        //public ActiveDirectoryMetadataType ActiveDirectoryMetadataType { get; set; }
 
 
 

@@ -24,7 +24,7 @@
 
     <div id="activeDirectory" class="tabcontent">
         @*<h5>Active Directory</h5>*@
-        <div id="externalIdentitySourcesTable"></div>
+        <div id="ActiveDirectoryMetadatasTable"></div>
     </div>
 
 
@@ -56,7 +56,7 @@
                 </div>
 
                 <div class="row">
-                    <button id="saveLocalConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ExternalIdentitySources.SetLocalAppConfig();">Save</button>
+                    <button id="saveLocalConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ActiveDirectoryMetadatas.SetLocalAppConfig();">Save</button>
                 </div>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 </div>
 
                 <div class="row">
-                    <button id="saveAppConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ExternalIdentitySources.SetAppConfig();">Save</button>
+                    <button id="saveAppConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ActiveDirectoryMetadatas.SetAppConfig();">Save</button>
                 </div>
             </div>
         </div>
@@ -105,13 +105,13 @@
         </div>
     </div>
 
-    @Html.Partial("~/Views/ExternalIdentitySources/_AddExternalIdentitySourceModal.cshtml")
-    @Html.Partial("~/Views/ExternalIdentitySources/_AuthApiConfigActionModal.cshtml")
+    @Html.Partial("~/Views/ActiveDirectoryMetadatas/_AddActiveDirectoryMetadataModal.cshtml")
+    @Html.Partial("~/Views/ActiveDirectoryMetadatas/_AuthApiConfigActionModal.cshtml")
 
     @section Script{
         <script>
             $(document).ready(function () {
-                ExternalIdentitySources.PageLoad();
+                ActiveDirectoryMetadatas.PageLoad();
             });
         </script>
     }

@@ -107,7 +107,7 @@ var Services = {
         });
     },
 
-    ImportUsersFromExternalIdentitySource: function (data, successCallback, errorCallback)
+    ImportUsersFromActiveDirectoryMetadata: function (data, successCallback, errorCallback)
     {
         $.ajax({
             url: "/security/authenticable-principal/import",

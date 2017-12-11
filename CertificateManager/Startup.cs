@@ -1,27 +1,23 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
+using CertificateManager.Logic.ActiveDirectory;
+using CertificateManager.Logic.ActiveDirectory.Interfaces;
 using CertificateManager.Logic.ConfigurationProvider;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Logic.MvcMiddleware;
 using CertificateManager.Logic.UXLogic;
 using CertificateManager.Repository;
 using CertificateServices;
-using CertificateServices.ActiveDirectory;
 using CertificateServices.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Internal;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 
 namespace CertificateManager
 {
-
-
-
 
     public class Startup
     {
@@ -161,15 +157,16 @@ namespace CertificateManager
 
             AppConfig appConfig = configurationRepository.GetAppConfig();
 
-            ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
+            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository();
 
             EncryptionProvider cipher = new EncryptionProvider(appConfig.EncryptionKey);
 
             services.AddSingleton<EncryptionProvider>(cipher);
 
-            services.AddSingleton<IActiveDirectoryAuthenticator>(activeDirectoryAuthenticator);
+            services.AddSingleton<IActiveDirectoryAuthenticator>(activeDirectory);
+            services.AddSingleton<IActiveDirectoryRepository>(activeDirectory);
 
-            IdentityAuthenticationLogic identityAuthenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator);
+            IdentityAuthenticationLogic identityAuthenticationLogic = new IdentityAuthenticationLogic(configurationRepository, activeDirectory);
 
             services.AddSingleton<IdentityAuthenticationLogic>();
 
@@ -191,6 +188,7 @@ namespace CertificateManager
 
             services.AddSingleton<SecurityPrincipalLogic>();
 
+            services.AddSingleton<AdcsTemplateLogic>(new AdcsTemplateLogic(configurationRepository, activeDirectory));
 
             services.AddSingleton<IAuthorizationLogic>(authorizationLogic);
 

@@ -17,13 +17,13 @@ namespace CertificateManager.Controllers
         private IConfigurationRepository configurationRepository;
         private ICertificateProvider certificateProvider;
         private IAuthorizationLogic authorizationLogic;
-        private PrivateCertificateProcessing processor;
+        //private PrivateCertificateProcessing processor;
         private HttpResponseHandler http;
         private AuditLogic audit;
-        //private AdcsTemplateLogic templateLogic;
+        private AdcsTemplateLogic templateLogic;
 
 
-        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic)
+        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic, AdcsTemplateLogic templateLogic)
         {
             this.certificateRepository = certRepo;
             this.configurationRepository = configRepo;
@@ -31,7 +31,7 @@ namespace CertificateManager.Controllers
             this.authorizationLogic = authorizationLogic;
             this.http = new HttpResponseHandler(this);
             this.audit = auditLogic;
-            //this.templateLogic = new AdcsTemplateLogic(configurationRepository);
+            this.templateLogic = templateLogic;
 
         }
 
@@ -41,7 +41,7 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult IssuePendingCertificate(Guid id)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
 
             CreatePrivateCertificateResult result = processor.IssuePendingCertificate(id);
 
@@ -55,7 +55,7 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult CreateCertificate(CreatePrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
 
             CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
 
@@ -67,7 +67,7 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Certificate was successfully signed by the certificate authority.")]
         public JsonResult SignCertificaste(SignPrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
 
             SignPrivateCertificateResult result = processor.SignCertificate(model);
 

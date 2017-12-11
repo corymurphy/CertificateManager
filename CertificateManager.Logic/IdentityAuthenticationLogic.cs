@@ -1,6 +1,6 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Logic.ActiveDirectory.Interfaces;
 using CertificateManager.Repository;
-using CertificateServices.ActiveDirectory;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -92,16 +92,16 @@ namespace CertificateManager.Logic
         {
             AuthenticablePrincipal authenticablePrincipal = configurationRepository.GetAuthenticablePrincipal(upn);
 
-            ExternalIdentitySource externalIdentitySource = configurationRepository.Get<ExternalIdentitySource>(domain);
+            ActiveDirectoryMetadata ActiveDirectoryMetadata = configurationRepository.Get<ActiveDirectoryMetadata>(domain);
 
-            if (externalIdentitySource == null || externalIdentitySource.Enabled != true)
+            if (ActiveDirectoryMetadata == null || ActiveDirectoryMetadata.Enabled != true)
                 throw new Exception("Authentication failed");
 
 
-            if(activeDirectoryAuthenticator.Authenticate(upn, password, externalIdentitySource.Domain))
+            if(activeDirectoryAuthenticator.Authenticate(upn, password, ActiveDirectoryMetadata.Domain))
             {
                 this.IncrementSuccessfulAuthentication(authenticablePrincipal, domain);
-                return ConstructClaimsPrincipal(authenticablePrincipal, externalIdentitySource.Name);
+                return ConstructClaimsPrincipal(authenticablePrincipal, ActiveDirectoryMetadata.Name);
             }
             else
             {

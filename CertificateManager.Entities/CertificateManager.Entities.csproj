@@ -167,6 +167,7 @@
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.3.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.4.0\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
@@ -190,9 +191,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Attributes\DirectoryAttributeMapping.cs" />
+    <Compile Include="Attributes\EntitySchemaClassAttribute.cs" />
     <Compile Include="Attributes\RepositoryAttribute.cs" />
     <Compile Include="Entities\AccessControlEntryViewModel.cs" />
     <Compile Include="Entities\AccessControlEntry.cs" />
+    <Compile Include="Entities\ActiveDirectorySchemaClass.cs" />
+    <Compile Include="Entities\AdcsCertificateTemplate.cs" />
     <Compile Include="Entities\AuthorizationScopes.cs" />
     <Compile Include="Entities\GetCertificatePasswordResponseEntity.cs" />
     <Compile Include="Entities\GetCertificatePasswordEntity.cs" />
@@ -204,6 +209,7 @@
     <Compile Include="Entities\SetRoleScopesModel.cs" />
     <Compile Include="Entities\UpdateUserModel.cs" />
     <Compile Include="Enumerations\PendingCertificateRequestType.cs" />
+    <Compile Include="Exceptions\AdcsTemplateValidationException.cs" />
     <Compile Include="Exceptions\AuthenticablePrincipalDeniedLoginByPolicyException.cs" />
     <Compile Include="Exceptions\CertificateAuthorityDeniedRequestException.cs" />
     <Compile Include="Exceptions\CredentialsInvalidForAuthenticablePrincipalException.cs" />
@@ -238,10 +244,10 @@
     <Compile Include="Entities\DownloadCertificateEntity.cs" />
     <Compile Include="Entities\DownloadPfxCertificateEntity.cs" />
     <Compile Include="Entities\ImportUsersExternalIdentitySourceModel.cs" />
-    <Compile Include="Entities\ExternalIdentitySourceAuthPrincipalQueryResultModel.cs" />
-    <Compile Include="Entities\ExternalIdentitySourceConfigViewModel.cs" />
-    <Compile Include="Entities\ExternalIdentitySourceDomains.cs" />
-    <Compile Include="Entities\ExternalIdentitySource.cs" />
+    <Compile Include="Entities\ActiveDirectoryMetadataAuthPrincipalQueryResultModel.cs" />
+    <Compile Include="Entities\ActiveDirectoryMetadataConfigViewModel.cs" />
+    <Compile Include="Entities\ActiveDirectoryMetadataDomains.cs" />
+    <Compile Include="Entities\ActiveDirectoryMetadata.cs" />
     <Compile Include="Entities\GetCertificateEntity.cs" />
     <Compile Include="Entities\LoginLocalViewModel.cs" />
     <Compile Include="Entities\PrivateCertificateRequestStatus.cs" />
@@ -272,6 +278,9 @@
     <Compile Include="Exceptions\MergeRequiresMergeTargetException.cs" />
     <Compile Include="Exceptions\ConfigurationItemNotFoundException.cs" />
     <Compile Include="Exceptions\RepositoryAttributeIsInvalidException.cs" />
+    <Compile Include="Exceptions\TypeDoesNotHaveDirectoryAttributeException.cs" />
+    <Compile Include="Exceptions\TypeDoesNotHaveEntitySchemaClassAttributeException.cs" />
+    <Compile Include="Exceptions\TypeHasInvalidDirectoryAttributeException.cs" />
     <Compile Include="Interfaces\ICertificatePasswordEntity.cs" />
     <Compile Include="Interfaces\ICertificateRequestPublicPrivateKeyPair.cs" />
     <Compile Include="Interfaces\ICertificateSubjectRaw.cs" />
@@ -283,10 +292,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj">
-      <Project>{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}</Project>
-      <Name>CertificateServices.ActiveDirectory</Name>
-    </ProjectReference>
     <ProjectReference Include="..\CertificateServices\CertificateServices.csproj">
       <Project>{d7a343ae-7c7f-431e-9b81-52160d57b44c}</Project>
       <Name>CertificateServices</Name>

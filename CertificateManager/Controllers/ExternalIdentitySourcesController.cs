@@ -1,28 +1,30 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
+using CertificateManager.Logic.ActiveDirectory;
+using CertificateManager.Logic.ActiveDirectory.Interfaces;
 using CertificateManager.Repository;
-using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
 
 namespace CertificateManager.Controllers
 {
-    public class ExternalIdentitySourcesController : Controller
+    public class ActiveDirectoryMetadatasController : Controller
     {
         IConfigurationRepository configurationRepository;
+        IActiveDirectoryRepository activeDirectory;
         HttpResponseHandler http;
 
-        public ExternalIdentitySourcesController(IConfigurationRepository configurationRepository)
+        public ActiveDirectoryMetadatasController(IConfigurationRepository configurationRepository, IActiveDirectoryRepository activeDirectory)
         {
             this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
+            this.activeDirectory = activeDirectory;
         }
 
 
         [HttpGet]
         [Route("view/identity-sources/external")]
-        public ActionResult ExternalIdentitySourcesView()
+        public ActionResult ActiveDirectoryMetadatasView()
         {
             return View("View");
         }
@@ -31,21 +33,19 @@ namespace CertificateManager.Controllers
         [Route("identity-source/external/query/users")]
         public JsonResult QueryUsers(string query)
         {
-            IEnumerable<ExternalIdentitySource> sources = configurationRepository.GetAll<ExternalIdentitySource>();
+            IEnumerable<ActiveDirectoryMetadata> sources = configurationRepository.GetAll<ActiveDirectoryMetadata>();
 
-            List<ExternalIdentitySourceAuthPrincipalQueryResultModel> results = new List<ExternalIdentitySourceAuthPrincipalQueryResultModel>();
-            foreach(var source in sources)
+            List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel> results = new List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>();
+            foreach(ActiveDirectoryMetadata source in sources)
             {
-                ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(source.Domain, source.Domain, source.Username, source.Password);
-
-                List<ActiveDirectoryAuthenticablePrincipal> sourceResults = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", query, NamingContext.Default);
+                List<ActiveDirectoryAuthenticablePrincipal> sourceResults = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", query, NamingContext.Default, source);
 
                 if (sourceResults == null)
                     continue;
 
                 if(sourceResults.Count == 1)
                 {
-                    results.Add(new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    results.Add(new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         Domain = source.Domain, 
                         SamAccountName = sourceResults[0].SamAccountName,
@@ -60,7 +60,7 @@ namespace CertificateManager.Controllers
 
                 foreach(var user in sourceResults)
                 {
-                    results.Add(new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    results.Add(new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         Domain = source.Domain,
                         SamAccountName = user.SamAccountName,
@@ -84,12 +84,12 @@ namespace CertificateManager.Controllers
 
         [HttpGet]
         [Route("cm-config/external-identity-sources")]
-        public JsonResult GetExternalIdentitySources()
+        public JsonResult GetActiveDirectoryMetadatas()
         {
-            List<ExternalIdentitySource> modified = new List<ExternalIdentitySource>();
-            IEnumerable<ExternalIdentitySource> actual = configurationRepository.GetAll<ExternalIdentitySource>();
+            List<ActiveDirectoryMetadata> modified = new List<ActiveDirectoryMetadata>();
+            IEnumerable<ActiveDirectoryMetadata> actual = configurationRepository.GetAll<ActiveDirectoryMetadata>();
 
-            foreach (ExternalIdentitySource item in actual)
+            foreach (ActiveDirectoryMetadata item in actual)
             {
                 item.Password = "********";
                 modified.Add(item);
@@ -101,27 +101,27 @@ namespace CertificateManager.Controllers
 
         [HttpGet]
         [Route("cm-config/external-identity-sources/domains")]
-        public JsonResult GetExternalIdentitySourceDomains()
+        public JsonResult GetActiveDirectoryMetadataDomains()
         {
-            return Json(configurationRepository.GetAll<ExternalIdentitySourceDomains>());
+            return Json(configurationRepository.GetAll<ActiveDirectoryMetadataDomains>());
         }
 
 
 
         [HttpDelete]
         [Route("cm-config/external-identity-source")]
-        public JsonResult DeleteExternalIdentitySource(ExternalIdentitySource entity)
+        public JsonResult DeleteActiveDirectoryMetadata(ActiveDirectoryMetadata entity)
         {
-            configurationRepository.Delete<ExternalIdentitySource>(entity.Id);
+            configurationRepository.Delete<ActiveDirectoryMetadata>(entity.Id);
 
             return Json(new { status = "success" });
         }
 
         [HttpPost]
         [Route("cm-config/external-identity-source")]
-        public JsonResult AddExternalIdentitySource(ExternalIdentitySource entity)
+        public JsonResult AddActiveDirectoryMetadata(ActiveDirectoryMetadata entity)
         {
-            configurationRepository.Insert<ExternalIdentitySource>(entity);
+            configurationRepository.Insert<ActiveDirectoryMetadata>(entity);
 
             return Json(new { status = "success" });
         }
@@ -129,12 +129,12 @@ namespace CertificateManager.Controllers
 
         [HttpPut]
         [Route("cm-config/external-identity-source")]
-        public JsonResult UpdateExternalIdentitySource(ExternalIdentitySource entity)
+        public JsonResult UpdateActiveDirectoryMetadata(ActiveDirectoryMetadata entity)
         {
-            ExternalIdentitySource existing = configurationRepository.Get<ExternalIdentitySource>(entity.Id);
+            ActiveDirectoryMetadata existing = configurationRepository.Get<ActiveDirectoryMetadata>(entity.Id);
             entity.Password = existing.Password;
 
-            configurationRepository.Update<ExternalIdentitySource>(entity);
+            configurationRepository.Update<ActiveDirectoryMetadata>(entity);
 
             return Json(new { status = "success" });
         }

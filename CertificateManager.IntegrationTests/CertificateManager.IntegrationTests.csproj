@@ -100,6 +100,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ActiveDirectoryRepositoryTests.cs" />
     <Compile Include="PrivateCertificateProcessingTests.cs" />
+    <Compile Include="AdcsTemplateLogicTests.cs" />
     <Compile Include="Win32CertificateProviderTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -122,10 +123,6 @@
     <ProjectReference Include="..\CertificateManager\CertificateManager.csproj">
       <Project>{72434dac-a9a1-463d-987f-7518c4a593a2}</Project>
       <Name>CertificateManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj">
-      <Project>{eef4be6c-ce28-459c-80f8-fe3cd7f1dce5}</Project>
-      <Name>CertificateServices.ActiveDirectory</Name>
     </ProjectReference>
     <ProjectReference Include="..\CertificateServices\CertificateServices.csproj">
       <Project>{d7a343ae-7c7f-431e-9b81-52160d57b44c}</Project>

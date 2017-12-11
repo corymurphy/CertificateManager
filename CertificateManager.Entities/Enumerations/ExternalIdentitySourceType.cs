@@ -1,4 +1,4 @@
 ﻿namespace CertificateManager.Entities.Enumerations
 {
-    public enum ExternalIdentitySourceType { ActiveDirectoryIwa, ActiveDirectoryBasic }
+    public enum ActiveDirectoryMetadataType { ActiveDirectoryIwa, ActiveDirectoryBasic }
 }

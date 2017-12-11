@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Logic.ActiveDirectory;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
@@ -23,7 +24,7 @@ namespace CertificateManager.Logic
         {
             //this.runtimeConfigurationState = runtimeConfigurationState;
             this.configurationRepository = configurationRepository;
-            this.templateLogic = new AdcsTemplateLogic(configurationRepository);
+            this.templateLogic = new AdcsTemplateLogic(configurationRepository, new ActiveDirectoryRepository());
             this.certificateAuthorityConfigurationLogic = new CertificateAuthorityConfigurationLogic(configurationRepository);
             this.idpLogic = new ActiveDirectoryIdentityProviderLogic(configurationRepository);
             this.authorizationLogic = new AuthorizeInitialSetup(configurationRepository);
@@ -35,7 +36,7 @@ namespace CertificateManager.Logic
         public void Complete(InitialSetupConfigModel config)
         {
 
-            ExternalIdentitySource idp = idpLogic.Add(config.AdName, config.AdServer, config.AdSearchBase, config.AdServiceAccountUsername, config.AdServiceAccountPassword, config.AdUseAppPoolIdentity);
+            ActiveDirectoryMetadata idp = idpLogic.Add(config.AdName, config.AdServer, config.AdSearchBase, config.AdServiceAccountUsername, config.AdServiceAccountPassword, config.AdUseAppPoolIdentity);
             certificateAuthorityConfigurationLogic.AddPrivateCertificateAuthority(config.AdcsServerName, config.AdcsCommonName, config.AdcsHashAlgorithm, idp.Id);
             AdcsTemplate adcsTemplate = templateLogic.AddTemplate(config.AdcsTemplateName, config.AdcsTemplateCipher, config.AdcsTemplateKeyUsage, config.AdcsTemplateWindowsApi, RoleManagementLogic.DefaultTemplateIssuerRoles);
             AuthenticablePrincipal emergencyAccess = localIdpLogic.InitializeEmergencyAccess(config.EmergencyAccessKey);

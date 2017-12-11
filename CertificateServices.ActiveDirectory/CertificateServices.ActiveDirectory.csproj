@@ -22,4 +22,11 @@
     <Reference Include="System.DirectoryServices.AccountManagement" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Attributes\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Interfaces\" />
+  </ItemGroup>
+
 </Project>

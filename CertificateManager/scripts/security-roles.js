@@ -50,7 +50,7 @@
                 { name: "name", type: "text", title: "name" },
                 //{ name: "domain", type: "text", title: "Domain" },
                 //{ name: "searchBase", type: "text", title: "SearchBase" },
-                //{ name: "externalIdentitySourceType", type: "select", items: CmOptions.ExternalIdentitySourceType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
+                //{ name: "ActiveDirectoryMetadataType", type: "select", items: CmOptions.ActiveDirectoryMetadataType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
                 //{ name: "username", type: "text", title: "Username" },
                 //{ name: "password", type: "text", readOnly: true, title: "password" },
                 { name: "enabled", type: "checkbox", title: "Enabled", sorting: false },
@@ -142,7 +142,7 @@
     },
 
     InitializeSelect: function () {
-        CmOptions.ExternalIdentitySourceType.forEach(function (item) {
+        CmOptions.ActiveDirectoryMetadataType.forEach(function (item) {
             $('#eisType').append($('<option>', {
                 value: item.Name,
                 text: item.Name

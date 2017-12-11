@@ -45,7 +45,7 @@ namespace CertificateManager.Logic
                     });
                 }
             }
-            ExternalIdentitySource idp = configDb.GetAll<ExternalIdentitySource>().FirstOrDefault();
+            ActiveDirectoryMetadata idp = configDb.GetAll<ActiveDirectoryMetadata>().FirstOrDefault();
 
             configDb.DropCollection<PrivateCertificateAuthorityConfig>();
 

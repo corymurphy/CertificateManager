@@ -16,5 +16,6 @@ namespace CertificateManager.Entities
         public KeyUsage KeyUsage { get; set; }
         public WindowsApi WindowsApi { get; set; }
         public List<Guid> RolesAllowedToIssue { get; set; }
+        public int MinimumKeySize { get; set; }
     }
 }

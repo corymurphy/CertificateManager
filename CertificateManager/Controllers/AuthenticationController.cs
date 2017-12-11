@@ -1,7 +1,5 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
-using CertificateManager.Repository;
-using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

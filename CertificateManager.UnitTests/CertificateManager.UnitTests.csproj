@@ -222,6 +222,7 @@
     <Compile Include="TestClasses\TestClassWithoutAttribute.cs" />
     <Compile Include="HashProviderTests.cs" />
     <Compile Include="CertificateManagementLogicTests.cs" />
+    <Compile Include="AdcsTemplateLogicTests.cs" />
     <Compile Include="UserManagementLogicTests.cs" />
     <Compile Include="X509NormalizationTests.cs" />
     <Compile Include="Win32CertificateProviderTests.cs" />
@@ -255,10 +256,6 @@
     <ProjectReference Include="..\CertificateManager\CertificateManager.csproj">
       <Project>{72434dac-a9a1-463d-987f-7518c4a593a2}</Project>
       <Name>CertificateManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj">
-      <Project>{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}</Project>
-      <Name>CertificateServices.ActiveDirectory</Name>
     </ProjectReference>
     <ProjectReference Include="..\CertificateServices\CertificateServices.csproj">
       <Project>{d7a343ae-7c7f-431e-9b81-52160d57b44c}</Project>

@@ -1,4 +1,4 @@
-﻿var ExternalIdentitySources = {
+﻿var ActiveDirectoryMetadatas = {
 
     ShowAuthApiActionModal: function (dialogType, client) {
 
@@ -6,7 +6,7 @@
         {
             $('#commitAuthApiEntity').click(function () {
 
-                ExternalIdentitySources.AddAuthApiCertificate(client);
+                ActiveDirectoryMetadatas.AddAuthApiCertificate(client);
             });
         }
         else
@@ -18,14 +18,14 @@
         $("#authApiActionModal").modal("show");
     },
 
-    ShowAddExternalIdentitySourceModal: function (dialogType, client) {
+    ShowAddActiveDirectoryMetadataModal: function (dialogType, client) {
 
         $('#commitAuthApiEntity').click(function () {
 
-            ExternalIdentitySources.AddEis(client, "Add");
+            ActiveDirectoryMetadatas.AddEis(client, "Add");
         });
 
-        $("#addExternalIdentitySourceModal").modal("show");
+        $("#addActiveDirectoryMetadataModal").modal("show");
     },
 
     AddEis: function (client, isNew) {
@@ -38,9 +38,9 @@
             searchBase: $("#eisSearchBase").val(),
         });
 
-        $("#externalIdentitySourcesTable").jsGrid(isNew ? "insertItem" : "updateItem", client);
+        $("#ActiveDirectoryMetadatasTable").jsGrid(isNew ? "insertItem" : "updateItem", client);
 
-        $("#addExternalIdentitySourceModal").modal("hide");
+        $("#addActiveDirectoryMetadataModal").modal("hide");
     },
 
     AddAuthApiCertificate: function (client) {
@@ -71,7 +71,7 @@
 
             deleteConfirm: "Do you really want to delete this external identity source?",
 
-            controller: ExternalIdentitySources.AuthApiController,
+            controller: ActiveDirectoryMetadatas.AuthApiController,
 
             fields: [
                 { name: "displayName", type: "text", title: "DisplayName" },
@@ -84,7 +84,7 @@
                     headerTemplate: function () {
                         return $("<button>").attr("type", "button").text("Add")
                             .on("click", function () {
-                                ExternalIdentitySources.ShowAuthApiActionModal("Add", {});
+                                ActiveDirectoryMetadatas.ShowAuthApiActionModal("Add", {});
                             });
                     }
                 }
@@ -94,7 +94,7 @@
 
     InitializeGrid: function ()
     {
-        $("#externalIdentitySourcesTable").jsGrid({
+        $("#ActiveDirectoryMetadatasTable").jsGrid({
             height: "auto",
             width: "100%",
 
@@ -109,13 +109,13 @@
 
             deleteConfirm: "Do you really want to delete this external identity source?",
 
-            controller: ExternalIdentitySources.Controller,
+            controller: ActiveDirectoryMetadatas.Controller,
 
             fields: [
                 { name: "name", type: "text", title: "Name" },
                 { name: "domain", type: "text", title: "Domain" },
                 { name: "searchBase", type: "text", title: "SearchBase" },
-                { name: "externalIdentitySourceType", type: "select", items: CmOptions.ExternalIdentitySourceType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
+                { name: "ActiveDirectoryMetadataType", type: "select", items: CmOptions.ActiveDirectoryMetadataType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
                 { name: "username", type: "text", title: "Username" },
                 { name: "password", type: "text", readOnly: true, title: "password" },
                 { name: "enabled", type: "checkbox", title: "Enabled", sorting: false },
@@ -124,7 +124,7 @@
                     headerTemplate: function () {
                         return $("<button>").attr("type", "button").text("Add")
                             .on("click", function () {
-                                ExternalIdentitySources.ShowAddExternalIdentitySourceModal("Add", {});
+                                ActiveDirectoryMetadatas.ShowAddActiveDirectoryMetadataModal("Add", {});
                             });
                     }
                 }
@@ -150,7 +150,7 @@
                 url: "/cm-config/external-identity-source",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#externalIdentitySourcesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#ActiveDirectoryMetadatasTable"));
             });
         },
 
@@ -161,7 +161,7 @@
                 url: "/cm-config/external-identity-source",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#externalIdentitySourcesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#ActiveDirectoryMetadatasTable"));
             });
         },
 
@@ -171,13 +171,13 @@
                 url: "/cm-config/external-identity-source",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#externalIdentitySourcesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#ActiveDirectoryMetadatasTable"));
             });
         },
 
-        onItemInserting: function (args) { ExternalIdentitySources.ResetErrorState(); },
-        onItemUpdating: function (args) { ExternalIdentitySources.ResetErrorState(); },
-        onItemDeleting: function (args) { ExternalIdentitySources.ResetErrorState(); }
+        onItemInserting: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); },
+        onItemUpdating: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); },
+        onItemDeleting: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); }
     },
 
     AuthApiController: {
@@ -198,7 +198,7 @@
                 url: "/identity-sources/local-authapi/trustedcertificate",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
             });
         },
 
@@ -209,7 +209,7 @@
                 url: "/identity-sources/local-authapi/trustedcertificate",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
             });
         },
 
@@ -219,13 +219,13 @@
                 url: "/identity-sources/local-authapi/trustedcertificate",
                 data: item
             }).fail(function (xhr, ajaxOptions, thrownError) {
-                ExternalIdentitySources.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
+                ActiveDirectoryMetadatas.HandleError(xhr.responseJSON.message, $("#authApiSigningCertificatesTable"));
             });
         },
 
-        onItemInserting: function (args) { ExternalIdentitySources.ResetErrorState(); },
-        onItemUpdating: function (args) { ExternalIdentitySources.ResetErrorState(); },
-        onItemDeleting: function (args) { ExternalIdentitySources.ResetErrorState(); }
+        onItemInserting: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); },
+        onItemUpdating: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); },
+        onItemDeleting: function (args) { ActiveDirectoryMetadatas.ResetErrorState(); }
     },
 
     ResetErrorState: function () {
@@ -238,7 +238,7 @@
     },
 
     InitializeSelect: function () {
-        CmOptions.ExternalIdentitySourceType.forEach(function (item) {
+        CmOptions.ActiveDirectoryMetadataType.forEach(function (item) {
             $('#eisType').append($('<option>', {
                 value: item.Name,
                 text: item.Name
@@ -250,7 +250,7 @@
 
     InitializeCertificateSelect2: function ()
     {
-        ExternalIdentitySources.CertificateSelect2.select2({
+        ActiveDirectoryMetadatas.CertificateSelect2.select2({
             width: '100%',
             placeholder: 'Search for a certificate',
             ajax: {
@@ -273,8 +273,8 @@
                 cache: false
             },
             escapeMarkup: function (markup) { return markup; },
-            templateResult: ExternalIdentitySources.FormatCertificate,
-            templateSelection: ExternalIdentitySources.FormatCertificateSelection,
+            templateResult: ActiveDirectoryMetadatas.FormatCertificate,
+            templateSelection: ActiveDirectoryMetadatas.FormatCertificateSelection,
 
         });
     },
@@ -310,12 +310,12 @@
 
     PageLoad: function ()
     {
-        ExternalIdentitySources.InitializeSelect();
-        ExternalIdentitySources.InitializeGrid();
-        ExternalIdentitySources.CertificateSelect2 = $('#thumbprint');
-        ExternalIdentitySources.InitializeCertificateSelect2();
-        ExternalIdentitySources.InitializeAuthApiGrid();
-        Services.GetAppConfig(ExternalIdentitySources.GetAppConfigSuccessCallback, null);
+        ActiveDirectoryMetadatas.InitializeSelect();
+        ActiveDirectoryMetadatas.InitializeGrid();
+        ActiveDirectoryMetadatas.CertificateSelect2 = $('#thumbprint');
+        ActiveDirectoryMetadatas.InitializeCertificateSelect2();
+        ActiveDirectoryMetadatas.InitializeAuthApiGrid();
+        Services.GetAppConfig(ActiveDirectoryMetadatas.GetAppConfigSuccessCallback, null);
         UiGlobal.ShowCurrentTab();
     },
 
@@ -328,7 +328,7 @@
             localIdpIdentifier: $('#localIdpIdentifier').val()
         }
 
-        Services.SetAppConfig(data, ExternalIdentitySources.SaveAppConfigSuccessCallback, null);
+        Services.SetAppConfig(data, ActiveDirectoryMetadatas.SaveAppConfigSuccessCallback, null);
     },
 
     SetLocalAppConfig: function ()
@@ -341,6 +341,6 @@
             emergencyAccessEnabled: $('#allowEmergencyAccess').prop('checked')
         }
 
-        Services.SetLocalAppConfig(data, ExternalIdentitySources.SaveAppConfigSuccessCallback, null);
+        Services.SetLocalAppConfig(data, ActiveDirectoryMetadatas.SaveAppConfigSuccessCallback, null);
     }
 }

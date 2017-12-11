@@ -30,7 +30,7 @@
         { Name: "UsernamePassword", Id: 0, Display: "basic", Primary: true },
         { Name: "WindowsKerberos", Id: 1, Display: "kerberos" }
     ],
-    ExternalIdentitySourceType: [
+    ActiveDirectoryMetadataType: [
         { Name: "ActiveDirectoryIwa", Id: 0, Display: "ActiveDirectoryIwa" },
         { Name: "ActiveDirectoryBasic", Id: 1, Display: "ActiveDirectoryBasic" },
     ]

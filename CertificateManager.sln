@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27004.2009
+VisualStudioVersion = 15.0.27004.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateServices", "CertificateServices\CertificateServices.csproj", "{D7A343AE-7C7F-431E-9B81-52160D57B44C}"
 EndProject
@@ -16,8 +16,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.IntegrationTests", "CertificateManager.IntegrationTests\CertificateManager.IntegrationTests.csproj", "{B69432C7-D39E-4D8B-9620-72415B2DD4D4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.UnitTests", "CertificateManager.UnitTests\CertificateManager.UnitTests.csproj", "{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CertificateServices.ActiveDirectory", "CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj", "{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,18 +111,6 @@ Global
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x64.Build.0 = Release|x64
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x86.ActiveCfg = Release|x86
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x86.Build.0 = Release|x86
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|x64.ActiveCfg = Debug|x64
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|x64.Build.0 = Debug|x64
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Debug|x86.Build.0 = Debug|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|x64.ActiveCfg = Release|x64
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|x64.Build.0 = Release|x64
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|x86.ActiveCfg = Release|x86
-		{EEF4BE6C-CE28-459C-80F8-FE3CD7F1DCE5}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

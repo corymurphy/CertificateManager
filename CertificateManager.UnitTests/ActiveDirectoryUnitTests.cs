@@ -1,6 +1,8 @@
-﻿using CertificateServices.ActiveDirectory;
+﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Exceptions;
+using CertificateManager.Logic.ActiveDirectory;
 using CertificateServices.ActiveDirectory.Entities;
-using CertificateServices.ActiveDirectory.Exceptions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CertificateManager.UnitTests

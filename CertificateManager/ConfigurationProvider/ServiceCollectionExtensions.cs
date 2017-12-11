@@ -1,17 +1,7 @@
-﻿using CertificateManager.Entities;
-using CertificateManager.Logic;
-using CertificateManager.Logic.UXLogic;
-using CertificateManager.Repository;
-using CertificateServices;
-using CertificateServices.ActiveDirectory;
-using CertificateServices.Interfaces;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using System;
 
 namespace CertificateManager.Logic.ConfigurationProvider
 {

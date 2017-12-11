@@ -1,8 +1,5 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
-using CertificateManager.Logic.Interfaces;
-using CertificateManager.Repository;
-using CertificateServices.ActiveDirectory;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -66,7 +63,7 @@ namespace CertificateManager.Controllers
 
         [HttpPost]
         [Route("security/authenticable-principal/import")]
-        public JsonResult ImportUsers(ImportUsersExternalIdentitySourceModel entity)
+        public JsonResult ImportUsers(ImportUsersActiveDirectoryMetadataModel entity)
         {
             try
             {

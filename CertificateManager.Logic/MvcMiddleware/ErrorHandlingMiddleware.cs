@@ -46,6 +46,8 @@ namespace CertificateManager.Logic.MvcMiddleware
         {
             switch (exception)
             {
+                case AdcsTemplateValidationException adcsTemplateValidationException:
+                    return HttpStatusCode.PreconditionFailed;
                 case CryptographicException cryptographicException:
                     return HttpStatusCode.InternalServerError;
                 case FormatException formatException:

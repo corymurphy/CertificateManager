@@ -1,4 +1,4 @@
-﻿using CertificateServices.ActiveDirectory;
+﻿using CertificateManager.Entities.Attributes;
 using System;
 
 namespace CertificateManager.Entities

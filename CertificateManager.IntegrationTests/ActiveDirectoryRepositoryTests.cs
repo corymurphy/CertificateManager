@@ -1,11 +1,10 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CertificateServices.ActiveDirectory;
+﻿using CertificateManager.Entities;
+using CertificateManager.Logic.ActiveDirectory;
 using CertificateServices.ActiveDirectory.Entities;
-using CertificateManager.Repository;
-using CertificateManager.Entities;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Collections.Generic;
 using System.Linq;
+
 namespace CertificateManager.IntegrationTests
 {
     [TestClass]
@@ -20,38 +19,49 @@ namespace CertificateManager.IntegrationTests
         //private string domain = "cm.local";
         private string password = "Password1@";
 
+        private ActiveDirectoryRepository activeDirectory;
+        private ActiveDirectoryMetadata metadata;
+
+        [TestInitialize]
+        public void InitializeTest()
+        {
+            activeDirectory = new ActiveDirectoryRepository();
+            metadata = new ActiveDirectoryMetadata(domain, username, password);
+        }
 
         [TestMethod]
-        public void ActiveDirectoryRepositoryTests_Search_ActiveDirectoryAuthenticablePrincipal_ReturnsResults_Success()
+        public void ActiveDirectoryRepository_Search_ActiveDirectoryAuthenticablePrincipal_ReturnsResults_Success()
         {
-            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
-
-            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>(NamingContext.Default);
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>(NamingContext.Default, metadata);
 
             Assert.IsNotNull(results);
         }
 
         [TestMethod]
-        public void ActiveDirectoryRepositoryTests_Search_SearchForAdministrator_ReturnsAdminAccount()
+        public void ActiveDirectoryRepository_Search_SearchForAdministrator_ReturnsAdminAccount()
         {
-            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
-
-            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default);
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default, metadata);
 
             Assert.IsTrue(results.Any());
         }
 
         [TestMethod]
-        public void ActiveDirectoryRepositoryTests_Search_SearchForAdministrator_ReturnAdminAccount_CheckName()
+        public void ActiveDirectoryRepository_Search_SearchForAdministrator_ReturnAdminAccount_CheckName()
         {
-            ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository(domain, domain, username, password);
-
-            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default);
+            List<ActiveDirectoryAuthenticablePrincipal> results = activeDirectory.Search<ActiveDirectoryAuthenticablePrincipal>("anr", username, NamingContext.Default, metadata);
 
             ActiveDirectoryAuthenticablePrincipal adminAccount = results.FirstOrDefault();
 
             Assert.AreEqual(username, adminAccount.SamAccountName);
 
+        }
+
+        [TestMethod]
+        public void ActiveDirectoryRepository_Search_FindAllAdcsTemplates_DoesNotReturnNull()
+        {
+            List<AdcsCertificateTemplate> templates = activeDirectory.Search<AdcsCertificateTemplate>(NamingContext.Configuration, metadata);
+
+            Assert.IsNotNull(templates);
         }
     }
 }

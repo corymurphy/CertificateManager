@@ -13,15 +13,15 @@ namespace CertificateManager.UnitTests
     [TestClass]
     public class UserManagementLogicTests
     {
-        private ImportUsersExternalIdentitySourceModel GetImportUsersExternalIdentitySourceModelValid()
+        private ImportUsersActiveDirectoryMetadataModel GetImportUsersActiveDirectoryMetadataModelValid()
         {
-            return new ImportUsersExternalIdentitySourceModel()
+            return new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = Guid.NewGuid(),
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = "TestAccountName",
                         UserPrincipalName = "TestUpn"
@@ -123,13 +123,13 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportMerge_EntityWithNullMergeWith_ThrowsMergeRequiresMergeTargetException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = new ImportUsersExternalIdentitySourceModel()
+            ImportUsersActiveDirectoryMetadataModel entity = new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = (Guid?)null,
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = "TestAccountName",
                         UserPrincipalName = "TestUpn"
@@ -151,13 +151,13 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportMerge_EntityWithExistingSamAccountName_ThrowsMergeRequiresMergeTargetException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = new ImportUsersExternalIdentitySourceModel()
+            ImportUsersActiveDirectoryMetadataModel entity = new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = Guid.NewGuid(),
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = "TestAccountName",
                         UserPrincipalName = "TestUpn"
@@ -179,13 +179,13 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportMerge_EntityWithInvalidAuthenticationRealm_ThrowsReferencedObjectDoesNotExistException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = new ImportUsersExternalIdentitySourceModel()
+            ImportUsersActiveDirectoryMetadataModel entity = new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = Guid.NewGuid(),
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = "TestAccountName",
                         UserPrincipalName = "TestUpn"
@@ -207,13 +207,13 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportMerge_EntityWithEmptyUserPrincipalName_ThrowsInsufficientDataException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = new ImportUsersExternalIdentitySourceModel()
+            ImportUsersActiveDirectoryMetadataModel entity = new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = Guid.NewGuid(),
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = "TestAccountName",
                         UserPrincipalName = string.Empty
@@ -224,7 +224,7 @@ namespace CertificateManager.UnitTests
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.Exists<ExternalIdentitySource>(It.IsAny<Guid>())).Returns(true);
+            configurationRepository.Setup(x => x.Exists<ActiveDirectoryMetadata>(It.IsAny<Guid>())).Returns(true);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -236,13 +236,13 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportMerge_EntityWithEmptySamAccountName_ThrowsInsufficientDataException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = new ImportUsersExternalIdentitySourceModel()
+            ImportUsersActiveDirectoryMetadataModel entity = new ImportUsersActiveDirectoryMetadataModel()
             {
                 MergeWith = Guid.NewGuid(),
                 Merge = true,
-                Users = new System.Collections.Generic.List<ExternalIdentitySourceAuthPrincipalQueryResultModel>()
+                Users = new System.Collections.Generic.List<ActiveDirectoryMetadataAuthPrincipalQueryResultModel>()
                 {
-                    new ExternalIdentitySourceAuthPrincipalQueryResultModel()
+                    new ActiveDirectoryMetadataAuthPrincipalQueryResultModel()
                     {
                         SamAccountName = string.Empty,
                         UserPrincipalName = "TestUpn"
@@ -253,7 +253,7 @@ namespace CertificateManager.UnitTests
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
             configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.Exists<ExternalIdentitySource>(It.IsAny<Guid>())).Returns(true);
+            configurationRepository.Setup(x => x.Exists<ActiveDirectoryMetadata>(It.IsAny<Guid>())).Returns(true);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -265,7 +265,7 @@ namespace CertificateManager.UnitTests
         public void UserManagementLogic_ImportUser_Unauthorized_ThrowsUnauthorizedAccessException()
         {
             ClaimsPrincipal user = new ClaimsPrincipal();
-            ImportUsersExternalIdentitySourceModel entity = GetImportUsersExternalIdentitySourceModelValid();
+            ImportUsersActiveDirectoryMetadataModel entity = GetImportUsersActiveDirectoryMetadataModelValid();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
             authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user)).Throws(new UnauthorizedAccessException());

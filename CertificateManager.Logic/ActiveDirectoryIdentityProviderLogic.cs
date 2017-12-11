@@ -2,10 +2,6 @@
 using CertificateManager.Entities.Enumerations;
 using CertificateManager.Repository;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CertificateManager.Logic
 {
@@ -19,39 +15,39 @@ namespace CertificateManager.Logic
         }
 
 
-        public ExternalIdentitySource Add(string displayName, string domain, string searchBase, string username, string password, bool useProcessContext)
+        public ActiveDirectoryMetadata Add(string displayName, string domain, string searchBase, string username, string password, bool useProcessContext)
         {
-            ExternalIdentitySource idp = NewExternalIdentitySource(displayName, domain, searchBase, username, password, useProcessContext);
+            ActiveDirectoryMetadata idp = NewActiveDirectoryMetadata(displayName, domain, searchBase, username, password, useProcessContext);
 
-            configurationRepository.Insert<ExternalIdentitySource>(idp);
+            configurationRepository.Insert<ActiveDirectoryMetadata>(idp);
 
             return idp;
         }
 
-        private ExternalIdentitySource NewExternalIdentitySource(string displayName, string domain, string searchBase, string username, string password, bool useProcessContext)
+        private ActiveDirectoryMetadata NewActiveDirectoryMetadata(string displayName, string domain, string searchBase, string username, string password, bool useProcessContext)
         {
-            ExternalIdentitySource idp = null;
+            ActiveDirectoryMetadata idp = null;
 
             if (useProcessContext)
             {
-                idp = new ExternalIdentitySource()
+                idp = new ActiveDirectoryMetadata()
                 {
                     Name = displayName,
                     Domain = domain,
                     Enabled = true,
-                    ExternalIdentitySourceType = ExternalIdentitySourceType.ActiveDirectoryIwa,
+                    ActiveDirectoryMetadataType = ActiveDirectoryMetadataType.ActiveDirectoryIwa,
                     Id = Guid.NewGuid(),
                     SearchBase = searchBase
                 };
             }
             else
             {
-                idp = new ExternalIdentitySource()
+                idp = new ActiveDirectoryMetadata()
                 {
                     Name = displayName,
                     Domain = domain,
                     Enabled = true,
-                    ExternalIdentitySourceType = ExternalIdentitySourceType.ActiveDirectoryBasic,
+                    ActiveDirectoryMetadataType = ActiveDirectoryMetadataType.ActiveDirectoryBasic,
                     Id = Guid.NewGuid(),
                     SearchBase = searchBase,
                     Username = username,

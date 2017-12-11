@@ -35,7 +35,7 @@
 
     InitializeDomainSelect: function ()
     {
-        CmOptions.ExternalIdentitySources.forEach(function (item) {
+        CmOptions.ActiveDirectoryMetadatas.forEach(function (item) {
             if (item.enabled) {
                 var element = $('#domain');
 

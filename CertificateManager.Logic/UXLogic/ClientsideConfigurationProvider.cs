@@ -35,19 +35,19 @@ namespace CertificateManager.Logic.UXLogic
 
         public string RenderIdentitySourcesJsonArray()
         {
-            IEnumerable<ExternalIdentitySource> idps = configurationRepository.GetAll<ExternalIdentitySource>();
+            IEnumerable<ActiveDirectoryMetadata> idps = configurationRepository.GetAll<ActiveDirectoryMetadata>();
 
             if (idps == null)
                 return string.Empty;
 
-            List<ExternalIdentitySourceConfigViewModel> editedIdps = new List<ExternalIdentitySourceConfigViewModel>();
+            List<ActiveDirectoryMetadataConfigViewModel> editedIdps = new List<ActiveDirectoryMetadataConfigViewModel>();
 
-            foreach(ExternalIdentitySource idp in idps)
+            foreach(ActiveDirectoryMetadata idp in idps)
             {
-                editedIdps.Add(new ExternalIdentitySourceConfigViewModel(idp));
+                editedIdps.Add(new ActiveDirectoryMetadataConfigViewModel(idp));
             }
 
-            return string.Format("CmOptions.ExternalIdentitySources = {0}", JsonConvert.SerializeObject(editedIdps));
+            return string.Format("CmOptions.ActiveDirectoryMetadatas = {0}", JsonConvert.SerializeObject(editedIdps));
         }
 
         public string RenderLocalAuthenticationStateJsonArray()

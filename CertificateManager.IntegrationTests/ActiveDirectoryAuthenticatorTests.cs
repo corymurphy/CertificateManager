@@ -1,11 +1,6 @@
-﻿using System;
+﻿using CertificateManager.Logic.ActiveDirectory;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using CertificateServices.ActiveDirectory;
-using CertificateServices.ActiveDirectory.Entities;
-using CertificateManager.Repository;
-using CertificateManager.Entities;
-using System.Collections.Generic;
-using System.Linq;
+
 namespace CertificateManager.IntegrationTests
 {
     [TestClass]
@@ -25,7 +20,7 @@ namespace CertificateManager.IntegrationTests
         [TestMethod]
         public void ActiveDirectoryAuthenticator_Authenticate_ProvideValidCredentials_ReturnsTrue()
         {
-            ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
+            ActiveDirectoryRepository activeDirectoryAuthenticator = new ActiveDirectoryRepository();
 
             bool isAuthenticated = activeDirectoryAuthenticator.Authenticate(username, password, domain);
 
@@ -35,7 +30,7 @@ namespace CertificateManager.IntegrationTests
         [TestMethod]
         public void ActiveDirectoryAuthenticator_Authenticate_ProvideInvalidCredentials_ReturnsFalse()
         {
-            ActiveDirectoryAuthenticator activeDirectoryAuthenticator = new ActiveDirectoryAuthenticator();
+            ActiveDirectoryRepository activeDirectoryAuthenticator = new ActiveDirectoryRepository();
 
             bool isAuthenticated = activeDirectoryAuthenticator.Authenticate(username, invalidPassword, domain);
 

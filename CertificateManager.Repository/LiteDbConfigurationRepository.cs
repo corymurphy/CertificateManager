@@ -1,10 +1,10 @@
 ﻿using CertificateManager.Entities;
-using System;
-using LiteDB;
-using CertificateServices;
 using CertificateManager.Entities.Exceptions;
-using System.Collections.Generic;
+using CertificateServices;
 using CertificateServices.Enumerations;
+using LiteDB;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CertificateManager.Repository
@@ -17,7 +17,7 @@ namespace CertificateManager.Repository
         private const string adcsTemplateCollectionName = "Template";
         private const string privateCertificateAuthorityCollectionName = "PrivateCa";
         private const string AdcsTemplateCollectionName = "AdcsTemplate";
-        private const string externalIdentitySourceCollectionName = "extid";
+        private const string ActiveDirectoryMetadataCollectionName = "extid";
         private const string authApiCertificateCollectionName = "authcer";
         private const string appConfigCollectionName = "appcfg";
         private const string scopesCollectionName = "scopes";
@@ -120,11 +120,11 @@ namespace CertificateManager.Repository
 
             PrivateCertificateAuthorityConfig caConfig = this.GetPrivateCertificateAuthorityConfigByHash(hash);
 
-            ExternalIdentitySource idp = this.Get<ExternalIdentitySource>(caConfig.IdentityProviderId);
+            ActiveDirectoryMetadata idp = this.Get<ActiveDirectoryMetadata>(caConfig.IdentityProviderId);
 
             MicrosoftCertificateAuthorityAuthenticationType authType;
 
-            if (idp.ExternalIdentitySourceType == Entities.Enumerations.ExternalIdentitySourceType.ActiveDirectoryBasic)
+            if (idp.ActiveDirectoryMetadataType == Entities.Enumerations.ActiveDirectoryMetadataType.ActiveDirectoryBasic)
                 authType = MicrosoftCertificateAuthorityAuthenticationType.UsernamePassword;
             else
                 authType = MicrosoftCertificateAuthorityAuthenticationType.WindowsKerberos;

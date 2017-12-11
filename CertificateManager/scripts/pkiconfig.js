@@ -6,7 +6,7 @@ var PkiConfig = {
     {
         var idpDisplayName = "";
 
-        CmOptions.ExternalIdentitySources.forEach(function (idp) {
+        CmOptions.ActiveDirectoryMetadatas.forEach(function (idp) {
 
 
             if (idp.id == item.identityProviderId) {
@@ -78,7 +78,7 @@ var PkiConfig = {
         //    }));
         //});
 
-        //CmOptions.ExternalIdentitySources.forEach(function (item) {
+        //CmOptions.ActiveDirectoryMetadatas.forEach(function (item) {
         //    if (item.enabled)
         //    {
         //        $('#caAuthenticationRealm').append($('<option>', {
@@ -96,64 +96,54 @@ var PkiConfig = {
 
     HandleError: function (textStatus, grid) {
         grid.jsGrid("render");
-        UiGlobal.ShowError(textStatus.responseJSON.message);
+        UiGlobal.ShowError(textStatus);
     },
 
-    AddTemplate: function (client, isNew) {
-
+    GetUpdatedTemplateData: function ()
+    {
         var allowedToIssueList = "";
         $('#adcsTemplateAllowedToIssue').val().forEach(function (item) {
 
-            if (allowedToIssueList === "")
-            {
+            if (allowedToIssueList === "") {
                 allowedToIssueList = item;
             }
-            else
-            {
+            else {
                 allowedToIssueList = allowedToIssueList + ';' + item;
             }
 
         });
 
-
-        $.extend(client, {
-            name: $("#adcsTemplateName").val(),
-            //hash: $("#adcsTemplateHash").val(),
+        return {
+            id: $('#selected-template-id').val(),
+            name: $('#adcsTemplateName').val(),
             cipher: $("#adcsTemplateCipher").val(),
             keyUsage: $("#adcsTemplateKeyUsage").val(),
             windowsApi: $("#adcsTemplateWindowsApi").val(),
             rolesAllowedToIssue: allowedToIssueList
-        });
-
-        $("#adcsTemplatesTable").jsGrid(isNew ? "insertItem" : "updateItem", client);
-
-        $("#addAdcsTemplateModal").modal("hide");
+        }
     },
 
-    ShowAddTemplateModal: function (dialogType, client) {
+    EditTemplate: function ()
+    {
+        var data = PkiConfig.GetUpdatedTemplateData();
 
-        $('#addAdcsTemplateButton').click(function () {
+        $("#adcsTemplatesTable").jsGrid("updateItem", data);
 
-            PkiConfig.AddTemplate(client, dialogType === "Add");
-        });
-
-        $("#addAdcsTemplateModal").modal("show");
     },
 
-    ShowEditTemplateModal: function (dialogType, client)
+    LoadEditTemplateModalData: function (data)
     {
         var roleIds = new Array();
-        
-        for (var key in client.rolesAllowedToIssueSelectView) {
-            roleIds.push(client.rolesAllowedToIssueSelectView[key].id);
+
+        for (var key in data.rolesAllowedToIssueSelectView) {
+            roleIds.push(data.rolesAllowedToIssueSelectView[key].id);
         }
 
-        $("#adcsTemplateName").val(client.name);
-        //$("#adcsTemplateHash").val(client.hash);
-        $("#adcsTemplateCipher").val(client.cipher);
-        $("#adcsTemplateKeyUsage").val(client.keyUsage);
-        $("#adcsTemplateWindowsApi").val(client.windowsApi);
-
+        $('#selected-template-id').val(data.id);
+        $("#adcsTemplateName").val(data.name);
+        $("#adcsTemplateCipher").val(data.cipher);
+        $("#adcsTemplateKeyUsage").val(data.keyUsage);
+        $("#adcsTemplateWindowsApi").val(data.windowsApi);
 
         var roleSelect = document.getElementById('adcsTemplateAllowedToIssue');
 
@@ -161,29 +151,44 @@ var PkiConfig = {
 
             var option = roleSelect.children[i];
 
-            if (roleIds.includes(option.value))
-            {
+            if (roleIds.includes(option.value)) {
                 option.selected = true;
             }
-            else
-            {
+            else {
                 option.selected = false;
             }
         }
+    },
+
+    AddTemplate: function ()
+    {
+        var data = PkiConfig.GetUpdatedTemplateData();
+
+        $("#adcsTemplatesTable").jsGrid("insertItem", data);
+    },
+
+    ShowAddTemplateModal: function ()
+    {
+        PkiConfig.ResetErrorState();
+
+        PkiConfig.SetCommitOnClick("Add");
 
         PkiConfig.InitializeSelect2();
 
-        $('#addAdcsTemplateButton').click(function () {
-
-            PkiConfig.AddTemplate(client, dialogType === "Add");
-        });
-
-        $("#addAdcsTemplateModal").modal("show");
+        UiGlobal.ShowModal("addAdcsTemplateModal");
     },
 
-    EditTemplate: function (client)
+    ShowEditTemplateModal: function (data)
     {
+        PkiConfig.ResetErrorState();
 
+        PkiConfig.LoadEditTemplateModalData(data);
+        
+        PkiConfig.InitializeSelect2();
+
+        PkiConfig.SetCommitOnClick("Edit");
+
+        UiGlobal.ShowModal("addAdcsTemplateModal");
     },
 
     ShowAddPrivateCaModal: function (client) {
@@ -314,10 +319,20 @@ var PkiConfig = {
                 type: "POST",
                 url: "/pki-config/template",
                 data: item
+            }).done(function (response) {
+                d.resolve(response.payload);
             }).fail(function (xhr, ajaxOptions, thrownError) {
                 PkiConfig.HandleError(xhr.responseJSON.message, $("#adcsTemplatesTable"));
-                });
+            });
             return d.promise();
+
+            //$.ajax({
+            //    type: "POST",
+            //    url: "/pki-config/template",
+            //    data: item
+            //}).fail(function (xhr, ajaxOptions, thrownError) {
+            //    PkiConfig.HandleError(xhr.responseJSON.message, $("#adcsTemplatesTable"));
+            //});
         },
 
         updateItem: function (item) {
@@ -332,6 +347,17 @@ var PkiConfig = {
                 PkiConfig.HandleError(xhr.responseJSON.message, $("#adcsTemplatesTable"));
                 });
             return d.promise();
+
+
+            //var d = $.Deferred();
+            //$.ajax({
+            //    type: "PUT",
+            //    url: "/pki-config/template",
+            //    data: item
+            //}).fail(function (xhr, ajaxOptions, thrownError) {
+            //    PkiConfig.HandleError(xhr.responseJSON.message, $("#adcsTemplatesTable"));
+            //});
+            //return d.promise();
         },
 
         deleteItem: function (item) {
@@ -348,7 +374,10 @@ var PkiConfig = {
 
     InitializePkiConfigGrids: function () {
 
-        $("#adcsTemplatesTable").jsGrid({
+        PkiConfig.TemplateGrid = $("#adcsTemplatesTable");
+
+
+        PkiConfig.TemplateGrid.jsGrid({
             height: "auto",
             width: "100%",
 
@@ -366,7 +395,7 @@ var PkiConfig = {
             controller: PkiConfig.AdcsTemplateController,
 
             rowClick: function (args) {
-                PkiConfig.ShowEditTemplateModal("Edit", args.item);
+                PkiConfig.ShowEditTemplateModal(args.item);
             },
             
             fields: [
@@ -401,13 +430,14 @@ var PkiConfig = {
                     headerTemplate: function () {
                         return $("<button>").attr("type", "button").text("Add")
                             .on("click", function () {
-                                PkiConfig.ShowAddTemplateModal("Add", {});
+                                PkiConfig.ShowAddTemplateModal();
                             });
                     }
                 }
             ],
+            onItemInserted: function (args) { PkiConfig.TemplateGrid.jsGrid("render"); },
             onRefreshed: function (args) { PkiConfig.InitializeSelect2(); },
-            onItemUpdated: function (args) { PkiConfig.InitializeSelect2(); },
+            onItemUpdated: function (args) { PkiConfig.TemplateGrid.jsGrid("render"); PkiConfig.InitializeSelect2(); },
             onItemEditing: function (args) { PkiConfig.InitializeSelect2(); },
             onItemInserting: function (args) { PkiConfig.ResetErrorState(); },
             onItemUpdating: function (args) { PkiConfig.ResetErrorState(); PkiConfig.InitializeSelect2(); },
@@ -474,7 +504,7 @@ var PkiConfig = {
 
     InitializePrivateCaIdentityProviderSelect2: function ()
     {
-        $('#caIdentityProvider').select2({ data: CmOptions.ExternalIdentitySources, width: '100%' });
+        $('#caIdentityProvider').select2({ data: CmOptions.ActiveDirectoryMetadatas, width: '100%' });
     },
 
     InitializeSelect2: function ()
@@ -482,8 +512,26 @@ var PkiConfig = {
         $('.security-roles-adcs-select2').select2({ width: '100%' });
     },
 
+    SetCommitOnClick(eventType) {
+        switch (eventType) {
+            case "Add":
+                PkiConfig.CommitTemplateButton.attr("onclick", "PkiConfig.AddTemplate();");
+                break;
+            case "Edit":
+                PkiConfig.CommitTemplateButton.attr("onclick", "PkiConfig.EditTemplate();");
+                break;
+            default:
+                PkiConfig.CommitTemplateButton.attr("onclick", "PkiConfig.AddTemplate();");
+        }
+    },
+
+    CommitTemplateButton: null,
+
+    TemplateGrid: null,
+
     PageLoad: function ()
     {
+        PkiConfig.CommitTemplateButton = $('#addAdcsTemplateButton');
         PkiConfig.InitializeSelect();
         UiGlobal.ShowCurrentTab();
         PkiConfig.InitializePkiConfigGrids();

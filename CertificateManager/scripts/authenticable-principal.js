@@ -268,7 +268,7 @@ var AuthenticablePrincipal = {
     },
 
     InitializeSelect: function () {
-        CmOptions.ExternalIdentitySourceType.forEach(function (item) {
+        CmOptions.ActiveDirectoryMetadataType.forEach(function (item) {
             $('#eisType').append($('<option>', {
                 value: item.Name,
                 text: item.Name
@@ -280,7 +280,7 @@ var AuthenticablePrincipal = {
 
     InitializeUserSearchSelect: function () {
 
-        $('.idp-select').select2({ data: CmOptions.ExternalIdentitySources });
+        $('.idp-select').select2({ data: CmOptions.ActiveDirectoryMetadatas });
 
         AuthenticablePrincipal.ImportUserSelect = $(".user-search-select");
 
@@ -376,7 +376,7 @@ var AuthenticablePrincipal = {
         
 
 
-        Services.ImportUsersFromExternalIdentitySource(data, AuthenticablePrincipal.ImportSelectedUsersSuccessCallback, AuthenticablePrincipal.ImportSelectedUsersErrorCallback);
+        Services.ImportUsersFromActiveDirectoryMetadata(data, AuthenticablePrincipal.ImportSelectedUsersSuccessCallback, AuthenticablePrincipal.ImportSelectedUsersErrorCallback);
 
 
     },

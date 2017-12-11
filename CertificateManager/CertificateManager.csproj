@@ -61,7 +61,6 @@
   <ItemGroup>
     <ProjectReference Include="..\CertificateManager.Entities\CertificateManager.Entities.csproj" />
     <ProjectReference Include="..\CertificateManager.Logic\CertificateManager.Logic.csproj" />
-    <ProjectReference Include="..\CertificateServices.ActiveDirectory\CertificateServices.ActiveDirectory.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />

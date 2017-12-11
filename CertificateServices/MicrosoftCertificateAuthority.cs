@@ -80,7 +80,7 @@ namespace CertificateServices
                     requestStatus = objCertRequest.Submit((CR_IN_BASE64 | CR_IN_FORMATANY), csr.EncodedCsr, templateArg, serverArg);
                 }
             }
-            catch
+            catch(Exception e)
             {
 
                 requestStatus = 0x6;

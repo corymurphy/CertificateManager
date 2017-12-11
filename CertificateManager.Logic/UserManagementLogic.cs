@@ -34,7 +34,7 @@ namespace CertificateManager.Logic
             return configurationRepository.Get<AuthenticablePrincipal>(id);
         }
 
-        public void ImportUser(ImportUsersExternalIdentitySourceModel entity, ClaimsPrincipal user)
+        public void ImportUser(ImportUsersActiveDirectoryMetadataModel entity, ClaimsPrincipal user)
         {
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
@@ -67,7 +67,7 @@ namespace CertificateManager.Logic
             }
         }
 
-        private void ValidateImportEntity(ImportUsersExternalIdentitySourceModel entity)
+        private void ValidateImportEntity(ImportUsersActiveDirectoryMetadataModel entity)
         {
             foreach (var user in entity.Users)
             {
@@ -82,11 +82,11 @@ namespace CertificateManager.Logic
             }
         }
 
-        private void ImportWithoutMerge(ImportUsersExternalIdentitySourceModel entity)
+        private void ImportWithoutMerge(ImportUsersActiveDirectoryMetadataModel entity)
         {
             foreach (var user in entity.Users)
             {
-                if (!configurationRepository.Exists<ExternalIdentitySource>(user.DomainId))
+                if (!configurationRepository.Exists<ActiveDirectoryMetadata>(user.DomainId))
                     throw new ReferencedObjectDoesNotExistException("The authentication realm specified by the importing user does not exist");
 
                 configurationRepository.Insert<AuthenticablePrincipal>(new AuthenticablePrincipal()
@@ -98,7 +98,7 @@ namespace CertificateManager.Logic
             }
         }
 
-        private void ImportMerge(ImportUsersExternalIdentitySourceModel entity)
+        private void ImportMerge(ImportUsersActiveDirectoryMetadataModel entity)
         {
             if (entity.MergeWith == null)
                 throw new MergeRequiresMergeTargetException("merge operation requires a valid userid to merge with");
@@ -110,7 +110,7 @@ namespace CertificateManager.Logic
 
             foreach (var user in entity.Users)
             {
-                if (!configurationRepository.Exists<ExternalIdentitySource>(user.DomainId))
+                if (!configurationRepository.Exists<ActiveDirectoryMetadata>(user.DomainId))
                     throw new ReferencedObjectDoesNotExistException("The authentication realm specified by the importing user does not exist");
 
                 if (existingUser.AlternativeNames == null)
