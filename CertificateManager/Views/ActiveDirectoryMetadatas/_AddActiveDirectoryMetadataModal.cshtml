@@ -1,0 +1,74 @@
+﻿<div class="modal fade" id="addActiveDirectoryMetadataModal" tabindex="-1" role="dialog" aria-labelledby="addActiveDirectoryMetadataModal" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add External Identity Source</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+
+                    <div class="form-group row">
+                        <label for="eisName" class="col-sm-3 col-form-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="eisName" placeholder="Microsoft">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="eisType" class="col-sm-3 col-form-label">Type</label>
+                        <div class="col-sm-10">
+                            <select id="eisType" class="form-control"></select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="eisDomain" class="col-sm-3 col-form-label">Domain</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="eisDomain" placeholder="corp.microsoft.com">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="eisUsername" class="col-sm-3 col-form-label">Username</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="eisUsername" placeholder="">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="eisPassword" class="col-sm-3 col-form-label">Password</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="eisPassword" placeholder="">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="eisSearchBase" class="col-sm-3 col-form-label">SearchBase</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="eisSearchBase" placeholder="">
+                        </div>
+                    </div>
+
+
+                    <div class="form-group row">
+                        <label for="eisEnabled" class="col-sm-3 col-form-label">Enabled</label>
+                        <div class="col-sm-10">
+                            <input id="eisEnabled" name="eisEnabled" type="checkbox">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="commitAuthApiEntity" data-dismiss="modal">Commit</button>
+            </div>
+        </div>
+    </div>
+</div>

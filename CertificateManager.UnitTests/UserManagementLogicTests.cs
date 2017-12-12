@@ -6,6 +6,7 @@ using CertificateManager.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using System;
+using System.Linq.Expressions;
 using System.Security.Claims;
 
 namespace CertificateManager.UnitTests
@@ -139,7 +140,7 @@ namespace CertificateManager.UnitTests
             };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
+            configurationRepository.Setup(x => x.Exists<AuthenticablePrincipal>(It.IsAny<Expression<Func<AuthenticablePrincipal, bool>>>())).Returns(false);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
@@ -166,7 +167,7 @@ namespace CertificateManager.UnitTests
             };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
+            configurationRepository.Setup(x => x.Exists<AuthenticablePrincipal>(It.IsAny<Expression<Func<AuthenticablePrincipal, bool>>>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns((AuthenticablePrincipal)null);
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
@@ -194,7 +195,7 @@ namespace CertificateManager.UnitTests
             };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
+            configurationRepository.Setup(x => x.Exists<AuthenticablePrincipal>(It.IsAny<Expression<Func<AuthenticablePrincipal, bool>>>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
 
             UserManagementLogic userManagementLogic = new UserManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
@@ -222,7 +223,7 @@ namespace CertificateManager.UnitTests
             };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
+            configurationRepository.Setup(x => x.Exists<AuthenticablePrincipal>(It.IsAny<Expression<Func<AuthenticablePrincipal, bool>>>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
             configurationRepository.Setup(x => x.Exists<ActiveDirectoryMetadata>(It.IsAny<Guid>())).Returns(true);
 
@@ -251,7 +252,7 @@ namespace CertificateManager.UnitTests
             };
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.UserPrincipalNameExists(It.IsAny<string>())).Returns(false);
+            configurationRepository.Setup(x => x.Exists<AuthenticablePrincipal>(It.IsAny<Expression<Func<AuthenticablePrincipal, bool>>>())).Returns(false);
             configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(It.IsAny<Guid>())).Returns(new AuthenticablePrincipal());
             configurationRepository.Setup(x => x.Exists<ActiveDirectoryMetadata>(It.IsAny<Guid>())).Returns(true);
 

@@ -6,6 +6,7 @@ using LiteDB;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {
@@ -73,47 +74,29 @@ namespace CertificateManager.Repository
             return col.FindById(id);
         }
 
+        public bool Exists<T>(Expression<Func<T, bool>> query)
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            return col.Exists(query);
+        }
+
         public bool Exists<T>(Guid id)
         {
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             return col.Exists(Query.EQ("Id", id));
         }
 
-
-
-
-
-        public AdcsTemplate GetAdcsTemplate(HashAlgorithm hash, CipherAlgorithm cipher, WindowsApi api, KeyUsage keyUsage)
+        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> query)
         {
-            AdcsTemplate template;
-
-            using (LiteDatabase db = new LiteDatabase(path))
-            {
-                LiteCollection<AdcsTemplate> col = db.GetCollection<AdcsTemplate>();
-                {
-                    template = col.FindOne(
-                        Query.And(
-
-                            Query.EQ("Cipher", cipher.ToString()),
-
-                            Query.And(
-                                Query.EQ("WindowsApi", api.ToString()),
-                                Query.EQ("KeyUsage", keyUsage.ToString())
-                            )
-
-                        ));
-
-                    if(template == null)
-                    {
-                        throw new ConfigurationItemNotFoundException(string.Format(adcsNotFoundExceptionMessage, hash, cipher));
-                    }
-                    else
-                    {
-                        return template;
-                    }
-                }
-            }
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            return col.Find(query);
         }
+
+
+
+
+
+
 
         public MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash)
         {

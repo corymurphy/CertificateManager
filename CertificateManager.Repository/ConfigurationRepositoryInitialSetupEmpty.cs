@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 using CertificateManager.Entities;
@@ -11,12 +12,6 @@ namespace CertificateManager.Repository
 {
     public class ConfigurationRepositoryInitialSetupEmpty : IConfigurationRepository
     {
-
-        public AdcsTemplate GetAdcsTemplate(HashAlgorithm hash, CipherAlgorithm cipher, WindowsApi api, KeyUsage keyUsage)
-        {
-            throw new NotImplementedException();
-        }
-
 
         public AppConfig GetAppConfig()
         {
@@ -106,6 +101,21 @@ namespace CertificateManager.Repository
         }
 
         public T Get<T>(Guid id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<AdcsTemplate> Get<T>(Expression<Func<AdcsTemplate, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> query)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Exists<T>(Expression<Func<T, bool>> query)
         {
             throw new NotImplementedException();
         }

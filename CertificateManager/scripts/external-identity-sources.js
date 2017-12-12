@@ -115,7 +115,7 @@
                 { name: "name", type: "text", title: "Name" },
                 { name: "domain", type: "text", title: "Domain" },
                 { name: "searchBase", type: "text", title: "SearchBase" },
-                { name: "ActiveDirectoryMetadataType", type: "select", items: CmOptions.ActiveDirectoryMetadataType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
+                { name: "activeDirectoryMetadataType", type: "select", items: CmOptions.ActiveDirectoryMetadataType, valueType: "string", valueField: "Name", textField: "Name", title: "Type" },
                 { name: "username", type: "text", title: "Username" },
                 { name: "password", type: "text", readOnly: true, title: "password" },
                 { name: "enabled", type: "checkbox", title: "Enabled", sorting: false },

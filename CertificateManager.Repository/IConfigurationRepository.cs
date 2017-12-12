@@ -3,6 +3,7 @@ using CertificateServices;
 using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {
@@ -18,16 +19,17 @@ namespace CertificateManager.Repository
 
         void DropCollection<T>();
 
+        bool Exists<T>(Expression<Func<T, bool>> query);
+
         bool Exists<T>(Guid id);
 
+        IEnumerable<T> Get<T>(Expression<Func<T, bool>> query);
 
-
-        AdcsTemplate GetAdcsTemplate(HashAlgorithm hash, CipherAlgorithm cipher, WindowsApi api, KeyUsage keyUsage);
         MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash);
         MicrosoftCertificateAuthority GetPrivateCertificateAuthority(HashAlgorithm hash);
         AuthenticablePrincipal GetAuthenticablePrincipal(string upn);
         bool UserPrincipalNameExists(string upn, Guid ignoreUserId);
-        bool UserPrincipalNameExists(string upn);
+        //bool UserPrincipalNameExists(string upn);
         IEnumerable<SecurityRole> GetAuthenticablePrincipalMemberOf(Guid id);
 
 

@@ -45,7 +45,7 @@ namespace CertificateManager.Logic
         {
             CertificateRequest csr = certificateProvider.InitializeFromEncodedCsr(model.EncodedCsr);
 
-            AdcsTemplate template = configurationRepository.GetAdcsTemplate(model.HashAlgorithm, csr.CipherAlgorithm, WindowsApi.Cng, KeyUsage.ServerAuthentication);
+            AdcsTemplate template = templateLogic.DiscoverTemplate(csr.CipherAlgorithm, WindowsApi.Cng, KeyUsage.ServerAuthentication);
 
             if (authorizationLogic.IsAuthorized(template, user))
             {
@@ -67,9 +67,15 @@ namespace CertificateManager.Logic
 
             KeyUsage keyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage);
 
-            AdcsTemplate template = configurationRepository.GetAdcsTemplate(model.HashAlgorithm, model.CipherAlgorithm, model.Provider, keyUsage);
+            AdcsTemplate template = templateLogic.DiscoverTemplate(model.CipherAlgorithm, model.Provider, keyUsage);
+            //AdcsTemplate template = configurationRepository.GetAdcsTemplate(model.HashAlgorithm, model.CipherAlgorithm, model.Provider, keyUsage);
 
-            if(authorizationLogic.IsAuthorized(template, user))
+            if(!templateLogic.ValidateTemplateWithRequest(model, template))
+            {
+                throw new AdcsTemplateValidationException("Certificate request does not meet the requirements of the certificate template");
+            }
+
+            if (authorizationLogic.IsAuthorized(template, user))
             {
                 CertificateRequest csr = certificateProvider.CreateCsrKeyPair(dataTransformation.NewCertificateSubjectFromModel(model), model.CipherAlgorithm, model.KeySize, model.Provider, SigningRequestProtocol.Pkcs10);
 
@@ -94,9 +100,9 @@ namespace CertificateManager.Logic
 
             KeyUsage keyUsage = dataTransformation.ParseKeyUsage(pendingCertificate.KeyUsage);
 
-            AdcsTemplate template = configurationRepository.GetAdcsTemplate(pendingCertificate.HashAlgorithm, pendingCertificate.CipherAlgorithm, pendingCertificate.Provider, keyUsage);
+            AdcsTemplate template = templateLogic.DiscoverTemplate(pendingCertificate.CipherAlgorithm, pendingCertificate.Provider, keyUsage);
 
-            if(authorizationLogic.IsAuthorized(template, user))
+            if (authorizationLogic.IsAuthorized(template, user))
             {
                 CertificateRequest csr = certificateProvider.CreateCsrKeyPair(dataTransformation.NewCertificateSubjectFromModel(pendingCertificate), pendingCertificate.CipherAlgorithm, pendingCertificate.KeySize, pendingCertificate.Provider, SigningRequestProtocol.Pkcs10);
 

@@ -13,9 +13,11 @@ namespace CertificateManager.Logic
     public class AuthorizationLogic : IAuthorizationLogic
     {
         private IConfigurationRepository configurationRepository;
+        private IAuditLogic audit;
 
         public AuthorizationLogic(IConfigurationRepository configurationRepository)
         {
+            this.audit = audit;
             this.configurationRepository = configurationRepository;
         }
 

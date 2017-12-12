@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using CertificateManager.Entities;
+using CertificateManager.Logic;
 using CertificateManager.Repository;
-using CertificateManager.Entities;
+using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
@@ -17,11 +15,13 @@ namespace CertificateManager.Controllers
 
         ICertificateRepository certificateRepository;
         IConfigurationRepository configurationRepository;
+        EncryptionProvider cipher;
 
-        public CertificateDownloadController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository)
+        public CertificateDownloadController(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, EncryptionProvider cipher)
         {
             this.configurationRepository = configurationRepository;
             this.certificateRepository = certificateRepository;
+            this.cipher = cipher;
         }
 
         [HttpGet]
@@ -53,7 +53,7 @@ namespace CertificateManager.Controllers
                 throw new Exception("No private key");
             }
 
-            X509Certificate2 x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
+            X509Certificate2 x509 = new X509Certificate2(cert.Content, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
 
             bool buildResult;
             X509Chain chain = new X509Chain();
@@ -72,7 +72,7 @@ namespace CertificateManager.Controllers
                 throw new Exception("DownloadCertificateWithChain: Failed to build chain");
 
 
-            byte[] chainBytes = x509Col.Export(X509ContentType.Pkcs12, cert.PfxPassword);
+            byte[] chainBytes = x509Col.Export(X509ContentType.Pkcs12, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
 
             return new FileContentResult(chainBytes, pfxMimeType)
             {
@@ -89,7 +89,7 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
                     break;
                 case CertificateStorageFormat.Cer:
                     x509 = new X509Certificate2(cert.Content);
@@ -117,7 +117,7 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
                     break;
                 case CertificateStorageFormat.Cer:
                     x509 = new X509Certificate2(cert.Content);
@@ -162,7 +162,7 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
                     break;
                 case CertificateStorageFormat.Cer:
                     x509 = new X509Certificate2(cert.Content);
@@ -186,7 +186,7 @@ namespace CertificateManager.Controllers
             switch (cert.CertificateStorageFormat)
             {
                 case CertificateStorageFormat.Pfx:
-                    x509 = new X509Certificate2(cert.Content, cert.PfxPassword);
+                    x509 = new X509Certificate2(cert.Content, cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce));
                     break;
                 case CertificateStorageFormat.Cer:
                     x509 = new X509Certificate2(cert.Content);

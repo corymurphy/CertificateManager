@@ -13,6 +13,7 @@ namespace CertificateManager.Logic
     {
         IConfigurationRepository configurationRepository;
         IAuthorizationLogic authorizationLogic;
+        IAuditLogic audit;
 
         public UserManagementLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic)
         {
@@ -72,11 +73,11 @@ namespace CertificateManager.Logic
             foreach (var user in entity.Users)
             {
                 if (!string.IsNullOrWhiteSpace(user.SamAccountName))
-                    if (configurationRepository.UserPrincipalNameExists(user.SamAccountName))
+                    if (configurationRepository.Exists<AuthenticablePrincipal>(x => x.Name == user.SamAccountName))
                         throw new ReferencedObjectAlreadyExistsException("The user selected to be imported already exists");
 
                 if (!string.IsNullOrWhiteSpace(user.UserPrincipalName))
-                    if (configurationRepository.UserPrincipalNameExists(user.UserPrincipalName))
+                    if (configurationRepository.Exists<AuthenticablePrincipal>(x => x.Name == user.UserPrincipalName))
                         throw new ReferencedObjectAlreadyExistsException("The user selected to be imported already exists");
 
             }

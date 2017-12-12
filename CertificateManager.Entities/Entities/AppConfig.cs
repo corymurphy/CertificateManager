@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CertificateManager.Entities.Enumerations;
+using System;
 
 namespace CertificateManager.Entities
 {
@@ -11,7 +12,12 @@ namespace CertificateManager.Entities
             this.Id = new Guid();
             this.LocalLogonEnabled = true;
             this.EmergencyAccessEnabled = true;
+            this.SecurityAuditingState = SecurityAuditingState.All;
+            this.OperationsLoggingState = OperationsLoggingState.Errors;
         }
+
+        public OperationsLoggingState OperationsLoggingState { get; set; }
+        public SecurityAuditingState SecurityAuditingState { get; set; }
         public string EncryptionKey { get; set; }
         public bool EmergencyAccessEnabled { get; set; }
         public bool LocalLogonEnabled { get; set; }

@@ -69,25 +69,6 @@ var PkiConfig = {
                 text: item.Name
             }));
         });
-
-
-        //CmOptions.authenticationTypeOptions.forEach(function (item) {
-        //    $('#caAuthenticationType').append($('<option>', {
-        //        value: item.Name,
-        //        text: item.Name
-        //    }));
-        //});
-
-        //CmOptions.ActiveDirectoryMetadatas.forEach(function (item) {
-        //    if (item.enabled)
-        //    {
-        //        $('#caAuthenticationRealm').append($('<option>', {
-        //            value: item.id,
-        //            text: item.name
-        //        }));
-        //    }
-        //});
-        
     },
 
     ResetErrorState: function () {

@@ -10,6 +10,7 @@ namespace CertificateManager.Entities
         public Guid Id { get; set; }
         public string Thumbprint { get; set; }
         public CertificateStorageFormat CertificateStorageFormat { get; set; }
+        public string PasswordNonce { get; set; }
         public string PfxPassword { get; set; }
         public byte[] Content { get; set; }
         public bool HasPrivateKey { get; set; }

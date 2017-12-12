@@ -32,6 +32,8 @@
     <Content Include="scripts\external-identity-sources.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="scripts\logs.js" />
+    <Content Include="scripts\general-config.js" />
     <Content Include="scripts\pkiconfig.js" />
     <Content Include="scripts\security-role-details.js" />
     <Content Include="scripts\security-roles.js" />

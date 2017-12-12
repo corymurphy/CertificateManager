@@ -2,7 +2,44 @@
 var certSearchResult = null;
 
 var Services = {
- 
+
+    GetAuditConfig: function (successCallback, errorCallback) {
+        $.ajax({
+            url: "/general-config/audit-config",
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
+    SetAuditConfig: function (data, successCallback, errorCallback)
+    {
+        $.ajax({
+            url: "/general-config/audit-config",
+            type: 'put',
+            data: {
+                SecurityAuditingState: data.securityAuditingState,
+                OperationsLoggingState: data.operationsLoggingState
+            },
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
     CreateCertificate: function (request, successCallback, errorCallback) {
         $.ajax({
             url: "/ca/private/certificate/request/includeprivatekey",
@@ -275,5 +312,4 @@ var Services = {
             }
         });
     }
-
 }

@@ -9,6 +9,7 @@ using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Logic
 {
@@ -26,6 +27,26 @@ namespace CertificateManager.Logic
             this.dataTransform = new DataTransformation();
         }
 
+        public AdcsTemplate DiscoverTemplate(CipherAlgorithm cipher, WindowsApi api, KeyUsage keyUsage)
+        {
+            Expression<Func<AdcsTemplate, bool>> query = template => template.Cipher == cipher && template.WindowsApi == api && template.KeyUsage.ToString() == keyUsage.ToString();
+            AdcsTemplate results = configurationRepository.Get<AdcsTemplate>(query).First();
+
+            //throw new ConfigurationItemNotFoundException(string.Format(adcsNotFoundExceptionMessage, hash, cipher));
+            return results;
+        }
+
+        public bool ValidateTemplateWithRequest(CreatePrivateCertificateModel model, AdcsTemplate template)
+        {
+            if(model.KeySize < template.MinimumKeySize)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
 
         public AdcsTemplateGetModel AddTemplate(AdcsTemplate template)
         {

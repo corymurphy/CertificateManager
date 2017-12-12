@@ -62,8 +62,7 @@ namespace CertificateServices
             ICertRequest3 objCertRequest = (ICertRequest3)Activator.CreateInstance(Type.GetTypeFromProgID("CertificateAuthority.Request"));
 
             string templateArg = $"CertificateTemplate:{templateName}";
-            string serverArg = String.Format(@"{0}\{1}", ServerName, CommonName);
-
+            string serverArg = string.Concat(ServerName, @"\", CommonName);
 
             int requestStatus = 0x0;
             try
@@ -82,6 +81,10 @@ namespace CertificateServices
             }
             catch(Exception e)
             {
+                if(objCertRequest.GetRequestId() == 0)
+                {
+                    throw new CertificateAuthorityUnavailibleException("Service error while attempting to sign certificate");
+                }
 
                 requestStatus = 0x6;
             }
@@ -132,6 +135,7 @@ namespace CertificateServices
         }
 
         private bool caSupportsTemplate() { throw new NotImplementedException(); }
+
         private bool caSupportsHashAlgorithm() { throw new NotImplementedException(); }
     }
 }

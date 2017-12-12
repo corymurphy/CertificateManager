@@ -29,7 +29,8 @@ namespace CertificateManager.Logic
             AdcsTemplate result = null;
             try
             {
-                result = configDb.GetAdcsTemplate(HashAlgorithm.SHA256, CipherAlgorithm.RSA, WindowsApi.CryptoApi, KeyUsage.ServerAuthentication);
+                result = configDb.Get<AdcsTemplate>(x => x.Cipher == CipherAlgorithm.RSA && x.WindowsApi == WindowsApi.CryptoApi && x.KeyUsage == KeyUsage.ServerAuthentication).First();
+                //result = configDb.GetAdcsTemplate(HashAlgorithm.SHA256, CipherAlgorithm.RSA, WindowsApi.CryptoApi, KeyUsage.ServerAuthentication);
             }
             catch
             {

@@ -174,6 +174,8 @@ namespace CertificateManager
 
             RuntimeCacheRepository runtimeCacheRepository = null;
 
+            services.AddSingleton<IAuditLogic>(new AuditLogic(new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString()), configurationRepository));
+
             IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository, authorizationLogic);
@@ -215,7 +217,7 @@ namespace CertificateManager
 
             services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
 
-            services.AddSingleton<AuditLogic>(new AuditLogic(new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString())));
+            
         }
 
         public void ConfigureAutoMapper()
