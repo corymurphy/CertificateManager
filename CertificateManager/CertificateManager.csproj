@@ -19,6 +19,9 @@
     <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="style\sb-admin-full.css" />
+  </ItemGroup>
+  <ItemGroup>
     <Content Include="scripts\authenticable-principal.js" />
     <Content Include="scripts\cm-constants.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -37,6 +40,9 @@
     <Content Include="scripts\pkiconfig.js" />
     <Content Include="scripts\security-role-details.js" />
     <Content Include="scripts\security-roles.js" />
+    <Content Include="style\sb-admin-full.css">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="6.2.1" />

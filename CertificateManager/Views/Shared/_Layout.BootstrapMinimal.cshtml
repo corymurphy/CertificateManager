@@ -1,8 +1,10 @@
 ﻿@using CertificateManager.Logic.UXLogic
 @using CertificateManager.Logic
+@using System.Security.Claims
+
 @inject IClientsideConfigurationProvider jsConfig
 @inject IRuntimeConfigurationState runtimeConfigurationState
-
+@*@inject ClaimsPrincipal user*@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -21,6 +23,23 @@
 
     <link href="~/css/cm.min.css" rel="stylesheet" />
 
+    <style>
+        .navbar-login {
+            width: 305px;
+            padding: 10px;
+            padding-bottom: 0px;
+        }
+
+        .navbar-login-session {
+            padding: 10px;
+            padding-bottom: 0px;
+            padding-top: 0px;
+        }
+
+        .icon-size {
+            font-size: 87px;
+        }
+    </style>
     @RenderSection("Style", required: false)
 
 </head>
@@ -31,6 +50,7 @@
         <button class="navbar-toggler d-lg-none collapsed" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="navbar-collapse collapse" id="navbarsExampleDefault" style="">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
@@ -40,15 +60,23 @@
                     <a class="nav-link" href="https://getbootstrap.com/docs/4.0/examples/dashboard/#">Help</a>
                 </li>
             </ul>
-            <form class="form-inline mt-2 mt-md-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
 
+            
+
+
+            @*<form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+        </form>*@
+
+            @*@if (User.Identity.IsAuthenticated)
+        {
             <form class="form-inline mt-2 mt-md-0" action="/view/auth/logout">
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
             </form>
-    </div>
+        }*@
+
+        </div>
     </nav>
 
     <div class="container-fluid">

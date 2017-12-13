@@ -64,7 +64,7 @@ namespace CertificateManager.Logic.UXLogic
 
         public string RenderScopeMap()
         {
-            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
+            AuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository, null);
             return string.Format("CmOptions.Scopes = {0}", JsonConvert.SerializeObject(authorizationLogic.GetAvailibleScopes()));
         }
 

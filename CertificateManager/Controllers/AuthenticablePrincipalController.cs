@@ -29,7 +29,7 @@ namespace CertificateManager.Controllers
         [Route("security/authenticable-principal/password")]
         public ActionResult ResetUserPassword(ResetUserPasswordViewModel model)
         {
-            userManagement.SetPassword(model);
+            userManagement.SetPassword(model, User);
             return http.RespondSuccess();
         }
 

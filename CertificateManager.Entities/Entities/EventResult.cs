@@ -1,4 +1,4 @@
 ﻿namespace CertificateManager.Entities
 {
-    public enum EventResult { Success, Failure, Information }
+    public enum EventResult { Success, Failure, Information, Error }
 }

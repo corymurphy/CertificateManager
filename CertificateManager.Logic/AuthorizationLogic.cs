@@ -15,7 +15,7 @@ namespace CertificateManager.Logic
         private IConfigurationRepository configurationRepository;
         private IAuditLogic audit;
 
-        public AuthorizationLogic(IConfigurationRepository configurationRepository)
+        public AuthorizationLogic(IConfigurationRepository configurationRepository, IAuditLogic audit)
         {
             this.audit = audit;
             this.configurationRepository = configurationRepository;
@@ -37,14 +37,14 @@ namespace CertificateManager.Logic
         private bool IncludesRole(ClaimsPrincipal user, Guid roleId)
         {
             return user.Claims
-                .Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier && claim.Value == roleId.ToString())
+                .Where(claim => claim.Type == WellKnownClaim.Role && claim.Value == roleId.ToString())
                 .Any();
         }
 
         private bool IsAdministrator(ClaimsPrincipal user)
         {
             return user.Claims
-                .Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier && claim.Value == RoleManagementLogic.WellKnownAdministratorRoleId.ToString())
+                .Where(claim => claim.Type == WellKnownClaim.Role && claim.Value == RoleManagementLogic.WellKnownAdministratorRoleId.ToString())
                 .ToList()
                 .Any();
         }
@@ -63,11 +63,11 @@ namespace CertificateManager.Logic
 
             bool isAuthorized = false;
 
-            var roles = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier);
+            var roles = user.Claims.Where(claim => claim.Type == WellKnownClaim.Role);
 
-            var upn = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.UpnClaimIdentifier).FirstOrDefault();
+            var upn = user.Claims.Where(claim => claim.Type == WellKnownClaim.Name).FirstOrDefault();
 
-            var uid = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.UidClaimIdentifier).FirstOrDefault();
+            var uid = user.Claims.Where(claim => claim.Type == WellKnownClaim.Uid).FirstOrDefault();
 
             foreach (AccessControlEntry ace in certificate.Acl)
             {
@@ -149,7 +149,7 @@ namespace CertificateManager.Logic
                 return roles;
         }
 
-        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user)
+        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user, ILoggableEntity entity)
         {
             if(!isAuthorized(scopeId, user))
             {
@@ -158,9 +158,23 @@ namespace CertificateManager.Logic
             }
         }
 
+        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user, ILoggableEntity entity, EventCategory category)
+        {
+            if(isAuthorized(scopeId, user))
+            {
+                audit.LogSecurityAuditSuccess(user, entity, category);
+            }
+
+            if (!isAuthorized(scopeId, user))
+            {
+                string message = string.Format("Access denied: The current user context is not authorized for the scope {0}", AuthorizationScopes.GetScope(scopeId).Name);
+                throw new UnauthorizedAccessException(message);
+            }
+        }
+
         private bool isAuthorized(Guid scopeId, ClaimsPrincipal user)
         {
-            IEnumerable<Claim> claims = user.Claims.Where(claim => claim.Type == IdentityAuthenticationLogic.RoleClaimIdentifier);
+            IEnumerable<Claim> claims = user.Claims.Where(claim => claim.Type == WellKnownClaim.Role);
 
             List<SecurityRole> roles;
             try

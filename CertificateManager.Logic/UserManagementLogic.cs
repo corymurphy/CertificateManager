@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 
+
 namespace CertificateManager.Logic
 {
     public class UserManagementLogic
     {
         IConfigurationRepository configurationRepository;
         IAuthorizationLogic authorizationLogic;
-        IAuditLogic audit;
 
         public UserManagementLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic)
         {
@@ -21,9 +21,11 @@ namespace CertificateManager.Logic
             this.authorizationLogic = authorizationLogic;
         }
 
-        public void SetPassword(ResetUserPasswordViewModel model)
+        public void SetPassword(ResetUserPasswordViewModel model, ClaimsPrincipal ctx)
         {
             AuthenticablePrincipal principal = this.GetUser(model.Id);
+
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, ctx, principal, EventCategory.UserManagementResetPassword);
 
             principal.PasswordHash = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
 
@@ -40,7 +42,7 @@ namespace CertificateManager.Logic
             if (entity == null)
                 throw new ArgumentNullException(nameof(entity));
 
-            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, entity, EventCategory.UserManagementImport);
                
             ValidateImportEntity(entity);
 
@@ -132,7 +134,7 @@ namespace CertificateManager.Logic
 
         public AddAuthenticablePrincipalEntity NewUser(AuthenticablePrincipal entity, ClaimsPrincipal user)
         {
-            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, entity, EventCategory.UserManagementNew);
 
             entity.Id = Guid.NewGuid();
             entity.PasswordHash = BCrypt.Net.BCrypt.HashPassword("Password1@");
@@ -142,7 +144,7 @@ namespace CertificateManager.Logic
 
         public void DeleteUser(AuthenticablePrincipal entity, ClaimsPrincipal user)
         {
-            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, entity, EventCategory.UserManagementDelete);
 
             configurationRepository.Delete<AuthenticablePrincipal>(entity.Id);
 
@@ -161,7 +163,7 @@ namespace CertificateManager.Logic
 
         public GetUserModel SetUser(UpdateUserModel entity, ClaimsPrincipal user)
         {
-            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user);
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, entity, EventCategory.UserManagementSet);
 
             if (!UserExists(entity.Id))
                 throw new ReferencedObjectDoesNotExistException("User does not exist");

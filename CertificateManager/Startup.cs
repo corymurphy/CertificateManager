@@ -174,9 +174,13 @@ namespace CertificateManager
 
             RuntimeCacheRepository runtimeCacheRepository = null;
 
-            services.AddSingleton<IAuditLogic>(new AuditLogic(new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString()), configurationRepository));
+            LiteDbAuditRepository auditRepository = new LiteDbAuditRepository(databaseLocator.GetAuditRepositoryConnectionString());
 
-            IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository);
+            IAuditLogic auditLogic = new AuditLogic(auditRepository, configurationRepository);
+
+            services.AddSingleton<IAuditLogic>(auditLogic);
+
+            IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository, auditLogic);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository, authorizationLogic);
 

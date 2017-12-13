@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities.Exceptions;
+using CertificateManager.Logic.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using System;
@@ -15,7 +16,7 @@ namespace CertificateManager.Logic.MvcMiddleware
     {
         private readonly RequestDelegate next;
 
-        public ErrorHandlingMiddleware(RequestDelegate next)
+        public ErrorHandlingMiddleware(RequestDelegate next, IAuditLogic auditLogic)
         {
             this.next = next;
         }

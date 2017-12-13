@@ -32,7 +32,6 @@ namespace CertificateManager.Logic
             Expression<Func<AdcsTemplate, bool>> query = template => template.Cipher == cipher && template.WindowsApi == api && template.KeyUsage.ToString() == keyUsage.ToString();
             AdcsTemplate results = configurationRepository.Get<AdcsTemplate>(query).First();
 
-            //throw new ConfigurationItemNotFoundException(string.Format(adcsNotFoundExceptionMessage, hash, cipher));
             return results;
         }
 

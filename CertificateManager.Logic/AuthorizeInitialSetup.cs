@@ -69,5 +69,15 @@ namespace CertificateManager.Logic
         {
             throw new NotImplementedException();
         }
+
+        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user, ILoggableEntity entity)
+        {
+
+        }
+
+        public void IsAuthorizedThrowsException(Guid scopeId, ClaimsPrincipal user, ILoggableEntity entity, EventCategory category)
+        {
+            
+        }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using CertificateManager.Logic;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace CertificateManager.Controllers
 {
@@ -21,10 +22,16 @@ namespace CertificateManager.Controllers
             return View();
         }
 
+        [Route("sandbox")]
+        public IActionResult Sandbox()
+        {
+            return View();
+        }
+
         [Route("secure")]
         public JsonResult Secure()
         {
-            return http.RespondSuccess(User);
+            return http.RespondSuccess( JsonConvert.SerializeObject(User));
         }
     }
 }

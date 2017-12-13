@@ -1,5 +1,7 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Interfaces;
+using CertificateManager.Entities.Models;
 using CertificateManager.Logic;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
@@ -18,12 +20,17 @@ namespace CertificateManager.UnitTests
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public void RoleManagementLogic_SetRoleScopes_UnauthorizedUser_ThrowsUnauthorizedAccessException()
         {
+            SetRoleScopesModel model = new SetRoleScopesModel()
+            {
+                RoleId = new Guid()
+            };
+
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorized(It.IsAny<Guid>(), It.IsAny<ClaimsPrincipal>())).Returns(false);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, It.IsAny<ClaimsPrincipal>(), It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(null, authorizationLogic.Object);
 
-            roleManagementLogic.SetRoleScopes(new Guid(), null, null);
+            roleManagementLogic.SetRoleScopes(model, null);
         }
 
         [TestMethod]
@@ -36,6 +43,11 @@ namespace CertificateManager.UnitTests
             authorizationLogic.Setup(x => x.IsAuthorized(It.IsAny<Guid>(), It.IsAny<ClaimsPrincipal>())).Returns(true);
             authorizationLogic.Setup(x => x.GetAvailibleScopes()).Returns(validScopes);
 
+            SetRoleScopesModel model = new SetRoleScopesModel()
+            {
+                RoleId = new Guid(),
+                Scopes = new List<Guid>() { Guid.NewGuid() }
+            };
 
             SecurityRole role = new SecurityRole() { Name = "TestRole", Id = Guid.NewGuid() };
 
@@ -44,62 +56,70 @@ namespace CertificateManager.UnitTests
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, authorizationLogic.Object);
 
-            List<Guid> invalidScopes = new List<Guid>() { Guid.NewGuid() };
-            Guid user = new Guid();
-
-            roleManagementLogic.SetRoleScopes(user, invalidScopes, null);
+            roleManagementLogic.SetRoleScopes(model, null);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ReferencedObjectDoesNotExistException))]
         public void RoleManagementLogic_AddRoleMember_UserNotFound_ThrowsReferencedObjectDoesNotExistException()
         {
-            Guid memberId = Guid.NewGuid();
-            Guid roleId = Guid.NewGuid();
+            AddSecurityRoleMemberModel model = new AddSecurityRoleMemberModel()
+            {
+                MemberId = Guid.NewGuid(),
+                RoleId = Guid.NewGuid()
+            };
+            
             ClaimsPrincipal user = new ClaimsPrincipal();
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns((AuthenticablePrincipal)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(model.MemberId)).Returns((AuthenticablePrincipal)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
-            roleManagementLogic.AddRoleMember(roleId, memberId, user);
+            roleManagementLogic.AddRoleMember(model, user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ReferencedObjectDoesNotExistException))]
         public void RoleManagementLogic_AddRoleMember_RoleNotFound_ThrowsReferencedObjectDoesNotExistException()
         {
-            Guid memberId = Guid.NewGuid();
-            Guid roleId = Guid.NewGuid();
             ClaimsPrincipal user = new ClaimsPrincipal();
 
+            AddSecurityRoleMemberModel model = new AddSecurityRoleMemberModel()
+            {
+                MemberId = Guid.NewGuid(),
+                RoleId = Guid.NewGuid()
+            };
+
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.Get<SecurityRole>(roleId)).Returns((SecurityRole)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(model.MemberId)).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Get<SecurityRole>(model.RoleId)).Returns((SecurityRole)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, new AuthorizeInitialSetup(configurationRepository.Object));
 
-            roleManagementLogic.AddRoleMember(roleId, memberId, user);
+            roleManagementLogic.AddRoleMember(model, user);
         }
 
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public void RoleManagementLogic_AddRoleMember_Unauthorized_ThrowsUnauthorizedAccessException()
         {
-            Guid memberId = Guid.NewGuid();
-            Guid roleId = Guid.NewGuid();
             ClaimsPrincipal user = new ClaimsPrincipal();
-
+            AddSecurityRoleMemberModel model = new AddSecurityRoleMemberModel()
+            {
+                MemberId = Guid.NewGuid(),
+                RoleId = Guid.NewGuid()
+            };
+            
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorized(AuthorizationScopes.ManageRoles, user)).Returns(false);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
-            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(memberId)).Returns(new AuthenticablePrincipal());
-            configurationRepository.Setup(x => x.Get<SecurityRole>(roleId)).Returns((SecurityRole)null);
+            configurationRepository.Setup(x => x.Get<AuthenticablePrincipal>(model.MemberId)).Returns(new AuthenticablePrincipal());
+            configurationRepository.Setup(x => x.Get<SecurityRole>(model.RoleId)).Returns((SecurityRole)null);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository.Object, authorizationLogic.Object);
 
-            roleManagementLogic.AddRoleMember(roleId, memberId, user);
+            roleManagementLogic.AddRoleMember(model, user);
         }
 
         [TestMethod]
@@ -110,7 +130,7 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal user = new ClaimsPrincipal();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.AuthorizedToManageRoles(user)).Returns(false);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -131,7 +151,7 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal user = new ClaimsPrincipal();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.AuthorizedToManageRoles(user)).Returns(true);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>()));
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -148,7 +168,7 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal user = new ClaimsPrincipal();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorized(AuthorizationScopes.ManageRoles, user)).Returns(false);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -165,7 +185,7 @@ namespace CertificateManager.UnitTests
             ClaimsPrincipal user = new ClaimsPrincipal();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorized(AuthorizationScopes.ManageRoles, user)).Returns(false);
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 

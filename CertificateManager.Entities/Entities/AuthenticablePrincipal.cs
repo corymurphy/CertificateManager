@@ -8,7 +8,7 @@ using CertificateManager.Entities.Attributes;
 namespace CertificateManager.Entities
 {
     [Repository("usr")]
-    public class AuthenticablePrincipal : ISecurityPrincipal
+    public class AuthenticablePrincipal : ISecurityPrincipal, ILoggableEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
@@ -21,5 +21,15 @@ namespace CertificateManager.Entities
 
         [BsonIgnore]
         public IdentityType IdentityType { get { return IdentityType.User; } }
+
+        public string GetDescription()
+        {
+            return Name;
+        }
+
+        public string GetId()
+        {
+            return Id.ToString();
+        }
     }
 }

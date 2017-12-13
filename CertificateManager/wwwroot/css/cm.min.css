@@ -122,3 +122,7 @@ div.tab button {
 .jsgrid-cell {
     overflow: hidden;
 }
+
+li.hr {
+    border-bottom: 1px solid #007bff;
+}

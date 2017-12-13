@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
@@ -269,7 +270,7 @@ namespace CertificateManager.UnitTests
             ImportUsersActiveDirectoryMetadataModel entity = GetImportUsersActiveDirectoryMetadataModelValid();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user)).Throws(new UnauthorizedAccessException());
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -286,7 +287,7 @@ namespace CertificateManager.UnitTests
             AuthenticablePrincipal authenticablePrincipal = GetAuthenticablePrincipalValid();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user)).Throws(new UnauthorizedAccessException());
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -303,7 +304,7 @@ namespace CertificateManager.UnitTests
             UpdateUserModel authenticablePrincipal = GetUpdateUserModelValid();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user)).Throws(new UnauthorizedAccessException());
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 
@@ -320,7 +321,7 @@ namespace CertificateManager.UnitTests
             AuthenticablePrincipal newUser = GetAuthenticablePrincipalValid();
 
             Mock<IAuthorizationLogic> authorizationLogic = new Mock<IAuthorizationLogic>();
-            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user)).Throws(new UnauthorizedAccessException());
+            authorizationLogic.Setup(x => x.IsAuthorizedThrowsException(AuthorizationScopes.ManageUsers, user, It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>())).Throws(new UnauthorizedAccessException());
 
             Mock<IConfigurationRepository> configurationRepository = new Mock<IConfigurationRepository>();
 

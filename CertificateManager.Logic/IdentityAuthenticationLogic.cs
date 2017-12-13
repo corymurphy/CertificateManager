@@ -9,16 +9,16 @@ namespace CertificateManager.Logic
 {
     public class IdentityAuthenticationLogic
     {
-        public static string RoleClaimIdentifier { get { return roleClaim; } }
-        public static string UpnClaimIdentifier { get { return nameClaim; } }
-        public static string UidClaimIdentifier { get { return uidClaim; } }
+        //public static string RoleClaimIdentifier { get { return roleClaim; } }
+        //public static string UpnClaimIdentifier { get { return nameClaim; } }
+        //public static string UidClaimIdentifier { get { return uidClaim; } }
 
 
 
-        private const string nameClaim = "http://certificatemanager/upn";
-        private const string roleClaim = "http://certificatemanager/role";
-        private const string altNameClaim = "http://certificatemanager/alternative-upn";
-        private const string uidClaim = "http://certificatemanager/uid";
+        //private const string nameClaim = "http://certificatemanager/upn";
+        //private const string roleClaim = "http://certificatemanager/role";
+        //private const string altNameClaim = "http://certificatemanager/alternative-upn";
+        //private const string uidClaim = "http://certificatemanager/uid";
 
         private const string devAuthBypass = "DevelopmentAuthority";
         private Guid localIdentityProviderId = new Guid("02abeb4c-e0b6-4231-b836-268aa40c3f1c");
@@ -36,16 +36,16 @@ namespace CertificateManager.Logic
 
         private ClaimsPrincipal ConstructClaimsPrincipal(AuthenticablePrincipal authenticablePrincipal, string authScheme)
         {
-            ClaimsIdentity id = new ClaimsIdentity(authScheme, nameClaim, roleClaim);
+            ClaimsIdentity id = new ClaimsIdentity(authScheme, WellKnownClaim.Name, WellKnownClaim.Role);
 
-            id.AddClaim(new Claim(nameClaim, authenticablePrincipal.Name));
-            id.AddClaim(new Claim(uidClaim, authenticablePrincipal.Id.ToString()));
+            id.AddClaim(new Claim(WellKnownClaim.Name, authenticablePrincipal.Name));
+            id.AddClaim(new Claim(WellKnownClaim.Uid, authenticablePrincipal.Id.ToString()));
 
             if(authenticablePrincipal.AlternativeNames != null)
             {
                 foreach (string altUpn in authenticablePrincipal.AlternativeNames)
                 {
-                    id.AddClaim(new Claim(altNameClaim, altUpn));
+                    id.AddClaim(new Claim(WellKnownClaim.AlternativeName, altUpn));
                 }
             }
 
@@ -58,7 +58,7 @@ namespace CertificateManager.Logic
 
                 foreach (SecurityRole role in configurationRepository.GetAuthenticablePrincipalMemberOf(authenticablePrincipal.Id))
                 {
-                    id.AddClaim(new Claim(roleClaim, role.Id.ToString()));
+                    id.AddClaim(new Claim(WellKnownClaim.Role, role.Id.ToString()));
                 }
 
 

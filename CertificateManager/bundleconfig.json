@@ -24,6 +24,21 @@
   //  "sourceMap": false
   //},
   {
+    "outputFileName": "wwwroot/css/certificate-manager.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "style/certificate-manager.css"
+    ],
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
     "outputFileName": "wwwroot/css/base.min.css",
     // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [

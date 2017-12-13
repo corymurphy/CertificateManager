@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Models;
 using CertificateManager.Logic;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Mvc;
@@ -63,7 +64,7 @@ namespace CertificateManager.Controllers
             roleManagement.DeleteRole(entity, User);
             return http.RespondSuccess();
         }
-    
+
         [HttpPut]
         [Route("security/role")]
         public JsonResult UpdateRole(SecurityRole entity)
@@ -81,17 +82,17 @@ namespace CertificateManager.Controllers
 
         [HttpDelete]
         [Route("security/role/{roleId:guid}/member/{memberId:guid}")]
-        public JsonResult DeleteRoleMember(Guid roleId, Guid memberId)
+        public JsonResult DeleteRoleMember([FromRoute]DeleteSecurityRoleMemberModel model)
         {
-            roleManagement.DeleteRoleMember(roleId, memberId);
+            roleManagement.DeleteRoleMember(model, User);
             return http.RespondSuccess();
         }
 
         [HttpPost]
         [Route("security/role/{roleId:guid}/member/{memberId:guid}")]
-        public JsonResult AddRoleMember(Guid roleId, Guid memberId)
+        public JsonResult AddRoleMember([FromRoute]AddSecurityRoleMemberModel model)
         {
-            return http.RespondSuccess(roleManagement.AddRoleMember(roleId, memberId, User));
+            return http.RespondSuccess(roleManagement.AddRoleMember(model, User));
         }
 
 
@@ -99,7 +100,8 @@ namespace CertificateManager.Controllers
         [Route("security/role/{roleId:guid}/scopes")]
         public JsonResult SetRoleScopes(Guid roleId, [FromBody]SetRoleScopesModel model)
         {
-            roleManagement.SetRoleScopes(roleId, model.Scopes, User);
+            model.RoleId = roleId;
+            roleManagement.SetRoleScopes(model, User);
             return http.RespondSuccess();
         }
     }

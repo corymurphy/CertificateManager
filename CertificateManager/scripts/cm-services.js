@@ -19,15 +19,12 @@ var Services = {
         });
     },
 
-    SetAuditConfig: function (data, successCallback, errorCallback)
+    SetAuditConfig: function (requestData, successCallback, errorCallback)
     {
         $.ajax({
             url: "/general-config/audit-config",
             type: 'put',
-            data: {
-                SecurityAuditingState: data.securityAuditingState,
-                OperationsLoggingState: data.operationsLoggingState
-            },
+            data: requestData,
             cache: false,
             async: true,
             dataType: "json",

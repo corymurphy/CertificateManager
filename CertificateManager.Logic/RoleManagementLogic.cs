@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Models;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
@@ -37,18 +38,17 @@ namespace CertificateManager.Logic
 
         public SecurityRole AddRole(SecurityRole entity, ClaimsPrincipal user)
         {
-            if(!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
-                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
-
             entity.Id = Guid.NewGuid();
+
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, entity, EventCategory.RoleManagementNew);
+            
             configurationRepository.Insert<SecurityRole>(entity);
             return entity;
         }
 
         public void DeleteRole(SecurityRole securityRole, ClaimsPrincipal user)
         {
-            if (!authorizationLogic.AuthorizedToManageRoles(user))
-                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, securityRole, EventCategory.RoleManagementDelete);
 
             if (securityRole.Id == RoleManagementLogic.WellKnownAdministratorRoleId)
                 throw new InvalidOperationException("The built-in administrator account cannot be deleted");
@@ -58,8 +58,7 @@ namespace CertificateManager.Logic
 
         public void UpdateRole(SecurityRole securityRole, ClaimsPrincipal user)
         {
-            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
-                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, securityRole, EventCategory.RoleManagementUpdate);
 
             configurationRepository.Update<SecurityRole>(securityRole);
         }
@@ -87,24 +86,25 @@ namespace CertificateManager.Logic
             return members;
         }
 
-        public void DeleteRoleMember(Guid roleId, Guid memberId)
+        public void DeleteRoleMember(DeleteSecurityRoleMemberModel model, ClaimsPrincipal user)
         {
-            SecurityRole role = configurationRepository.Get<SecurityRole>(roleId);
-            role.Member = role.Member.Where(member => member != memberId).ToList();
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, model, EventCategory.RoleManagementUpdate);
+
+            SecurityRole role = configurationRepository.Get<SecurityRole>(model.RoleId);
+            role.Member = role.Member.Where(member => member != model.MemberId).ToList();
             configurationRepository.Update<SecurityRole>(role);
         }
 
-        public AuthenticablePrincipal AddRoleMember(Guid roleId, Guid memberId, ClaimsPrincipal user)
+        public AuthenticablePrincipal AddRoleMember(AddSecurityRoleMemberModel model, ClaimsPrincipal user)
         {
-            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
-                throw new UnauthorizedAccessException("Current user context is not authorized to manage roles");
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, model, EventCategory.RoleManagementAddMember);
 
-            AuthenticablePrincipal principal = configurationRepository.Get<AuthenticablePrincipal>(memberId);
+            AuthenticablePrincipal principal = configurationRepository.Get<AuthenticablePrincipal>(model.MemberId);
 
             if (principal == null)
                 throw new ReferencedObjectDoesNotExistException("Specified member id was not found. No changes have been made.");
 
-            SecurityRole role = configurationRepository.Get<SecurityRole>(roleId);
+            SecurityRole role = configurationRepository.Get<SecurityRole>(model.RoleId);
 
             if (role == null)
                 throw new ReferencedObjectDoesNotExistException("Specified role id was not found. No changes have been made.");
@@ -123,17 +123,16 @@ namespace CertificateManager.Logic
             return configurationRepository.Get<SecurityRole>(WellKnownAdministratorRoleId);
         }
 
-        public void SetRoleScopes(Guid roleId, List<Guid> scopes, ClaimsPrincipal user)
+        public void SetRoleScopes(SetRoleScopesModel model, ClaimsPrincipal user)
         {
-            if (!authorizationLogic.IsAuthorized(AuthorizationScopes.ManageRoles, user))
-                throw new UnauthorizedAccessException("Access denied: scope change will not be performed.");
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.ManageRoles, user, model, EventCategory.RoleManagementSetScopes);
 
-            SecurityRole role = configurationRepository.Get<SecurityRole>(roleId);
+            SecurityRole role = configurationRepository.Get<SecurityRole>(model.RoleId);
 
             List<Scope> validScopes = authorizationLogic.GetAvailibleScopes();
-            if(scopes != null && scopes.Any() )
+            if(model.Scopes != null && model.Scopes.Any() )
             {
-                foreach (Guid scope in scopes)
+                foreach (Guid scope in model.Scopes)
                 {
                     if (!validScopes.Select(item => item.Id).Contains(scope))
                         throw new ReferencedObjectDoesNotExistException("Requested scope does not exist");
@@ -141,10 +140,10 @@ namespace CertificateManager.Logic
             }
             else
             {
-                scopes = new List<Guid>();
+                model.Scopes = new List<Guid>();
             }
 
-            role.Scopes = scopes;
+            role.Scopes = model.Scopes;
 
             configurationRepository.Update<SecurityRole>(role);
         }

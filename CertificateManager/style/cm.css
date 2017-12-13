@@ -123,3 +123,6 @@ div.tab button {
     overflow: hidden;
 }
 
+li.hr {
+    border-bottom: 1px solid #007bff;
+}

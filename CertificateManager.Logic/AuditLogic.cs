@@ -1,10 +1,13 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using CertificateManager.Entities.Extensions;
 
 namespace CertificateManager.Logic
 {
@@ -18,33 +21,51 @@ namespace CertificateManager.Logic
             this.configurationRepository = configurationRepository;
             this.auditRepository = auditRepository;
         }
-        public void LogSecurityAuditSuccess(Guid userid, string upn, string target, EventCategory category)
-        {
 
+        public void LogSecurityAuditSuccess(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category)
+        {
             AppConfig appConfig = configurationRepository.GetAppConfig();
-            
-            if(appConfig.SecurityAuditingState == SecurityAuditingState.Success)
+
+            if (appConfig.SecurityAuditingState == SecurityAuditingState.Success)
             {
                 AuditEvent auditEvent = new AuditEvent
                 {
-                    Target = target,
+                    Id = Guid.NewGuid(),
+                    Target = entity.GetId(),
+                    TargetDescription = entity.GetDescription(),
                     EventCategory = category,
-                    UserId = userid,
-                    UserPrincipalName = upn,
+                    UserId = userContext.GetUserId(),
+                    UserDisplay = userContext.GetName(),
                     Time = DateTime.Now,
                     EventResult = EventResult.Success
                 };
                 Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+
+                //auditRepository.InsertAuditEvent(auditEvent);
             }
-            
         }
 
-        public void LogSecurityAuditFailure(string target, string source)
+        public void LogSecurityAuditFailure(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category)
         {
+            AppConfig appConfig = configurationRepository.GetAppConfig();
 
+            if (appConfig.SecurityAuditingState == SecurityAuditingState.Success)
+            {
+                AuditEvent auditEvent = new AuditEvent
+                {
+                    Id = Guid.NewGuid(),
+                    Target = userContext.GetName(),
+                    EventCategory = category,
+                    UserId = userContext.GetUserId(),
+                    UserDisplay = userContext.GetName(),
+                    Time = DateTime.Now,
+                    EventResult = EventResult.Failure
+                };
+                Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+            }
         }
 
-        public void LogOpsError(Guid userid, string upn, string target, EventCategory category)
+        public void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category)
         {
             AppConfig appConfig = configurationRepository.GetAppConfig();
 
@@ -52,16 +73,16 @@ namespace CertificateManager.Logic
             {
                 AuditEvent auditEvent = new AuditEvent
                 {
+                    Id = Guid.NewGuid(),
                     Target = target,
                     EventCategory = category,
-                    UserId = userid,
-                    UserPrincipalName = upn,
+                    UserId = userContext.GetUserId(),
+                    UserDisplay = userContext.GetName(),
                     Time = DateTime.Now,
                     EventResult = EventResult.Success
                 };
                 Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
             }
-            
         }
 
         public void Log(AuditEvent auditEvent)
@@ -74,5 +95,7 @@ namespace CertificateManager.Logic
         {
             return auditRepository.GetAllEvents();
         }
+
+
     }
 }
