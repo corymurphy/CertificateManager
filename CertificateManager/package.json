@@ -20,6 +20,7 @@
     "gulp-clean-css": "~3.9.0",
     "gulp-sourcemaps": "~2.6.1",
     "adminlte-reactjs": "^1.0.6",
-    "adminlte-reactjs-carnegie": "^1.0.10"
+    "adminlte-reactjs-carnegie": "^1.0.10",
+    "chart.js": "^2.7.1"
   }
 }

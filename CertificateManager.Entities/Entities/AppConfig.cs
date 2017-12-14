@@ -14,6 +14,7 @@ namespace CertificateManager.Entities
             this.EmergencyAccessEnabled = true;
             this.SecurityAuditingState = SecurityAuditingState.All;
             this.OperationsLoggingState = OperationsLoggingState.Errors;
+            this.CachePeriod = 5;
         }
 
         public OperationsLoggingState OperationsLoggingState { get; set; }
@@ -24,5 +25,6 @@ namespace CertificateManager.Entities
         public int JwtValidityPeriod { get; set; }
         public string LocalIdpIdentifier { get; set; }
         public Guid Id { get; set; }
+        public int CachePeriod { get; set; }
     }
 }

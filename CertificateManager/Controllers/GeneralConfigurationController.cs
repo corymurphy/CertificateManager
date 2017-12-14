@@ -1,4 +1,5 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Models;
 using CertificateManager.Logic;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Authorization;
@@ -25,6 +26,17 @@ namespace CertificateManager.Controllers
         }
 
         [HttpPut]
+        [Route("general-config/settings")]
+        public JsonResult SetSettings(SettingsModel model)
+        {
+            AppConfig appConfig = configurationRepository.GetAppConfig();
+            appConfig.CachePeriod = model.CachePeriod;
+            configurationRepository.SetAppConfig(appConfig);
+
+            return http.RespondSuccess();
+        }
+
+        [HttpPut]
         [Route("general-config/audit-config")]
         public JsonResult SetAuditConfig(AuditConfigurationModel model)
         {
@@ -37,8 +49,8 @@ namespace CertificateManager.Controllers
         }
 
         [HttpGet]
-        [Route("general-config/audit-config")]
-        public JsonResult GetAuditConfig()
+        [Route("app-config")]
+        public JsonResult GetAppConfig()
         {
             return http.RespondSuccess(configurationRepository.GetAppConfig());
         }

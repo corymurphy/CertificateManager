@@ -27,6 +27,9 @@ namespace CertificateManager.Repository
         private LiteDatabase db;
         private CollectionDiscoveryLogic collectionDiscoveryLogic;
 
+        private AppConfig cachedConfig;
+        private DateTime cacheRefreshTime;
+
         public LiteDbConfigurationRepository(string path)
         {
             if (string.IsNullOrWhiteSpace(path))
@@ -197,33 +200,55 @@ namespace CertificateManager.Repository
         }
 
 
-
-
-
-        private AppConfig InitializeAppConfig(LiteCollection<AppConfig> col)
+        private void ValidateCacheState()
         {
-            AppConfig appConfig = new AppConfig();
-            col.Insert(appConfig);
-            return appConfig;
+            //If the cache is expired, refresh
+            if(cacheRefreshTime.AddMinutes(cachedConfig.CachePeriod) < DateTime.Now)
+            {
+                InitializeAppConfig();
+            }
+        }
+
+
+        private void InitializeAppConfig()
+        {
+            LiteCollection<AppConfig> col = db.GetCollection<AppConfig>(appConfigCollectionName);
+
+            cacheRefreshTime = DateTime.Now;
+
+            IEnumerable<AppConfig> config = col.FindAll();
+
+            if (config.Any())
+            {
+                this.cachedConfig = config.First();
+            }
+            else
+            {
+                this.cachedConfig = new AppConfig();
+                col.Upsert(this.cachedConfig);
+            }
+
+            
         }
 
         public AppConfig GetAppConfig()
         {
-            
-            LiteCollection<AppConfig> col = db.GetCollection<AppConfig>(appConfigCollectionName);
+            if(cachedConfig == null)
+            {
+                InitializeAppConfig();
+            }
 
-            AppConfig appConfig = col.FindOne(Query.All());
+            ValidateCacheState();
 
-            if (appConfig != null)
-                return appConfig;
-            else
-                return InitializeAppConfig(col);
+            return cachedConfig;
         }
 
         public void SetAppConfig(AppConfig appConfig)
         {
             LiteCollection<AppConfig> col = db.GetCollection<AppConfig>(appConfigCollectionName);
             col.Upsert(appConfig);
+            cachedConfig = appConfig;
+            cacheRefreshTime = DateTime.Now;
         }
 
         public IEnumerable<Scope> GetAvailibleScopes()

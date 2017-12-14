@@ -3,9 +3,26 @@ var certSearchResult = null;
 
 var Services = {
 
-    GetAuditConfig: function (successCallback, errorCallback) {
+    SaveSettings: function (requestData, successCallback, errorCallback) {
         $.ajax({
-            url: "/general-config/audit-config",
+            url: "/general-config/settings",
+            type: 'put',
+            data: requestData,
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
+    GetSettings: function (successCallback, errorCallback) {
+        $.ajax({
+            url: "/app-config",
             type: 'get',
             cache: false,
             async: true,

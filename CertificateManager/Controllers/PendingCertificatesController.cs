@@ -13,9 +13,9 @@ namespace CertificateManager.Controllers
         private IConfigurationRepository configurationRepository;
         private IAuthorizationLogic authorizationLogic;
         private HttpResponseHandler http;
-        private AuditLogic audit;
+        private IAuditLogic audit;
 
-        public PendingCertificatesController(ICertificateRepository certRepo, IConfigurationRepository configRepo, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic)
+        public PendingCertificatesController(ICertificateRepository certRepo, IConfigurationRepository configRepo, IAuthorizationLogic authorizationLogic, IAuditLogic auditLogic)
         {
             this.certificateRepository = certRepo;
             this.configurationRepository = configRepo;

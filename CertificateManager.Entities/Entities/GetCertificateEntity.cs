@@ -3,11 +3,13 @@ using CertificateServices.Enumerations;
 using CertificateServices;
 using System.Collections.Generic;
 using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Interfaces;
+using CertificateManager.Entities.Extensions;
 
 namespace CertificateManager.Entities
 {
     [Repository("Certificate")]
-    public class GetCertificateEntity
+    public class GetCertificateEntity : ILoggableEntity
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
@@ -23,5 +25,15 @@ namespace CertificateManager.Entities
         public CertificateSubject Subject { get; set; }
         public bool HasPrivateKey { get; set; }
         public List<AccessControlEntry> Acl { get; set; }
+
+        public string GetDescription()
+        {
+            return string.Format("Certificate viewed thumbprint: {0};id: {1};displayname: {2}", Thumbprint, Id, DisplayName);
+        }
+
+        public string GetId()
+        {
+            return Id.GetId();
+        }
     }
 }

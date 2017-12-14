@@ -19,11 +19,11 @@ namespace CertificateManager.Controllers
         private IAuthorizationLogic authorizationLogic;
         //private PrivateCertificateProcessing processor;
         private HttpResponseHandler http;
-        private AuditLogic audit;
+        private IAuditLogic audit;
         private AdcsTemplateLogic templateLogic;
 
 
-        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, AuditLogic auditLogic, AdcsTemplateLogic templateLogic)
+        public PrivateCertificateAuthorityController(ICertificateRepository certRepo, IConfigurationRepository configRepo, ICertificateProvider certProvider, IAuthorizationLogic authorizationLogic, IAuditLogic auditLogic, AdcsTemplateLogic templateLogic)
         {
             this.certificateRepository = certRepo;
             this.configurationRepository = configRepo;

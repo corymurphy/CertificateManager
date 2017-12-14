@@ -3,6 +3,7 @@ using CertificateManager.Logic;
 using CertificateManager.Logic.ActiveDirectory;
 using CertificateManager.Logic.ActiveDirectory.Interfaces;
 using CertificateManager.Logic.ConfigurationProvider;
+using CertificateManager.Logic.InitialSetupDependencies;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Logic.MvcMiddleware;
 using CertificateManager.Logic.UXLogic;
@@ -146,6 +147,7 @@ namespace CertificateManager
 
             services.AddSingleton<IClientsideConfigurationProvider>(new ClientsideConfigurationProviderInitialSetup());
 
+            services.AddSingleton<IAuditLogic>(new AuditLogicInitialSetup());
             //IdentityAuthenticationLogic(configurationRepository, activeDirectoryAuthenticator)
 
             services.AddSingleton<IdentityAuthenticationLogic>(new IdentityAuthenticationLogic(null, null));
@@ -216,6 +218,7 @@ namespace CertificateManager
                     configurationRepository,
                     certificateRepository,
                     authorizationLogic,
+                    auditLogic,
                     securityPrincipalLogic,
                     cipher);
 

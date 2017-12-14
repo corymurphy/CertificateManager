@@ -349,6 +349,7 @@
     <Compile Include="HashProvider.cs" />
     <Compile Include="EncryptionProvider.cs" />
     <Compile Include="IHashProvider.cs" />
+    <Compile Include="InitialSetupDependencies\AuditLogicInitialSetup.cs" />
     <Compile Include="Interfaces\IAuditLogic.cs" />
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />

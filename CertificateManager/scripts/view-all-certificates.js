@@ -33,6 +33,10 @@ var ViewAllCertificates = {
         }
     },
 
+    ViewCertificate: function (item) {
+        document.location = "/view/certificate/" + item.id;
+    },
+
     InitializeGrid: function ()
     {
         ViewAllCertificates.Grid.jsGrid({
@@ -48,6 +52,10 @@ var ViewAllCertificates = {
             pageSize: 15,
             pageButtonCount: 5,
 
+            rowClick: function (args) {
+                ViewAllCertificates.ViewCertificate(args.item);
+            },
+
             deleteConfirm: "Do you really want to delete this certificate?",
 
             controller: ViewAllCertificates.Controller,
@@ -62,26 +70,22 @@ var ViewAllCertificates = {
                         return UiGlobal.GetDateString(value);
                     } },
                 { title: "Thumbprint", name: "thumbprint", type: "text" },
-                {
-                    name: "details",
-                    title: "Action",
-                    width: 20,
-                    itemTemplate: function (value, item) {
-                        //var $text = $("<p>").text(item.MyField);
-                        var $link = $("<a>").attr("href", '/view/certificate/' + item.id).text("View");
-                        return $("<div>").append($link);
-                    }
-                },
+                //{
+                //    name: "details",
+                //    title: "Action",
+                //    width: 20,
+                //    itemTemplate: function (value, item) {
+                //        //var $text = $("<p>").text(item.MyField);
+                //        var $link = $("<a>").attr("href", '/view/certificate/' + item.id).text("View");
+                //        return $("<div>").append($link);
+                //    }
+                //},
                 {
                     type: "control",
                     editButton: false,
                     width: 10
                 }
-            ],
-
-            onItemInserting: function (args) { SecurityRoles.ResetErrorState(); },
-            onItemUpdating: function (args) { SecurityRoles.ResetErrorState(); },
-            onItemDeleting: function (args) { SecurityRoles.ResetErrorState(); }
+            ]
 
         });
     }

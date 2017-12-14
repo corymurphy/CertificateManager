@@ -2,9 +2,12 @@
 {
     public enum EventCategory
     {
+        CertificateViewed, 
         CertificateIssuance,
         CertificateAccess,
         CertificateDownload,
+        CertificatePasswordViewed,
+        CertificatePasswordReset,
         UserAuthentication,
         UserManagementResetPassword,
         UserManagementSet,

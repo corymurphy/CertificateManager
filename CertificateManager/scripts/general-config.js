@@ -17,29 +17,46 @@
         }
     },
 
-    GetAuditConfig: function ()
+    GetSettingsCurrentState: function ()
+    {
+        return {
+            cachePeriod: $('#cachePeriod').val()
+        };
+    },
+
+    GetSettings: function ()
     {
         GeneralConfig.ClearAuditConfigCurrentState();
 
-        Services.GetAuditConfig(GeneralConfig.GetAuditConfigSuccessCallback, GeneralConfig.GetAuditConfigErrorCallback)
-        //var value = 5;
-        //$("input[name=mygroup][value=" + value + "]").attr('checked', 'checked');
+        Services.GetSettings(GeneralConfig.GetSettingsSuccessCallback, GeneralConfig.ErrorCallback)
+    },
+
+    SaveSettings: function ()
+    {
+        UiGlobal.ResetAlertState();
+        var data = GeneralConfig.GetSettingsCurrentState();
+        Services.SaveSettings(data, GeneralConfig.SaveSettingsSuccessCallback, GeneralConfig.ErrorCallback);
     },
 
     SaveAuditConfig: function ()
     {
         UiGlobal.ResetAlertState();
         var data = GeneralConfig.GetAuditConfigCurrentState();
-        Services.SetAuditConfig(data, GeneralConfig.SaveAuditConfigSuccessCallback, GeneralConfig.SaveAuditConfigErrorCallback);
+        Services.SetAuditConfig(data, GeneralConfig.SaveAuditConfigSuccessCallback, GeneralConfig.ErrorCallback);
     },
 
-    GetAuditConfigSuccessCallback: function (data) {
+    SaveSettingsSuccessCallback: function () {
+        UiGlobal.ShowSuccess("Settings were saved successfully");
+    },
+
+    ErrorCallback: function (x) {
+        UiGlobal.ShowError(x.message);
+    },
+
+    GetSettingsSuccessCallback: function (data) {
         $("input[name=operationsLoggingState][value=" + data.operationsLoggingState + "]").attr('checked', 'checked');
         $("input[name=securityAuditingState][value=" + data.securityAuditingState + "]").attr('checked', 'checked');
-    },
-
-    GetAuditConfigErrorCallback: function (x) {
-        UiGlobal.ShowError(x.message);
+        $('#cachePeriod').val(data.cachePeriod);
     },
 
     SaveAuditConfigSuccessCallback: function ()
@@ -47,16 +64,12 @@
         UiGlobal.ShowSuccess("Auditing configuration was saved successfully");
     },
 
-    SaveAuditConfigErrorCallback: function (x) {
-        UiGlobal.ShowError(x.message);
-    },
-
     PageLoad: function ()
     {
         //GeneralConfig.SecurityAuditingRadio = $('input[name=securityAuditingRadio]:checked');
         //GeneralConfig.OperationsLoggingRadio = $('input[name=operationsLoggingRadio]:checked');
 
-        GeneralConfig.GetAuditConfig();
+        GeneralConfig.GetSettings();
         UiGlobal.ShowCurrentTab();
 
     }

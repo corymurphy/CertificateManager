@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-    Layout = "~/Views/Shared/_Layout.BootstrapMinimal.cshtml";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
 }
 
 <!-- Breadcrumbs -->
@@ -11,3 +11,12 @@
     <li class="breadcrumb-item active">My Dashboard</li>
 </ol>
 
+<div class="card mb-3">
+    <div class="card-header">
+        <i class="fa fa-area-chart"></i> Certificates Issued
+    </div>
+    <div class="card-body">
+        <canvas id="myAreaChart" width="668" height="200" class="chartjs-render-monitor" style="display: block; width: 668px; height: 200px;"></canvas>
+    </div>
+    <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+</div>

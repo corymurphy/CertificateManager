@@ -19,11 +19,13 @@ namespace CertificateManager.Logic
         EncryptionProvider cipher;
         SecretKeyProvider keygen;
         IHashProvider hashProvider;
+        IAuditLogic audit;
 
         public CertificateManagementLogic(
             IConfigurationRepository configurationRepository, 
             ICertificateRepository certificateRepository, 
-            IAuthorizationLogic authorizationLogic, 
+            IAuthorizationLogic authorizationLogic,
+            IAuditLogic audit,
             SecurityPrincipalLogic securityPrincipalLogic,
             EncryptionProvider cipher
         )
@@ -35,12 +37,14 @@ namespace CertificateManager.Logic
             this.cipher = cipher;
             this.hashProvider = new HashProvider();
             this.keygen = new SecretKeyProvider();
+            this.audit = audit;
         }
 
         public CertificateManagementLogic(
             IConfigurationRepository configurationRepository,
             ICertificateRepository certificateRepository,
             IAuthorizationLogic authorizationLogic,
+            IAuditLogic audit,
             SecurityPrincipalLogic securityPrincipalLogic,
             EncryptionProvider cipher,
             IHashProvider hashProvider
@@ -53,12 +57,14 @@ namespace CertificateManager.Logic
             this.cipher = cipher;
             this.hashProvider = hashProvider;
             this.keygen = new SecretKeyProvider();
+            this.audit = audit;
         }
 
-        public GetCertificateEntity GetCertificate(Guid id)
+        public GetCertificateEntity GetCertificate(Guid id, ClaimsPrincipal user)
         {
             GetCertificateEntity cert = certificateRepository.Get<GetCertificateEntity>(id);
 
+            audit.LogSecurityAuditSuccess(user, cert, EventCategory.CertificateViewed);
 
             if(cert.Acl != null && cert.Acl.Count >= 0)
             {
@@ -76,9 +82,11 @@ namespace CertificateManager.Logic
             return cert;
         }
 
-        public AccessControlEntry AddCertificateAce(Guid certId, AddCertificateAceEntity entity)
+        public AccessControlEntry AddCertificateAce(Guid certId, AddCertificateAceEntity entity, ClaimsPrincipal user)
         {
             Certificate cert = certificateRepository.Get<Certificate>(certId);
+
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.CertificateFullControl, user, cert);
 
             if (cert.Acl == null)
             {
@@ -96,9 +104,11 @@ namespace CertificateManager.Logic
             return ace;
         }
 
-        public void DeleteCertificateAce(Guid certId, Guid aceId)
-        {
+        public void DeleteCertificateAce(Guid certId, Guid aceId, ClaimsPrincipal user)
+        { 
             Certificate cert = certificateRepository.Get<Certificate>(certId);
+
+            authorizationLogic.IsAuthorizedThrowsException(AuthorizationScopes.CertificateFullControl, user, cert);
 
             if (cert.Acl == null)
             {
@@ -116,6 +126,8 @@ namespace CertificateManager.Logic
 
             if (authorizationLogic.CanViewPrivateKey(cert, user))
             {
+                audit.LogSecurityAuditSuccess(user, cert, EventCategory.CertificatePasswordViewed);
+
                 GetCertificatePasswordResponseEntity response = new GetCertificatePasswordResponseEntity();
 
                 response.DecryptedPassword = cipher.Decrypt(cert.PfxPassword, cert.PasswordNonce);
@@ -124,6 +136,7 @@ namespace CertificateManager.Logic
             }
             else
             {
+                audit.LogSecurityAuditFailure(user, cert, EventCategory.CertificatePasswordViewed);
                 throw new UnauthorizedAccessException();
             }
         }
@@ -134,6 +147,7 @@ namespace CertificateManager.Logic
 
             if (!authorizationLogic.CanViewPrivateKey(cert, user))
             {
+                audit.LogSecurityAuditFailure(user, cert, EventCategory.CertificatePasswordReset);
                 throw new UnauthorizedAccessException();
             }
 
@@ -146,6 +160,8 @@ namespace CertificateManager.Logic
             {
                 throw new ObjectNotInCorrectStateException("Certificate does not have a private key");
             }
+
+            audit.LogSecurityAuditSuccess(user, cert, EventCategory.CertificatePasswordReset);
 
             byte[] certBytes = cert.Content;
 
@@ -167,6 +183,7 @@ namespace CertificateManager.Logic
 
         public IEnumerable<AllCertificatesViewModel> GetAllCertificates()
         {
+
             return certificateRepository.GetAll<AllCertificatesViewModel>();
         }
 

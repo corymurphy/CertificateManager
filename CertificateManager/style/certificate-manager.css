@@ -22,3 +22,15 @@
 .icon-size {
     font-size: 87px;
 }
+
+.content-wrapper {
+    background: none;
+}
+
+.form-control {
+    font-size: 0.8rem;
+}
+
+.tabcontent{
+    background-color:white;
+}

@@ -1,6 +1,6 @@
 ﻿@{
     ViewData["Title"] = "General Configuration";
-    Layout = "~/Views/Shared/_Layout.BootstrapMinimal.cshtml";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
 }
 
 <!-- Breadcrumbs -->
@@ -15,50 +15,20 @@
 <div class="alert alert-danger" id="error-alert" style="display:none;"></div>
 
 <div class="tab">
-    <button class="tablinks generalConfig" onclick="openTab(event, 'generalConfig')" id="defaultOpen">General Configuration</button>
+    <button class="tablinks generalConfig" onclick="openTab(event, 'generalConfig')" id="defaultOpen">Settings</button>
     <button class="tablinks auditConfig" onclick="openTab(event, 'auditConfig')" id="defaultOpen">Auditing</button>
     <button class="tablinks certificateAuthorities" onclick="openTab(event, 'certificateAuthorities')">Certificate Authorities</button>
 </div>
 
 <div id="generalConfig" class="tabcontent">
-    <h5>Certificate Manager - General Configuration</h5>
 
-
-    <div class="form-group row"><div class="col-sm-6">DeleteCertificates</div><div class="col-sm-4"><div class="form-check"><label class="form-check-label"><input class="form-check-input scope" type="checkbox" id="02803f7c-5cf3-4bb4-8f57-1dc940035f5b" checked="checked"></label></div></div></div>
+    @Html.Partial("~/Views/GeneralConfiguration/_Settings.cshtml")
 
 </div>
 
 <div id="auditConfig" class="tabcontent">
-    @*<h5>Auditing Configuration</h5>*@
-    <p>
-        <h6>Security Auditing</h6>
-        <br />
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="None">  None       </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="Success">  Success       </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="Failure">  Failure        </label>
-        <label class="radio-inline"><input type="radio" name="securityAuditingState" value="All" >  Success and Failure </label>
-    </p>
 
-
-    <hr />
-
-
-    <p>
-        <h6>
-            Operations Logging
-        </h6>
-        <br />
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="None">  None        </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Information">  Information        </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Warnings">  Warnings        </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Errors">  Errors       </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Debug">  Debug        </label>
-        <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="All">  All        </label>
-    </p>
-
-    <p>
-        <button type="button" class="btn btn-primary" onclick="GeneralConfig.SaveAuditConfig()">Save</button>
-    </p>
+    @Html.Partial("~/Views/GeneralConfiguration/_AuditConfig.cshtml")
 
 </div>
 

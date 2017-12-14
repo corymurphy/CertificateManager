@@ -157,7 +157,14 @@
     }
   },
 
-
+  {
+    "outputFileName": "wwwroot/js/Chart.bundle.min.js",
+    "inputFiles": [ "node_modules/chart.js/dist/Chart.bundle.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
 
 
   {

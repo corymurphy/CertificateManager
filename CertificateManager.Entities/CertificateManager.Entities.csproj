@@ -209,6 +209,7 @@
     <Compile Include="Entities\PendingCertificateSigning.cs" />
     <Compile Include="Entities\PendingCertificate.cs" />
     <Compile Include="Entities\GetUserModel.cs" />
+    <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Entities\WellKnownClaim.cs" />
     <Compile Include="Entities\Scope.cs" />
     <Compile Include="Entities\SetRoleScopesModel.cs" />

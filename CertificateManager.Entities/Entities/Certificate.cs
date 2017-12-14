@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities.Attributes;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Extensions;
 using CertificateManager.Entities.Interfaces;
 using CertificateServices;
 using CertificateServices.Enumerations;
@@ -9,7 +10,7 @@ using System.Collections.Generic;
 namespace CertificateManager.Entities
 {
     [Repository("Certificate")]
-    public class Certificate : ICertificatePasswordEntity
+    public class Certificate : ICertificatePasswordEntity, ILoggableEntity
     {
         public Guid Id { get; set; }
         public string DisplayName { get; set; }
@@ -51,5 +52,15 @@ namespace CertificateManager.Entities
         public KeyUsage KeyUsage { get; set; }
 
         public byte[] ContentDigest { get; set; }
+
+        public string GetDescription()
+        {
+            return string.Format("Certificate viewed thumbprint: {0};id: {1};displayname: {2}", Thumbprint, Id, DisplayName);
+        }
+
+        public string GetId()
+        {
+            return Id.GetId();
+        }
     }
 }

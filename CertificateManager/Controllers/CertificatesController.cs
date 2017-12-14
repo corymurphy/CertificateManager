@@ -7,7 +7,6 @@ namespace CertificateManager.Controllers
 {
     public class CertificatesController : Controller
     {
-
         HttpResponseHandler http;
         CertificateManagementLogic certificateManagementLogic;
 
@@ -21,14 +20,15 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}")]
         public JsonResult GetCertificate(Guid id)
         {
-            return http.RespondSuccess(certificateManagementLogic.GetCertificate(id));
+            
+            return http.RespondSuccess(certificateManagementLogic.GetCertificate(id, User));
         }
 
         [HttpDelete]
         [Route("certificate/{certId:guid}/acl/{aceId:guid}")]
         public JsonResult DeleteCertificateAce(Guid certId, Guid aceId)
         {
-            certificateManagementLogic.DeleteCertificateAce(certId, aceId);
+            certificateManagementLogic.DeleteCertificateAce(certId, aceId, User);
             return http.RespondSuccess();
         }
 
@@ -36,7 +36,7 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}/acl")]
         public JsonResult AddCertificateAce(Guid id, [FromBody]AddCertificateAceEntity entity)
         {         
-            return http.RespondSuccess(certificateManagementLogic.AddCertificateAce(id, entity));
+            return http.RespondSuccess(certificateManagementLogic.AddCertificateAce(id, entity, User));
         }
 
         [HttpGet]
@@ -79,8 +79,6 @@ namespace CertificateManager.Controllers
         {
             return null;
         }
-
-
 
     }
 }

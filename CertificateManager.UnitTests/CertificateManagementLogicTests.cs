@@ -1,19 +1,28 @@
-﻿using System;
+﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Interfaces;
+using CertificateManager.Logic;
+using CertificateManager.Logic.Interfaces;
+using CertificateManager.Repository;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using CertificateManager.Repository;
-using CertificateManager.Entities;
-using CertificateManager.Logic.Interfaces;
-using CertificateManager.Entities.Interfaces;
+using System;
 using System.Security.Claims;
-using CertificateManager.Logic;
-using CertificateManager.Entities.Exceptions;
 
 namespace CertificateManager.UnitTests
 {
     [TestClass]
     public class CertificateManagementLogicTests
     {
+
+        private IAuditLogic GetAuditMock()
+        {
+            Mock<IAuditLogic> audit = new Mock<IAuditLogic>();
+            audit.Setup(x => x.LogSecurityAuditFailure(It.IsAny<ClaimsPrincipal>(), It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>()));
+            audit.Setup(x => x.LogSecurityAuditSuccess(It.IsAny<ClaimsPrincipal>(), It.IsAny<ILoggableEntity>(), It.IsAny<EventCategory>()));
+            return audit.Object;
+        }
+
         [TestMethod]
         [ExpectedException(typeof(UnauthorizedAccessException))]
         public void CertificateManagementLogic_GetCertificatePassword_Unauthorized_ThrowsUnauthorizedAccessException()
@@ -24,7 +33,7 @@ namespace CertificateManager.UnitTests
             Mock<IAuthorizationLogic> authLogic = new Mock<IAuthorizationLogic>();
             authLogic.Setup(x => x.CanViewPrivateKey(It.IsAny<ICertificatePasswordEntity>(), It.IsAny<ClaimsPrincipal>())).Returns(false);
 
-            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, null, null);
+            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, GetAuditMock(), null, null);
 
             certificateManagement.GetCertificatePassword(Guid.NewGuid(), null);
         }
@@ -39,7 +48,7 @@ namespace CertificateManager.UnitTests
             Mock<IAuthorizationLogic> authLogic = new Mock<IAuthorizationLogic>();
             authLogic.Setup(x => x.CanViewPrivateKey(It.IsAny<ICertificatePasswordEntity>(), It.IsAny<ClaimsPrincipal>())).Returns(false);
 
-            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, null, null);
+            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, GetAuditMock(), null, null);
 
             certificateManagement.ResetCertificatePassword(Guid.NewGuid(), null);
         }
@@ -58,7 +67,7 @@ namespace CertificateManager.UnitTests
             Mock<IAuthorizationLogic> authLogic = new Mock<IAuthorizationLogic>();
             authLogic.Setup(x => x.CanViewPrivateKey(It.IsAny<ICertificatePasswordEntity>(), It.IsAny<ClaimsPrincipal>())).Returns(true);
 
-            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, null, null, hashProvider.Object);
+            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, GetAuditMock(), null, null, hashProvider.Object);
 
             certificateManagement.ResetCertificatePassword(Guid.NewGuid(), null);
         }
@@ -83,7 +92,7 @@ namespace CertificateManager.UnitTests
             Mock<IAuthorizationLogic> authLogic = new Mock<IAuthorizationLogic>();
             authLogic.Setup(x => x.CanViewPrivateKey(It.IsAny<ICertificatePasswordEntity>(), It.IsAny<ClaimsPrincipal>())).Returns(true);
 
-            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, null, null, hashProvider.Object);
+            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, GetAuditMock(), null, null, hashProvider.Object);
 
             certificateManagement.ResetCertificatePassword(Guid.NewGuid(), null);
         }
@@ -109,7 +118,7 @@ namespace CertificateManager.UnitTests
             Mock<IAuthorizationLogic> authLogic = new Mock<IAuthorizationLogic>();
             authLogic.Setup(x => x.CanViewPrivateKey(It.IsAny<ICertificatePasswordEntity>(), It.IsAny<ClaimsPrincipal>())).Returns(true);
 
-            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, null, null, hashProvider.Object);
+            CertificateManagementLogic certificateManagement = new CertificateManagementLogic(null, certRepo.Object, authLogic.Object, GetAuditMock(), null, null, hashProvider.Object);
 
             certificateManagement.ResetCertificatePassword(Guid.NewGuid(), null);
         }
