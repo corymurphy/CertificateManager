@@ -341,6 +341,7 @@
     <Compile Include="ActiveDirectory\Interfaces\IActiveDirectoryRepository.cs" />
     <Compile Include="ActiveDirectory\NamingContext.cs" />
     <Compile Include="AdcsTemplateLogic.cs" />
+    <Compile Include="AnalyticsLogic.cs" />
     <Compile Include="AuditLogic.cs" />
     <Compile Include="AuthorizationLogic.cs" />
     <Compile Include="AuthorizeInitialSetup.cs" />
@@ -370,6 +371,7 @@
     <Compile Include="RuntimeConfigurationState.cs" />
     <Compile Include="SecretKeyProvider.cs" />
     <Compile Include="UserManagementLogic.cs" />
+    <Compile Include="UXLogic\DataRenderingProvider.cs" />
     <Compile Include="UXLogic\IClientsideConfigurationProvider.cs" />
     <Compile Include="UXLogic\ClientsideConfigurationProvider.cs" />
     <Compile Include="WorkstationDevelopment.cs" />

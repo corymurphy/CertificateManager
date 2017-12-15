@@ -8,17 +8,22 @@ namespace CertificateManager.Controllers
     [Authorize]
     public class HomeController : Controller
     {
+        private readonly AnalyticsLogic analytics;
         HttpResponseHandler http;
 
-        public HomeController()
+        public HomeController(AnalyticsLogic analytics)
         {
             http = new HttpResponseHandler(this);
+            this.analytics = analytics;
         }
 
         [HttpGet("~/")]
         [Route("home/index")]
         public IActionResult Index()
         {
+            ViewBag.CertificateHistory = analytics.GetCertificateHistory();
+            ViewBag.LogHistory = analytics.GetLogHistory();
+
             return View();
         }
 

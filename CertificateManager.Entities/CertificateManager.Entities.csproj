@@ -209,6 +209,11 @@
     <Compile Include="Entities\PendingCertificateSigning.cs" />
     <Compile Include="Entities\PendingCertificate.cs" />
     <Compile Include="Entities\GetUserModel.cs" />
+    <Compile Include="Interfaces\I2dChartData.cs" />
+    <Compile Include="Models\CertificateHistoryModel.cs" />
+    <Compile Include="Models\CertificateIssuanceModel.cs" />
+    <Compile Include="Models\LogDateModel.cs" />
+    <Compile Include="Models\LogHistoryModel.cs" />
     <Compile Include="Models\SettingsModel.cs" />
     <Compile Include="Entities\WellKnownClaim.cs" />
     <Compile Include="Entities\Scope.cs" />

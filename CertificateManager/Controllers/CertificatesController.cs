@@ -20,7 +20,6 @@ namespace CertificateManager.Controllers
         [Route("certificate/{id:guid}")]
         public JsonResult GetCertificate(Guid id)
         {
-            
             return http.RespondSuccess(certificateManagementLogic.GetCertificate(id, User));
         }
 
@@ -78,6 +77,14 @@ namespace CertificateManager.Controllers
         public JsonResult DeleteCertificate(Guid id)
         {
             return null;
+        }
+
+        [HttpGet]
+        [Route("certificate/init/data")]
+        public JsonResult InitializeMockData()
+        {
+            certificateManagementLogic.InitializeMockData();
+            return http.RespondSuccess();
         }
 
     }

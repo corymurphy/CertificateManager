@@ -1,6 +1,8 @@
 ﻿using CertificateManager.Entities;
 using LiteDB;
+using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {
@@ -8,14 +10,12 @@ namespace CertificateManager.Repository
     {
         private string auditCollectionName = "audit";
         private LiteDatabase db;
+        private readonly CollectionDiscoveryLogic collectionDiscoveryLogic;
 
         public LiteDbAuditRepository(string path)
         {
             db = new LiteDatabase(path);
-        }
-
-        public LiteDbAuditRepository()
-        {
+            this.collectionDiscoveryLogic = new CollectionDiscoveryLogic();
         }
 
         public void InsertAuditEvent(AuditEvent entity)
@@ -29,6 +29,12 @@ namespace CertificateManager.Repository
             LiteCollection<AuditEvent> col = db.GetCollection<AuditEvent>(auditCollectionName);
             return col.FindAll();
                 
+        }
+
+        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> query)
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            return col.Find(query);
         }
     }
 }

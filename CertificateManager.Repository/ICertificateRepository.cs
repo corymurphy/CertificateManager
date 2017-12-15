@@ -1,6 +1,7 @@
 ﻿using CertificateManager.Entities;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {
@@ -21,6 +22,8 @@ namespace CertificateManager.Repository
         void DeleteAllCertificates();
 
         void Delete<T>(Guid id);
+
+        IEnumerable<T> Get<T>(Expression<Func<T, bool>> query);
 
         IEnumerable<SearchCertificatesEntity> FindCertificates(string query);
 

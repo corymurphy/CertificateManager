@@ -3,6 +3,8 @@
     Layout = "~/Views/Shared/_Layout.full.cshtml";
 }
 
+@using CertificateManager.Logic.UXLogic
+@inject DataRenderingProvider renderingProvider
 <!-- Breadcrumbs -->
 <ol class="breadcrumb">
     <li class="breadcrumb-item">
@@ -13,10 +15,142 @@
 
 <div class="card mb-3">
     <div class="card-header">
-        <i class="fa fa-area-chart"></i> Certificates Issued
+        <i class="fa fa-area-chart"></i> Certificate Issuance History
     </div>
     <div class="card-body">
-        <canvas id="myAreaChart" width="668" height="200" class="chartjs-render-monitor" style="display: block; width: 668px; height: 200px;"></canvas>
+        <canvas id="certHistory" width="400" height="240"></canvas>
     </div>
     <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
 </div>
+
+<div class="row">
+
+    <div class="col-lg-8">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-area-chart"></i> Activity
+            </div>
+            <div class="card-body">
+                <canvas id="logHistory" width="400" height="240"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card mb-3">
+            <div class="card-header">
+                <i class="fa fa-pie-chart"></i> Pie Chart Example
+            </div>
+            <div class="card-body">
+                <canvas id="myPieChart" width="183" height="183" class="chartjs-render-monitor" style="display: block; width: 183px; height: 183px;"></canvas>
+            </div>
+            <div class="card-footer small text-muted">Updated yesterday at 11:59 PM</div>
+        </div>
+    </div>
+
+</div>
+
+
+
+
+
+@section Script{
+
+    @*<script src="~/js/plugin.filler.js"></script>*@
+
+    <script>
+
+        @Html.Raw(renderingProvider.Render2dChartData("logHistoryLabel", "logHistoryData", ViewBag.LogHistory))
+
+        @Html.Raw(renderingProvider.Render2dChartData("certHistoryLabel", "certHistoryData", ViewBag.CertificateHistory))
+
+        var certHistoryChart = new Chart(document.getElementById('certHistory').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: certHistoryLabel,
+                datasets: [{
+                    label: 'Certificates issued per day',
+                    data: certHistoryData,
+                    backgroundColor: "rgba(2,117,216,0.2)",
+                    borderColor: "rgba(2,117,216,1)",
+                    pointBackgroundColor: "rgba(2,117,216,1)",
+                    pointBorderColor: "rgba(255,255,255,0.8)",
+                    pointHoverRadius: 5,
+                    pointHitRadius: 30
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    xAxes: [{
+                        time: { unit: "date" },
+                        gridLines: { display: !1 }
+                        //ticks: {  maxTicksLimit: 7 }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            //max: 4e4,
+                            maxTicksLimit: 5
+                        },
+                        gridLines: {
+                            color: "rgba(0, 0, 0, .125)"
+                        }
+                    }]
+                },
+
+                legend: {
+                    display: !1
+                }
+            }
+        });
+
+        var logHistoryChart = new Chart(document.getElementById('logHistory').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: logHistoryLabel,
+                datasets: [{
+                    label: 'Logs per day',
+                    data: logHistoryData,
+                    backgroundColor: "rgba(2,117,216,0.2)",
+                    borderColor: "rgba(2,117,216,1)",
+                    pointBackgroundColor: "rgba(2,117,216,1)",
+                    pointBorderColor: "rgba(255,255,255,0.8)",
+                    pointHoverRadius: 5,
+                    pointHitRadius: 30
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+
+                scales: {
+                    xAxes: [{
+                        time: { unit: "date" },
+                        gridLines: { display: !1 }
+                        //ticks: {  maxTicksLimit: 7 }
+                    }],
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            //max: 4e4,
+                            maxTicksLimit: 5
+                        },
+                        gridLines: {
+                            color: "rgba(0, 0, 0, .125)"
+                        }
+                    }]
+                },
+
+                legend: {
+                    display: !1
+                }
+            }
+        });
+
+
+    </script>
+}

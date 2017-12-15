@@ -96,6 +96,32 @@ namespace CertificateManager.Logic
             return auditRepository.GetAllEvents();
         }
 
+        public void InitializeMockData()
+        {
+            for (int i = -10; i <= 0; i++)
+            {
+                DateTime day = DateTime.Now;
+                day = day.AddDays(i);
+
+                int certCount = new Random().Next(100, 5000);
+
+                int index = 0;
+                while (index < certCount)
+                {
+                    AuditEvent log = new AuditEvent()
+                    {
+                        Time = day
+                    };
+
+                    auditRepository.InsertAuditEvent(log);
+                    //certificateRepository.Insert<Certificate>(newCert);
+
+                    index++;
+                }
+
+            }
+        }
+
 
     }
 }

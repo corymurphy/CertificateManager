@@ -166,6 +166,14 @@
     }
   },
 
+  {
+    "outputFileName": "wwwroot/js/plugin.filler.js",
+    "inputFiles": [ "node_modules/chart.js/src/plugins/plugin.filler.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
 
   {
     "outputFileName": "wwwroot/js/jsgrid.min.js",

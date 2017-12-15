@@ -3,6 +3,7 @@ using CertificateManager.Entities.Exceptions;
 using LiteDB;
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {
@@ -101,5 +102,12 @@ namespace CertificateManager.Repository
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             col.Delete(id);
         }
+
+        public IEnumerable<T> Get<T>(Expression<Func<T, bool>> query)
+        {
+            LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
+            return col.Find(query);
+        }
+
     }
 }

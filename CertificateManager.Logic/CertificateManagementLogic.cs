@@ -187,5 +187,31 @@ namespace CertificateManager.Logic
             return certificateRepository.GetAll<AllCertificatesViewModel>();
         }
 
+        public void InitializeMockData()
+        {
+            for (int i = -10; i <= 0; i++)
+            {
+                DateTime day = DateTime.Now;
+                day = day.AddDays(i);
+
+                int certCount = new Random().Next(5, 30);
+
+                int index = 0;
+                while (index < certCount)
+                {
+                    Certificate newCert = new Certificate()
+                    {
+                        IssuedOn = day,
+                        DisplayName = "fakecert"
+                    };
+
+                    certificateRepository.Insert<Certificate>(newCert);
+
+                    index++;
+                }
+
+            }
+        }
+
     }
 }

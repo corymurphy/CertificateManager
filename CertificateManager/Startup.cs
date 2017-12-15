@@ -224,7 +224,9 @@ namespace CertificateManager
 
             services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
 
-            
+            services.AddSingleton<AnalyticsLogic>(new AnalyticsLogic(configurationRepository, certificateRepository, auditRepository));
+
+            services.AddSingleton<DataRenderingProvider>(new DataRenderingProvider());
         }
 
         public void ConfigureAutoMapper()

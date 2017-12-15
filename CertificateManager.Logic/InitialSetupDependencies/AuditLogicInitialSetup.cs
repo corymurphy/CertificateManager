@@ -13,6 +13,11 @@ namespace CertificateManager.Logic.InitialSetupDependencies
             return null;
         }
 
+        public void InitializeMockData()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category)
         {
             

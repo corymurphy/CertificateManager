@@ -30,5 +30,13 @@ namespace CertificateManager.Controllers
         {
             return http.RespondSuccess(audit.GetAllEvents());
         }
+
+        [HttpGet]
+        [Route("logs/init/data")]
+        public JsonResult InitializeMockData()
+        {
+            audit.InitializeMockData();
+            return http.RespondSuccess();
+        }
     }
 }
