@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace CertificateManager
 {
@@ -26,7 +27,7 @@ namespace CertificateManager
         private bool initialSetupComplete = false;
         private IHostingEnvironment env;
         private EnvironmentInitializationProvider environmentInitializationProvider;
-
+        private IOpenIdConnectIdentityProviderLogic oidcLogic;
         //private static CancellationTokenSource cancelTokenSource = new System.Threading.CancellationTokenSource();
 
         public Startup(IHostingEnvironment env)
@@ -50,6 +51,23 @@ namespace CertificateManager
 
         public IConfigurationRoot Configuration { get; }
 
+
+        public void InitializeOidc(IServiceCollection services, IEnumerable<OidcIdentityProvider> idps)
+        {
+            foreach(OidcIdentityProvider idp in idps)
+            {
+                services.AddAuthentication().AddOpenIdConnect
+                (
+                    options =>
+                    {
+                        options.Authority = idp.Authority;
+                        options.ClientId = idp.ClientId;
+                        options.Scope.Add("email");
+                    }
+                );
+            }
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -66,7 +84,13 @@ namespace CertificateManager
                     options.LoginPath = "/view/auth/login";
                 });
 
+            
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
+
+            //LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
+            //OpenIdConnectIdentityProviderLogic oidcLogic = new OpenIdConnectIdentityProviderLogic(configurationRepository);
+
+            //this.InitializeOidc(services, oidcLogic.GetIdentityProviders());
 
             databaseLocator = new DatabaseLocator(appSettings);
 
@@ -80,6 +104,8 @@ namespace CertificateManager
                 initialSetupComplete = false;
                 InitializeSetup(services);
             }
+
+            oidcLogic.InitializeMiddleware(services);
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
@@ -206,6 +232,12 @@ namespace CertificateManager
           
             services.AddSingleton<ICertificateRepository>(certificateRepository);
 
+            ActiveDirectoryIdentityProviderLogic activeDirectoryIdentityProviderLogic = new ActiveDirectoryIdentityProviderLogic(configurationRepository);
+
+            services.AddSingleton<ActiveDirectoryIdentityProviderLogic>(activeDirectoryIdentityProviderLogic);
+
+            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic));
+        
             services.AddSingleton<IRuntimeConfigurationState>(
                 new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository)
                 {
@@ -227,6 +259,9 @@ namespace CertificateManager
             services.AddSingleton<AnalyticsLogic>(new AnalyticsLogic(configurationRepository, certificateRepository, auditRepository));
 
             services.AddSingleton<DataRenderingProvider>(new DataRenderingProvider());
+
+            oidcLogic = new OpenIdConnectIdentityProviderLogic(configurationRepository, authorizationLogic);
+            services.AddSingleton<IOpenIdConnectIdentityProviderLogic>(oidcLogic);
         }
 
         public void ConfigureAutoMapper()
@@ -235,34 +270,5 @@ namespace CertificateManager
         }
 
 
-
-        private void ConfigureOidc()
-        {
-            //.AddOpenIdConnect("OidcPrimary",
-            //    options =>
-            //    {
-            //        options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
-            //        //options.SaveTokens = true;
-            //        options.ClientId = "";
-            //        options.ClientSecret = "";
-            //        options.RemoteAuthenticationTimeout = TimeSpan.FromHours(1);
-            //        options.ResponseType = "id_token token";
-            //        options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            //        options.Authority = @"https://idp/oauth2/token";
-            //        //options.
-            //    }
-            //);
-
-
-
-            //options =>
-
-            //{
-            //    options.MetadataAddress = @"https://idp/oauth2/oidcdiscovery/.well-known/openid-configuration";
-            //    options.SaveTokens = true;
-            //    options.ClientId = "";
-
-            //}
-        }
     }
 }

@@ -18,6 +18,9 @@
         RoleManagementDelete,
         RoleManagementUpdate,
         RoleManagementAddMember,
-        RoleManagementSetScopes
+        RoleManagementSetScopes,
+        IdentityProviderUpdate,
+        IdentityProviderDelete,
+        IdentityProviderAdd
     }
 }

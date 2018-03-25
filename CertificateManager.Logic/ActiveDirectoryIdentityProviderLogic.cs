@@ -2,6 +2,7 @@
 using CertificateManager.Entities.Enumerations;
 using CertificateManager.Repository;
 using System;
+using System.Collections.Generic;
 
 namespace CertificateManager.Logic
 {
@@ -14,6 +15,30 @@ namespace CertificateManager.Logic
             this.configurationRepository = configurationRepository;
         }
 
+        public IEnumerable<ActiveDirectoryMetadata> GetAll()
+        {
+            return configurationRepository.GetAll<ActiveDirectoryMetadata>();
+        }
+
+        public bool AdIdpExists(string id)
+        {
+            Guid validatedId;
+
+            if( !Guid.TryParse(id, out validatedId) )
+            {
+                return false;
+            }
+
+            if(configurationRepository.Exists<ActiveDirectoryMetadata>(validatedId))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+
+        }
 
         public ActiveDirectoryMetadata Add(string displayName, string domain, string searchBase, string username, string password, bool useProcessContext)
         {

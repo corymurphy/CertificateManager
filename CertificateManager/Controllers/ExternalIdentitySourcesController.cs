@@ -2,6 +2,7 @@
 using CertificateManager.Logic;
 using CertificateManager.Logic.ActiveDirectory;
 using CertificateManager.Logic.ActiveDirectory.Interfaces;
+using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
@@ -10,12 +11,14 @@ namespace CertificateManager.Controllers
 {
     public class ActiveDirectoryMetadatasController : Controller
     {
+        IOpenIdConnectIdentityProviderLogic oidcLogic;
         IConfigurationRepository configurationRepository;
         IActiveDirectoryRepository activeDirectory;
         HttpResponseHandler http;
 
-        public ActiveDirectoryMetadatasController(IConfigurationRepository configurationRepository, IActiveDirectoryRepository activeDirectory)
+        public ActiveDirectoryMetadatasController(IConfigurationRepository configurationRepository, IActiveDirectoryRepository activeDirectory, IOpenIdConnectIdentityProviderLogic oidcLogic)
         {
+            this.oidcLogic = oidcLogic;
             this.configurationRepository = configurationRepository;
             this.http = new HttpResponseHandler(this);
             this.activeDirectory = activeDirectory;
@@ -81,6 +84,28 @@ namespace CertificateManager.Controllers
             
         }
 
+        [HttpGet]
+        [Route("cm-config/oidc-idp")]
+        public JsonResult GetOidcIdentityProviders()
+        {
+            return http.RespondSuccess(oidcLogic.GetIdps(User));         
+        }
+
+        [HttpPost]
+        [Route("cm-config/oidc-idp")]
+        public JsonResult AddOidcIdentityProvider(OidcIdentityProvider idp)
+        {
+            oidcLogic.AddIdp(idp, User);
+            return http.RespondSuccess();
+        }
+
+        [HttpDelete]
+        [Route("cm-config/oidc-idp")]
+        public JsonResult DeleteOidcIdentityProvider(OidcIdentityProvider idp)
+        {
+            oidcLogic.DeleteIdp(idp, User);
+            return http.RespondSuccess("Identity Provider deleted successfully");
+        }
 
         [HttpGet]
         [Route("cm-config/external-identity-sources")]
@@ -105,8 +130,6 @@ namespace CertificateManager.Controllers
         {
             return Json(configurationRepository.GetAll<ActiveDirectoryMetadataDomains>());
         }
-
-
 
         [HttpDelete]
         [Route("cm-config/external-identity-source")]

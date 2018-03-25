@@ -3,6 +3,22 @@ var certSearchResult = null;
 
 var Services = {
 
+    GetNode: function (id, successCallback, errorCallback) {
+        $.ajax({
+            url: "/node/" + id,
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
     SaveSettings: function (requestData, successCallback, errorCallback) {
         $.ajax({
             url: "/general-config/settings",
@@ -13,6 +29,23 @@ var Services = {
             dataType: "json",
             success: function (data) {
                 successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
+    GetActiveDirectoryIdentityProviders: function (successCallback, errorCallback)
+    {
+        $.ajax({
+            url: "/cm-config/external-identity-sources",
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data);
             },
             error: function (x, t, m) {
                 errorCallback(x, t, m);
