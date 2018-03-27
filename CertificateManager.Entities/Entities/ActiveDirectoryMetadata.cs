@@ -4,8 +4,6 @@ using System;
 
 namespace CertificateManager.Entities
 {
-
-    [Repository("extid")]
     public class ActiveDirectoryMetadata
     {
         public ActiveDirectoryMetadata() { }

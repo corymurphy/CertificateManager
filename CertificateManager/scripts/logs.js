@@ -25,7 +25,7 @@
         $('#contextUserId').val(data.userId);
         $('#contextUser').val(data.userDisplay);
         $('#targetId').val(data.target);
-        $('#targetDescription').text(data.targetDescription);
+        $('#message').text(data.message);
 
         UiGlobal.ShowModal('LogDetailsModal');
     },

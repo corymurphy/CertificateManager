@@ -4,6 +4,7 @@ using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Linq;
 
 namespace CertificateManager.Logic
 {
@@ -13,15 +14,17 @@ namespace CertificateManager.Logic
         IAuthorizationLogic authorizationLogic;
         ActiveDirectoryIdentityProviderLogic adIdpLogic;
         DnsValidation dnsValidation = new DnsValidation();
+        IPowershellEngine powershell;
 
-        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic)
+        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell)
         {
+            this.powershell = powershell;
             this.configurationRepository = configurationRepository;
             this.authorizationLogic = authorizationLogic;
             this.adIdpLogic = adIdpLogic;
         }
 
-        public Node Get(string id)
+        public NodeDetails Get(string id)
         {
             Guid validatedId;
 
@@ -29,10 +32,38 @@ namespace CertificateManager.Logic
             {
                 throw new Exception("Invalid Node");
             }
-            else
+
+            NodeDetails node = configurationRepository.Get<NodeDetails>(validatedId);
+
+            if (node == null)
             {
-                return configurationRepository.Get<Node>(validatedId);
+                throw new Exception("Node could not be found");
             }
+
+            ActiveDirectoryMetadata idp = adIdpLogic.GetAll()
+                .Where(item => item.Id == node.CredentialId)
+                .FirstOrDefault();
+
+            node.CredentialDisplayName = idp.Name;
+
+            return node;
+        }
+
+        public NodeCredentialed GetCredentialedNode(Guid id)
+        {
+
+            NodeCredentialed node = configurationRepository.Get<NodeCredentialed>(id);
+
+            if (node == null)
+            {
+                throw new Exception("Node could not be found");
+            }
+
+            node.CredentialContext = adIdpLogic.GetAll()
+                .Where(item => item.Id == node.CredentialId)
+                .FirstOrDefault();
+
+            return node;
         }
 
         public void Add(AddNodesEntity entity, ClaimsPrincipal user)
@@ -56,6 +87,7 @@ namespace CertificateManager.Logic
 
             Node node = new Node()
             {
+                Hostname = entity.Hostname,
                 Id = Guid.NewGuid(),
                 DiscoveryType = Entities.Enumerations.DiscoveryType.Manual,
                 LastCommunication = DateTime.MinValue,
@@ -79,6 +111,12 @@ namespace CertificateManager.Logic
         {
             return configurationRepository.GetAll<Node>();
         }
-        //public void Discover()
+       
+        public void InvokeIISCertificateDiscovery(Guid nodeId)
+        {
+            NodeCredentialed node = this.GetCredentialedNode(nodeId);
+
+            //Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+        }
     }
 }

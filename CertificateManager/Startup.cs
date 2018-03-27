@@ -208,6 +208,10 @@ namespace CertificateManager
 
             services.AddSingleton<IAuditLogic>(auditLogic);
 
+            IPowershellEngine powershellEngine = new PowershellEngine(auditLogic);
+
+            services.AddSingleton<IPowershellEngine>(powershellEngine);
+
             IAuthorizationLogic authorizationLogic = new AuthorizationLogic(configurationRepository, auditLogic);
 
             RoleManagementLogic roleManagementLogic = new RoleManagementLogic(configurationRepository, authorizationLogic);
@@ -236,7 +240,9 @@ namespace CertificateManager
 
             services.AddSingleton<ActiveDirectoryIdentityProviderLogic>(activeDirectoryIdentityProviderLogic);
 
-            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic));
+            services.AddSingleton<ScriptManagementLogic>(new ScriptManagementLogic(configurationRepository, authorizationLogic));
+
+            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic, powershellEngine));
         
             services.AddSingleton<IRuntimeConfigurationState>(
                 new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository)

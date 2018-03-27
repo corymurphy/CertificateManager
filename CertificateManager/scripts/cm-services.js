@@ -3,6 +3,39 @@ var certSearchResult = null;
 
 var Services = {
 
+    Put: function (uri, data, successCallback, errorCallback) {
+        $.ajax({
+            url: uri,
+            type: 'put',
+            data: data,
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
+    Get: function (uri, successCallback, errorCallback) {
+        $.ajax({
+            url: uri,
+            type: 'get',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback('Error while retrieving data');
+            }
+        });
+    },
+
     GetNode: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/node/" + id,
@@ -11,7 +44,7 @@ var Services = {
             async: true,
             dataType: "json",
             success: function (data) {
-                successCallback(data);
+                successCallback(data.payload);
             },
             error: function (x, t, m) {
                 errorCallback(x, t, m);

@@ -14,11 +14,30 @@
     },
 
     InitializeIdpSelectSuccessCallback: function (data) {
+
+        var primarySet = false;
+
+        var appendData = {};
+
         data.forEach(function (item) {
-            Nodes.CredentialSelect.append($('<option>', {
-                value: item.id,
-                text: item.name
-            }));
+
+          
+            if (primarySet) {
+                appendData = {
+                    value: item.id,
+                    text: item.name
+                };
+            }
+            else {
+                appendData = {
+                    value: item.id,
+                    text: item.name,
+                    selected: "selected"
+                };
+                primarySet = true;
+            }
+
+            Nodes.CredentialSelect.append($('<option>', appendData));        
         });
     },
 

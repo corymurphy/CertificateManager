@@ -21,6 +21,8 @@
         RoleManagementSetScopes,
         IdentityProviderUpdate,
         IdentityProviderDelete,
-        IdentityProviderAdd
+        IdentityProviderAdd,
+        JobSuccess,
+        JobError
     }
 }

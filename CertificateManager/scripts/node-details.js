@@ -4,13 +4,17 @@
 
     CredentialId: null,
 
+    Credential: null,
+
     Hostname: null,
 
     PageLoad: function () {
+        openTab(event, 'nodeDetails');
         NodeDetails.Id = $('#id');
-        NodeDetails.CredentialId = $('#credential');
+        NodeDetails.Credential = $('#credential');
+        NodeDetails.CredentialId = $('#credentialId');
         NodeDetails.Hostname = $('#hostname');
-        NodeDetails.GetNode(NodeDetails.Id);
+        NodeDetails.GetNode(NodeDetails.Id.text());
     },
 
     GetNode: function (id) {
@@ -18,8 +22,8 @@
     },
 
     GetNodeSuccessCallback: function (data) {
-        NodeDetails.CredentialId = data.credentialId;
-        NodeDetails.Hostname = data.hostname;
-
+        NodeDetails.CredentialId.text(data.credentialId);
+        NodeDetails.Hostname.text(data.hostname);
+        NodeDetails.Credential.text(data.credentialDisplayName);
     }
 }

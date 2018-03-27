@@ -12,5 +12,6 @@ namespace CertificateManager.Entities
         public EventResult EventResult { get; set; }
         public EventCategory EventCategory { get; set; }
         public DateTime Time { get; set; }
+        public string Message { get; set; }
     }
 }

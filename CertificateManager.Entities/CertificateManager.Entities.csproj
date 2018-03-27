@@ -207,6 +207,7 @@
     <Compile Include="Entities\AuthorizationScopes.cs" />
     <Compile Include="Entities\GetCertificatePasswordResponseEntity.cs" />
     <Compile Include="Entities\GetCertificatePasswordEntity.cs" />
+    <Compile Include="Entities\NodeDetails.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\ManagedCertificate.cs" />
     <Compile Include="Entities\OidcIdentityProvider.cs" />
@@ -214,6 +215,7 @@
     <Compile Include="Entities\PendingCertificateSigning.cs" />
     <Compile Include="Entities\PendingCertificate.cs" />
     <Compile Include="Entities\GetUserModel.cs" />
+    <Compile Include="Entities\Script.cs" />
     <Compile Include="Enumerations\AppType.cs" />
     <Compile Include="Enumerations\CredentialCategory.cs" />
     <Compile Include="Enumerations\DiscoveryType.cs" />

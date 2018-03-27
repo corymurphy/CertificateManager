@@ -43,14 +43,15 @@ namespace CertificateManager.Controllers
         [Route("nodes")]
         public JsonResult GetNodes()
         {
-            return http.RespondSuccess(nodeLogic.All(User));
+            var nodes = nodeLogic.All(User);
+            return http.RespondSuccess(nodes);
         }
 
         [HttpGet]
         [Route("node/{id:guid}")]
         public JsonResult GetNode(Guid id)
         {
-            Node node = nodeLogic.Get(id.ToString());
+            NodeDetails node = nodeLogic.Get(id.ToString());
             
             return http.RespondSuccess(node);
         }
@@ -76,6 +77,15 @@ namespace CertificateManager.Controllers
         public JsonResult UpdateNode(Node node)
         {
             nodeLogic.Update(node, User);
+            return http.RespondSuccess();
+        }
+
+        [HttpPost]
+        [Route("node/{id:guid}/discovery/iis")]
+        public JsonResult InvokeIISCertificateDiscovert(Guid id)
+        {
+            nodeLogic.InvokeIISCertificateDiscovery(id);
+
             return http.RespondSuccess();
         }
     }

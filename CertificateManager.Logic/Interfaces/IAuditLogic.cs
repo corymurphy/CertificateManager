@@ -11,6 +11,7 @@ namespace CertificateManager.Logic.Interfaces
         void LogSecurityAuditSuccess(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category);
         void LogSecurityAuditFailure(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category);
         void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category);
+        void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category, string message);
         void InitializeMockData();
     }
 }

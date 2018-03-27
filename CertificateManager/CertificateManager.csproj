@@ -19,7 +19,9 @@
     <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="scripts\cm-scripts.js" />
     <None Remove="scripts\node-details.js" />
+    <None Remove="scripts\script-details.js" />
     <None Remove="scripts\security-roles - Copy.js" />
     <None Remove="style\sb-admin-full.css" />
   </ItemGroup>
@@ -28,6 +30,8 @@
     <Content Include="scripts\cm-constants.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
+    <Content Include="scripts\cm-scripts.js" />
+    <Content Include="scripts\script-details.js" />
     <Content Include="scripts\node-details.js" />
     <Content Include="scripts\cm-presentation.js">
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
@@ -65,6 +69,7 @@
     <PackageReference Include="Microsoft.VisualStudio.Web.BrowserLink" Version="2.0.2" />
     <!-- <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.0.0" /> -->
     <PackageReference Include="Swashbuckle.Core" Version="5.6.0" />
+    <PackageReference Include="System.Management.Automation.dll" Version="10.0.10586" />
     <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.1" />
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +80,7 @@
     <ProjectReference Include="..\CertificateManager.Logic\CertificateManager.Logic.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Views\Node\" />
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\js\" />
   </ItemGroup>

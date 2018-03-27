@@ -1,9 +1,11 @@
-﻿using CertificateManager.Entities.Enumerations;
+﻿using CertificateManager.Entities.Attributes;
+using CertificateManager.Entities.Enumerations;
 using System;
 using System.Collections.Generic;
 
 namespace CertificateManager.Entities
 {
+    [Repository("nodes")]
     public class Node
     {
         public string DisplayName { get; set; }

@@ -321,6 +321,10 @@
       <HintPath>..\packages\System.IdentityModel.Tokens.Jwt.5.1.4\lib\net451\System.IdentityModel.Tokens.Jwt.dll</HintPath>
     </Reference>
     <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Management.Automation.dll.10.0.10586.0\lib\net40\System.Management.Automation.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Net.Http">
       <HintPath>..\packages\System.Net.Http.4.3.3\lib\net46\System.Net.Http.dll</HintPath>
       <Private>True</Private>
@@ -378,10 +382,13 @@
     <Compile Include="Interfaces\IAuditLogic.cs" />
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="Interfaces\IOpenIdConnectIdentityProviderLogic.cs" />
+    <Compile Include="Interfaces\IPowershellEngine.cs" />
     <Compile Include="ManagedCertificateDiscoveryLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />
     <Compile Include="NodeLogic.cs" />
     <Compile Include="OpenIdConnectIdentityProviderLogic.cs" />
+    <Compile Include="PowershellEngine.cs" />
+    <Compile Include="ScriptManagementLogic.cs" />
     <Compile Include="SecurityPrincipalLogic.cs" />
     <Compile Include="UXLogic\ClientsideConfigurationProviderInitialSetup.cs" />
     <Compile Include="DatabaseLocator.cs" />

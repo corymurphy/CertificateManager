@@ -40,8 +40,6 @@ namespace CertificateManager.Logic
                     EventResult = EventResult.Success
                 };
                 Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
-
-                //auditRepository.InsertAuditEvent(auditEvent);
             }
         }
 
@@ -79,7 +77,28 @@ namespace CertificateManager.Logic
                     UserId = userContext.GetUserId(),
                     UserDisplay = userContext.GetName(),
                     Time = DateTime.Now,
-                    EventResult = EventResult.Success
+                    EventResult = EventResult.Error
+                };
+                Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+            }
+        }
+
+        public void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category, string message)
+        {
+            AppConfig appConfig = configurationRepository.GetAppConfig();
+
+            if (appConfig.OperationsLoggingState == OperationsLoggingState.Errors)
+            {
+                AuditEvent auditEvent = new AuditEvent
+                {
+                    Id = Guid.NewGuid(),
+                    Target = target,
+                    EventCategory = category,
+                    UserId = userContext.GetUserId(),
+                    UserDisplay = userContext.GetName(),
+                    Time = DateTime.Now,
+                    EventResult = EventResult.Error,
+                    Message = message
                 };
                 Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
             }
@@ -121,7 +140,6 @@ namespace CertificateManager.Logic
 
             }
         }
-
 
     }
 }

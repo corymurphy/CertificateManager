@@ -3,6 +3,7 @@ using CertificateManager.Entities.Enumerations;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CertificateManager.Logic
 {
@@ -29,7 +30,12 @@ namespace CertificateManager.Logic
                 return false;
             }
 
-            if(configurationRepository.Exists<ActiveDirectoryMetadata>(validatedId))
+
+            bool exists = configurationRepository.GetAll<ActiveDirectoryMetadata>().
+                Select(prop => prop.Id).
+                Contains(validatedId);
+
+            if(exists)
             {
                 return true;
             }
