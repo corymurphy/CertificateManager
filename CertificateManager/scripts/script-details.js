@@ -9,7 +9,6 @@
     Code: null,
 
     PageLoad: function () {
-
         ScriptDetails.Id = $('#id');
         ScriptDetails.Name = $('#name');
         ScriptDetails.Code = $('#code');

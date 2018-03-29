@@ -3,6 +3,23 @@ var certSearchResult = null;
 
 var Services = {
 
+    Post: function (uri, data, successCallback, errorCallback) {
+        $.ajax({
+            url: uri,
+            type: 'post',
+            data: data,
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data.payload);
+            },
+            error: function (x, t, m) {
+                errorCallback(x, t, m);
+            }
+        });
+    },
+
     Put: function (uri, data, successCallback, errorCallback) {
         $.ajax({
             url: uri,

@@ -383,6 +383,7 @@
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="Interfaces\IOpenIdConnectIdentityProviderLogic.cs" />
     <Compile Include="Interfaces\IPowershellEngine.cs" />
+    <Compile Include="Interfaces\IScriptManagementLogic.cs" />
     <Compile Include="ManagedCertificateDiscoveryLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />
     <Compile Include="NodeLogic.cs" />
@@ -416,6 +417,10 @@
     <ProjectReference Include="..\CertificateManager.Entities\CertificateManager.Entities.csproj">
       <Project>{21bee8b4-eb17-4fae-a457-73c6f942d8a8}</Project>
       <Name>CertificateManager.Entities</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\CertificateManager.Powershell.Runtime\CertificateManager.Powershell.Runtime.csproj">
+      <Project>{0ab7339c-f98b-41f0-9888-9dc3713ba61f}</Project>
+      <Name>CertificateManager.Powershell.Runtime</Name>
     </ProjectReference>
     <ProjectReference Include="..\CertificateManager.Repository\CertificateManager.Repository.csproj">
       <Project>{9858f331-54a1-4784-ba3a-0ac9a22dbb5e}</Project>

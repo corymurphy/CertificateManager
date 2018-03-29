@@ -28,6 +28,11 @@ namespace CertificateManager.Logic.InitialSetupDependencies
 
         }
 
+        public void LogOpsSuccess(ClaimsPrincipal userContext, string target, EventCategory category, string message)
+        {
+
+        }
+
         public void LogSecurityAuditFailure(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category)
         {
             

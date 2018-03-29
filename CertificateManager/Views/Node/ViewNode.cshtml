@@ -23,25 +23,47 @@
     </div>
 
     <div id="nodeDetails" class="tabcontent">
-        <h5>Node Details</h5>
-        <table>
-            <tr>
-                <th>Id</th>
-                <td><div id="id">@ViewBag.NodeId</div></td>
-                </tr>
-                <tr>
-                    <th>Hostname</th>
-                    <td><div id="hostname"></div></td>
-                </tr>
 
-                <tr>
-                    <th>Credential</th>
-                    <td><div id="credential"></div></td>
-                </tr>
-        </table>
+        <div class="container">
+            <div class="form-group">
+                <label for="id">Id</label>
+                <input class="form-control" type="text" readonly id="id" name="id" value="@ViewBag.NodeId">
+            </div>
+
+            <div class="form-group">
+                <label for="name">Hostname</label>
+                <input type="text" class="form-control" id="hostname">
+            </div>
+
+            <div class="form-group">
+                <label for="credential">Credential</label>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="col-sm-1">
+                    <button class="btn btn-primary" onclick="NodeDetails.InvokeCertificateDiscovery();">Save</button>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-primary" onclick="NodeDetails.InvokeCertificateDiscovery();">Start Certificate Discovery</button>
+                </div>
+            </div>
+        </div>
+
+
+
     </div>
 
     <div id="nodeManagedCertificates" class="tabcontent">
+        <table class="table table-striped" id="managedCertificatesTable">
+            <thead>
+                <tr>
+                    <th data-field="id" scope="col">ID</th>
+                    <th data-field="managedCertificateType" scope="col">Type</th>
+                    <th data-field="thumbprint" scope="col">Thumbprint</th>
+                </tr>
+            </thead>
+        </table>
 
     </div>
 

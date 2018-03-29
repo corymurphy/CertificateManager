@@ -17,6 +17,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.Integrat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.UnitTests", "CertificateManager.UnitTests\CertificateManager.UnitTests.csproj", "{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.Powershell.Runtime", "CertificateManager.Powershell.Runtime\CertificateManager.Powershell.Runtime.csproj", "{0AB7339C-F98B-41F0-9888-9DC3713BA61F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,18 @@ Global
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x64.Build.0 = Release|x64
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x86.ActiveCfg = Release|x86
 		{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}.Release|x86.Build.0 = Release|x86
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|x64.Build.0 = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Debug|x86.Build.0 = Debug|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x64.ActiveCfg = Release|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x64.Build.0 = Release|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x86.ActiveCfg = Release|Any CPU
+		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

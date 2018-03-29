@@ -12,12 +12,12 @@ namespace CertificateManager.Controllers
 {
     public class ScriptController : Controller
     {
-        ScriptManagementLogic scriptLogic;
+        IScriptManagementLogic scriptLogic;
         IConfigurationRepository configurationRepository;
         HttpResponseHandler http;
         IPowershellEngine powershell;
 
-        public ScriptController(IConfigurationRepository configurationRepository, ScriptManagementLogic scriptLogic, IPowershellEngine powershell)
+        public ScriptController(IConfigurationRepository configurationRepository, IScriptManagementLogic scriptLogic, IPowershellEngine powershell)
         {
             this.powershell = powershell;
             this.scriptLogic = scriptLogic;

@@ -5,6 +5,12 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Linq;
+using System.Collections;
+using System.Management.Automation;
+using System.Collections.ObjectModel;
+using CertificateManager.Powershell.Runtime;
+using System.Threading.Tasks;
+using CertificateManager.Entities.Enumerations;
 
 namespace CertificateManager.Logic
 {
@@ -15,9 +21,12 @@ namespace CertificateManager.Logic
         ActiveDirectoryIdentityProviderLogic adIdpLogic;
         DnsValidation dnsValidation = new DnsValidation();
         IPowershellEngine powershell;
+        IAuditLogic auditLogic;
+        string hostIisDiscoveryScript = "HostIISDiscovery";
 
-        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell)
+        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell, IAuditLogic auditLogic)
         {
+            this.auditLogic = auditLogic;
             this.powershell = powershell;
             this.configurationRepository = configurationRepository;
             this.authorizationLogic = authorizationLogic;
@@ -111,12 +120,71 @@ namespace CertificateManager.Logic
         {
             return configurationRepository.GetAll<Node>();
         }
+
+        private void RecieveIISCertificateDiscoveryResult(Collection<HostIISCertificateEntity> results, NodeCredentialed node)
+        {
+            Node storedNode = configurationRepository.Get<Node>(node.Id);
+
+            if(storedNode.ManagedCertificates == null || storedNode.ManagedCertificates.Count == 0)
+            {
+                storedNode.ManagedCertificates = new List<ManagedCertificate>();
+            }
+            
+            foreach (HostIISCertificateEntity result in results)
+            {
+
+                if(!storedNode.ManagedCertificates.Exists(cert => cert.Thumbprint == result.Thumbprint && cert.ManagedCertificateType == ManagedCertificateType.IIS))
+                {
+                    ManagedCertificate managedCertificate = new ManagedCertificate()
+                    {
+                        DiscoveryDate = DateTime.Now,
+                        Id = Guid.NewGuid(),
+                        Thumbprint = result.Thumbprint,
+                        ManagedCertificateType = ManagedCertificateType.IIS,
+                        LastRenewal = DateTime.MinValue
+                    };
+
+                    storedNode.ManagedCertificates.Add(managedCertificate);
+                }
+            }
+
+            configurationRepository.Update<Node>(storedNode);
+        }
        
-        public void InvokeIISCertificateDiscovery(Guid nodeId)
+        private void StartIISCertificateDiscoveryTaskAsync(NodeCredentialed node, Dictionary<string, object> cmdletParams, ClaimsPrincipal user)
+        {
+            Collection<HostIISCertificateEntity> result = null;
+            try
+            {
+                result = powershell.InvokeScriptAsync<HostIISCertificateEntity>(hostIisDiscoveryScript, cmdletParams, user);
+                this.RecieveIISCertificateDiscoveryResult(result, node);
+            }
+            catch(Exception ex)
+            {
+                string msg = string.Format("An error occured while attempting to run the host iis discovery job: {0}", ex.ToString());
+                auditLogic.LogOpsError(user, node.Id.ToString(), EventCategory.PowershellJob, msg);
+            }
+        }
+
+        public void InvokeIISCertificateDiscovery(Guid nodeId, ClaimsPrincipal user)
         {
             NodeCredentialed node = this.GetCredentialedNode(nodeId);
 
-            //Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+            Dictionary<string, object> cmdletParams = GetIISCertificateDiscoveryCmdletParams(node);
+
+            Task.Run(() => this.StartIISCertificateDiscoveryTaskAsync(node, cmdletParams, user));
+        }
+
+        public Dictionary<string, object> GetIISCertificateDiscoveryCmdletParams(NodeCredentialed node)
+        {
+
+            Dictionary<string, object> cmdletParams = new Dictionary<string, object>()
+            {
+                { "ComputerName", node.Hostname },
+                { "Credential", powershell.NewPSCredential(node.CredentialContext.Username, node.CredentialContext.Password) }
+            };
+
+            return cmdletParams;
         }
     }
 }

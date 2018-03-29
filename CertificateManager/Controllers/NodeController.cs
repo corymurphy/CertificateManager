@@ -84,7 +84,7 @@ namespace CertificateManager.Controllers
         [Route("node/{id:guid}/discovery/iis")]
         public JsonResult InvokeIISCertificateDiscovert(Guid id)
         {
-            nodeLogic.InvokeIISCertificateDiscovery(id);
+            nodeLogic.InvokeIISCertificateDiscovery(id, User);
 
             return http.RespondSuccess();
         }

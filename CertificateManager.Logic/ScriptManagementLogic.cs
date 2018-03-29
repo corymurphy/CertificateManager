@@ -3,11 +3,12 @@ using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace CertificateManager.Logic
 {
-    public class ScriptManagementLogic
+    public class ScriptManagementLogic : IScriptManagementLogic
     {
         IConfigurationRepository configurationRepository;
 
@@ -64,6 +65,9 @@ namespace CertificateManager.Logic
             configurationRepository.Update<Script>(existing);
         }
 
-
+        public Script GetByName(string name, ClaimsPrincipal user)
+        {
+            return configurationRepository.Get<Script>(item => item.Name == name).Single();
+        }
     }
 }

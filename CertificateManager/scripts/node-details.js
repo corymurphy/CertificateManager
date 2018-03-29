@@ -8,22 +8,49 @@
 
     Hostname: null,
 
+    Node: null,
+
+    ManagedCertificatesTable: null,
+
     PageLoad: function () {
         openTab(event, 'nodeDetails');
         NodeDetails.Id = $('#id');
         NodeDetails.Credential = $('#credential');
         NodeDetails.CredentialId = $('#credentialId');
         NodeDetails.Hostname = $('#hostname');
-        NodeDetails.GetNode(NodeDetails.Id.text());
+        NodeDetails.ManagedCertificatesTable = $('#managedCertificatesTable');
+        NodeDetails.GetNode(NodeDetails.Id.val());
+
     },
 
     GetNode: function (id) {
         Services.GetNode(id, NodeDetails.GetNodeSuccessCallback, null);
     },
 
+    InitManagedCertificatesTable: function () {
+        NodeDetails.ManagedCertificatesTable.bootstrapTable('load', {
+            data: NodeDetails.Node.managedCertificates
+        });
+    },
+
     GetNodeSuccessCallback: function (data) {
-        NodeDetails.CredentialId.text(data.credentialId);
-        NodeDetails.Hostname.text(data.hostname);
-        NodeDetails.Credential.text(data.credentialDisplayName);
+        NodeDetails.Node = data;
+        NodeDetails.CredentialId.val(data.credentialId);
+        NodeDetails.Hostname.val(data.hostname);
+        NodeDetails.Credential.val(data.credentialDisplayName);
+        NodeDetails.InitManagedCertificatesTable();
+    },
+
+    InvokeCertificateDiscovery: function () {
+        UiGlobal.ResetAlertState();
+        Services.Post("/node/" + NodeDetails.Id.val() + "/discovery/iis", null, NodeDetails.InvokeCertificateDiscoverySuccessCallback, NodeDetails.InvokeCertificateDiscoveryErrorCallback);
+    },
+
+    InvokeCertificateDiscoverySuccessCallback: function () {
+        UiGlobal.ShowSuccess("Certificate discovery has started for this node. Reviews logs for results.");
+    },
+
+    InvokeCertificateDiscoveryErrorCallback: function () {
+        UiGlobal.ShowError("Failed to start certificate discovery");
     }
 }

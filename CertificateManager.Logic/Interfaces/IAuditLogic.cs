@@ -10,6 +10,7 @@ namespace CertificateManager.Logic.Interfaces
         IEnumerable<AuditEvent> GetAllEvents();
         void LogSecurityAuditSuccess(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category);
         void LogSecurityAuditFailure(ClaimsPrincipal userContext, ILoggableEntity entity, EventCategory category);
+        void LogOpsSuccess(ClaimsPrincipal userContext, string target, EventCategory category, string message);
         void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category);
         void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category, string message);
         void InitializeMockData();

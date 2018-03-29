@@ -207,6 +207,7 @@
     <Compile Include="Entities\AuthorizationScopes.cs" />
     <Compile Include="Entities\GetCertificatePasswordResponseEntity.cs" />
     <Compile Include="Entities\GetCertificatePasswordEntity.cs" />
+    <Compile Include="Entities\NodeCredentialed.cs" />
     <Compile Include="Entities\NodeDetails.cs" />
     <Compile Include="Entities\Node.cs" />
     <Compile Include="Entities\ManagedCertificate.cs" />

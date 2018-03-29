@@ -23,6 +23,7 @@
         IdentityProviderDelete,
         IdentityProviderAdd,
         JobSuccess,
-        JobError
+        JobError,
+        PowershellJob
     }
 }

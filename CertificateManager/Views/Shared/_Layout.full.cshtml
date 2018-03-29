@@ -41,14 +41,16 @@
             </div>
         </nav>
         <div class="content-wrapper">
-            <div class="container-fluid">        
+            <div class="container-fluid">
                 @RenderBody()
             </div>
         </div>
 
         <script src="/js/base.min.js"></script>
         <script src="/js/cm.min.js"></script>
-        <script src="~/js/Chart.bundle.min.js"> </script>
+        <script src="~/js/Chart.bundle.min.js"></script>
+        <script src="~/js/bootstrap.min.js"></script>
+        <script src="~/js/bootstrap-table.min.js"></script>
         <script>
             @Html.Raw(jsConfig.RenderDynamicScript())
             @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())

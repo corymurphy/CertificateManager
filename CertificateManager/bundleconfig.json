@@ -133,6 +133,14 @@
     }
   },
   {
+    "outputFileName": "wwwroot/js/bootstrap-table.min.js",
+    "inputFiles": [ "node_modules/bootstrap-table/dist/bootstrap-table.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
     "outputFileName": "wwwroot/js/bootstrap.min.js",
     "inputFiles": [ "node_modules/bootstrap/dist/js/bootstrap.min.js" ],
     "minify": {
