@@ -31,6 +31,7 @@ namespace CertificateManager.Controllers
             AppConfig existinConfig = configurationRepository.GetAppConfig();
             existinConfig.JwtValidityPeriod = newConfig.JwtValidityPeriod;
             existinConfig.LocalIdpIdentifier = newConfig.LocalIdpIdentifier;
+
             configurationRepository.SetAppConfig(existinConfig);
 
             return http.RespondSuccess();
@@ -43,6 +44,7 @@ namespace CertificateManager.Controllers
             AppConfig existinConfig = configurationRepository.GetAppConfig();
             existinConfig.LocalLogonEnabled = newConfig.LocalLogonEnabled;
             existinConfig.EmergencyAccessEnabled = newConfig.EmergencyAccessEnabled;
+            existinConfig.windowsAuthEnabled = newConfig.windowsAuthEnabled;
             configurationRepository.SetAppConfig(existinConfig);
 
             return http.RespondSuccess();

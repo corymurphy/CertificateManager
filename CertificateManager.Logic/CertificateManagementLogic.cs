@@ -213,5 +213,18 @@ namespace CertificateManager.Logic
             }
         }
 
+        public DownloadPfxCertificateEntity GetPfxCertificateContent(Guid id)
+        {
+            DownloadPfxCertificateEntity cert = certificateRepository.Get<DownloadPfxCertificateEntity>(id);
+
+
+            if (!cert.HasPrivateKey || cert.CertificateStorageFormat != CertificateStorageFormat.Pfx)
+            {
+                throw new Exception("No private key");
+            }
+
+            return cert;
+        }
+
     }
 }

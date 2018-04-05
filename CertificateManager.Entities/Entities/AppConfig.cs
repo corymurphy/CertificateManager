@@ -12,6 +12,7 @@ namespace CertificateManager.Entities
             this.Id = new Guid();
             this.LocalLogonEnabled = true;
             this.EmergencyAccessEnabled = true;
+            this.windowsAuthEnabled = false;
             this.SecurityAuditingState = SecurityAuditingState.All;
             this.OperationsLoggingState = OperationsLoggingState.Errors;
             this.CachePeriod = 5;
@@ -22,6 +23,7 @@ namespace CertificateManager.Entities
         public string EncryptionKey { get; set; }
         public bool EmergencyAccessEnabled { get; set; }
         public bool LocalLogonEnabled { get; set; }
+        public bool windowsAuthEnabled { get; set; }
         public int JwtValidityPeriod { get; set; }
         public string LocalIdpIdentifier { get; set; }
         public Guid Id { get; set; }

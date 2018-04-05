@@ -13,13 +13,17 @@
     ManagedCertificatesTable: null,
 
     PageLoad: function () {
-        openTab(event, 'nodeDetails');
+
+        UiGlobal.ShowCurrentTab();
         NodeDetails.Id = $('#id');
         NodeDetails.Credential = $('#credential');
         NodeDetails.CredentialId = $('#credentialId');
         NodeDetails.Hostname = $('#hostname');
         NodeDetails.ManagedCertificatesTable = $('#managedCertificatesTable');
         NodeDetails.GetNode(NodeDetails.Id.val());
+    },
+
+    ShowSelectedTable: function () {
 
     },
 
@@ -28,7 +32,7 @@
     },
 
     InitManagedCertificatesTable: function () {
-        NodeDetails.ManagedCertificatesTable.bootstrapTable('load', {
+        NodeDetails.ManagedCertificatesTable.bootstrapTable({
             data: NodeDetails.Node.managedCertificates
         });
     },

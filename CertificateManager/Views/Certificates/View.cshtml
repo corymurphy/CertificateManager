@@ -20,7 +20,7 @@
 
     <div class="tab">
         <button class="tablinks" onclick="openTab(event, 'Basic')" id="defaultOpen">Basic</button>
-        <button class="tablinks" onclick="openTab(event, 'SubjectAlternativeNames')" >Subject Alternative Names</button>
+        <button class="tablinks" onclick="openTab(event, 'SubjectAlternativeNames')">Subject Alternative Names</button>
         <button class="tablinks" onclick="openTab(event, 'Advanced')">Advanced</button>
         <button class="tablinks" onclick="openTab(event, 'Security')">Security</button>
     </div>
@@ -40,7 +40,7 @@
                     <tr>
                         <th>Id</th>
                         <td id="certificate-id">@ViewBag.CertificateId</td>
-                        
+
                     </tr>
                     <tr>
                         <th>Thumbprint</th>
@@ -52,7 +52,7 @@
                         <th>Password</th>
                         <td id="password">
                             <a class="btn btn-sm btn-info" href="#" id="showPasswordButton">
-                                <i class="fa fa-key" ></i> Show Password
+                                <i class="fa fa-key"></i> Show Password
                             </a>
 
                             <a class="btn btn-sm btn-info" href="#" id="resetPasswordButton">
@@ -62,7 +62,7 @@
                     </tr>
 
 
-                    
+
 
                     <tr>
                         <th>Hash Algorithm</th>
@@ -92,27 +92,21 @@
                         <th>StorageFormat</th>
                         <td id="storageFormat"></td>
                     </tr>
+
+
+                    <tr>
+                        <th>Action</th>
+                        <td id="deployCertificate">
+                            <a class="btn btn-sm btn-info" href="#" id="showDeployCertificateModalButton" onclick="ViewCertificate.ShowDeployCertificateModal();">
+                                <i class="fa fa-copy"></i> Deploy
+                            </a>
+                        </td>
+                    </tr>
                 </table>
             </div>
 
         </div>
 
-
-        @*<div class="row">
-            <div class="col-md-6">
-                <h5>Subject Alternative Names</h5>
-                <ul id="container">
-                    <li>Article 1</li>
-                    <li>Article 2</li>
-                    <li>Article 3</li>
-                    <li>Article 4</li>
-                    <li>Article 5</li>
-                    <li>Article 6</li>
-                    <li>Article 7</li>
-                    <li>Article 8</li>
-                </ul>
-            </div>
-        </div>*@
     </div>
 
     <div id="SubjectAlternativeNames" class="tabcontent">
@@ -129,15 +123,16 @@
         <div id="certificateAclTable"></div>
     </div>
 
-    
+
 
 
 </div>
 
 @Html.Partial("~/Views/Shared/Modals/_CertificateDownloadOptionsModal.cshtml")
 @Html.Partial("~/Views/Certificates/modals/_AddCertificateAceModal.cshtml")
-    
-@section Script{ 
+@Html.Partial("~/Views/Certificates/modals/_DeployCertificateModal.cshtml")
+
+@section Script{
     <script>
         $(document).ready(function () {
             ViewCertificate.PageLoad();
@@ -145,12 +140,13 @@
     </script>
 }
 
-@section Style{ 
+@section Style{
     <style>
         img {
             max-width: 90px;
             max-height: 90px;
         }
+
         ul#container {
             height: 100px;
             overflow-y: auto;
@@ -171,7 +167,7 @@
             padding-left: 15px;
             padding-right: 15px;
             padding-top: 7px;
-            padding-bottom:7px;
+            padding-bottom: 7px;
         }
 
         td {
@@ -195,26 +191,26 @@
             border-top-right-radius: 4px;
         }
 
-        /* Style the buttons inside the tab */
-        div.tab button {
-            background-color: inherit;
-            float: left;
-            border: none;
-            outline: none;
-            cursor: pointer;
-            padding: 14px 16px;
-            transition: 0.3s;
-        }
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
 
-        /* Change background color of buttons on hover */
-        div.tab button:hover {
-            background-color: #ddd;
-        }
+                /* Change background color of buttons on hover */
+                div.tab button:hover {
+                    background-color: #ddd;
+                }
 
-        /* Create an active/current tablink class */
-        div.tab button.active {
-            background-color: #ccc;
-        }
+                /* Create an active/current tablink class */
+                div.tab button.active {
+                    background-color: #ccc;
+                }
 
         /* Style the tab content */
         .tabcontent {
@@ -225,7 +221,6 @@
             border-bottom-left-radius: 4px;
             border-bottom-right-radius: 4px;
         }
-
     </style>
-    
+
 }

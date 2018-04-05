@@ -1,0 +1,89 @@
+﻿@{
+    ViewData["Title"] = "Find Certificate";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Certificates</a>
+    </li>
+    <li class="breadcrumb-item active">Search Certificates</li>
+</ol>
+
+<div class="background-panel">
+
+    <table id="searchResultTable" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Expiry</th>
+                @*<th>Expiry</th>*@
+                <th>Hash Algorithm</th>
+                @*<th>id</th>*@
+                <th>Action</th>
+            </tr>
+        </thead>
+    </table>
+    
+</div>
+
+
+    
+@section Script{ 
+    <script>
+        $(document).ready(function () {
+
+            $('#searchResultTable').DataTable({
+                "ajax": "/certificates/search",
+                columns: [
+                    { data: "displayName" },
+                    {
+                        data: "expiry",
+                        render: function (data, type, row, meta) {
+                            var date = new Date(data);
+                            return (date.toDateString());
+                        }
+                    },
+                    { data: "hashAlgorithm" },
+                    //{ data: "id", sClass: "hidden" },
+                    {
+                        data: "id",
+                        title: "action",
+                        "render": function (data, type, row, meta) {
+                            return '<a href="/views/certificate/' + data + '">View</a>';
+                        }
+                    }
+                ]
+            });
+        });
+
+
+
+    </script>
+}
+
+
+
+
+
+@section Style{ 
+    <style>
+
+        .background-panel {
+            background: #fff;
+            border-radius: 4px;
+            padding: 20px;
+        }
+        th{
+            font-size:15px;
+        }
+
+        td{
+            font-size:12px;
+        }
+
+
+    </style>
+    
+}

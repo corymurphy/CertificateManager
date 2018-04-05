@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
-using CertificateManager.Entities;
+﻿using CertificateManager.Entities;
 using CertificateServices;
-using CertificateServices.Enumerations;
+using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace CertificateManager.Repository
 {

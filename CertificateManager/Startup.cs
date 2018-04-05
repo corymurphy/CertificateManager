@@ -244,9 +244,17 @@ namespace CertificateManager
 
             services.AddSingleton<ActiveDirectoryIdentityProviderLogic>(activeDirectoryIdentityProviderLogic);
 
-            
+            CertificateManagementLogic certificateManagementLogic = new CertificateManagementLogic(
+                configurationRepository,
+                certificateRepository,
+                authorizationLogic,
+                auditLogic,
+                securityPrincipalLogic,
+                cipher);
 
-            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic, powershellEngine, auditLogic));
+            services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
+
+            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic, powershellEngine, auditLogic, certificateManagementLogic));
         
             services.AddSingleton<IRuntimeConfigurationState>(
                 new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository)
@@ -256,15 +264,7 @@ namespace CertificateManager
 
             services.AddSingleton<IClientsideConfigurationProvider>(new ClientsideConfigurationProvider(configurationRepository));
 
-            CertificateManagementLogic certificateManagementLogic = new CertificateManagementLogic(
-                    configurationRepository,
-                    certificateRepository,
-                    authorizationLogic,
-                    auditLogic,
-                    securityPrincipalLogic,
-                    cipher);
 
-            services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
 
             services.AddSingleton<AnalyticsLogic>(new AnalyticsLogic(configurationRepository, certificateRepository, auditRepository));
 

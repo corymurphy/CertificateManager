@@ -1,0 +1,166 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Private Certificates</a>
+    </li>
+    <li class="breadcrumb-item active">New Certificate</li>
+</ol>
+
+<div class="alert alert-danger" id="error-alert" style="display:none;">
+    Error while creating the certificate.
+</div>
+
+<div class="alert alert-success" id="success-alert" style="display:none;">
+    Certificate created successfully, redirecting... <a href="#" class="alert-link">Click here</a> if you're not redirected automatically.
+</div>
+
+<form>
+
+
+    <div class="card mb-3">
+        <div class="card-header">
+            Certificate Subject
+        </div>
+
+        <div class="card-body">
+
+
+
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Common Name</label>
+                <input type="email" class="form-control" id="commonName" aria-describedby="emailHelp" placeholder="www.microsoft.com" value="www.microsoft.com">
+            </div>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label for="exampleInputName">Department</label>
+                        <input type="text" class="form-control" id="department" aria-describedby="nameHelp" placeholder="Engineering" value="Engineering">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="exampleInputLastName">Organization</label>
+                        <input type="text" class="form-control" id="organization" aria-describedby="nameHelp" placeholder="Microsoft" value="Microsoft">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col-md-4">
+                        <label for="exampleInputName">City</label>
+                        <input type="text" class="form-control" id="city" aria-describedby="nameHelp" placeholder="Seattle" value="Seattle">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="exampleInputLastName">State</label>
+                        <input type="text" class="form-control" id="state" aria-describedby="nameHelp" placeholder="Washington" value="Washington">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="exampleInputLastName">Country</label>
+                        <input type="text" class="form-control" id="country" aria-describedby="nameHelp" maxlength="2" placeholder="US" value="US">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Subject Alternative Name / DNS Name (Comma Separated)</label>
+                <input type="email" class="form-control" id="sancsv" aria-describedby="emailHelp" placeholder="www.microsoft.com, microsoft.com" value="www.microsoft.com, microsoft.com">
+            </div>
+
+            
+
+
+        </div>
+
+    </div>
+
+
+    <div class="card mb-3">
+        <div class="card-header">
+            Certificate Cryptographic Options
+        </div>
+
+        <div class="card-body">
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label>Cipher Algorithm</label>
+                        <select class="form-control" id="cipherAlgorithm"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Hash Algorithm</label>
+                        <select class="form-control" id="hashAlgorithm"></select>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label>Windows API</label>
+                        <select class="form-control" id="windowsApi"></select>
+                    </div>
+                    <div class="col-md-6">
+                        <label>Key Size</label>
+                        <input type="text" class="form-control" id="keySize" aria-describedby="nameHelp" placeholder="2048" value="2048">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="form-row">
+                    <div class="col-md-6">
+                        <label>Key Usage</label>
+                        <select multiple class="form-control" id="keyUsage"></select>
+                    </div>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <input type="button" class="btn btn-primary btn-block" id="create-private-certificate-btn" value="Create Private Certificate" style="color:#fff"/>
+
+        @*<div id="container">
+            <paper-spinner-lite active class="thick"></paper-spinner-lite>
+        </div>*@
+    </div>
+</form>
+
+@section Script{
+
+    <script>
+        $(document).ready(function () {
+            PrivateCertificateAuthority.PageLoad();
+        });
+    </script>
+}
+
+
+
+
+@section Style{
+    
+    <style>
+        a.btn.btn-primary{
+            width:100%;
+            max-width:320px;
+            display: inline-block;
+        } 
+        input, select {
+            max-width: none;
+        }
+        #container{
+            margin-left:10px;
+        }
+    </style>
+}

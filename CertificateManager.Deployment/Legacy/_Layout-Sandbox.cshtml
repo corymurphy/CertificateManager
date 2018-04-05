@@ -1,0 +1,87 @@
+﻿@using CertificateManager.Logic.UXLogic
+@using CertificateManager.Logic
+@using System.Security.Claims
+
+@inject IClientsideConfigurationProvider jsConfig
+@inject IRuntimeConfigurationState runtimeConfigurationState
+@*@inject ClaimsPrincipal user*@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Certificate Manager">
+    <meta name="author" content="Cory Murphy">
+
+    
+    <link href="~/css/certificate-manager-new.min.css" rel="stylesheet">
+
+
+    @*<style>
+        .navbar-login {
+            width: 305px;
+            padding: 10px;
+            padding-bottom: 0px;
+        }
+
+        .navbar-login-session {
+            padding: 10px;
+            padding-bottom: 0px;
+            padding-top: 0px;
+        }
+
+        .icon-size {
+            font-size: 87px;
+        }
+    </style>*@
+    @RenderSection("Style", required: false)
+
+</head>
+<body class="fixed-nav sticky-footer" id="page-top">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top" id="mainNav">
+        <a class="navbar-brand" href="index.html">Start Bootstrap</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+    </nav>
+
+    <div class="content-wrapper">
+        <div class="container-fluid">
+
+
+            @RenderBody()
+            @*<div class="row">
+
+
+
+                    <main class="col-sm-9 ml-sm-auto col-md-10 pt-3" role="main">
+
+                        @RenderBody()
+
+                    </main>
+
+
+                </div>*@
+        </div>
+    </div>
+
+
+    <script src="~/js/base.min.js"></script>
+    <script src="~/js/cm.min.js"></script>
+
+    <script>
+        @Html.Raw(jsConfig.RenderDynamicScript())
+        @Html.Raw(jsConfig.RenderIdentitySourcesJsonArray())
+        @Html.Raw(jsConfig.RenderSecurityRolesJsonArray())
+        @Html.Raw(jsConfig.RenderLocalAuthenticationStateJsonArray())
+        @Html.Raw(jsConfig.RenderScopeMap())
+        @Html.Raw(jsConfig.RenderIdentityTypes())
+        @Html.Raw(jsConfig.RenderAceTypes())
+    </script>
+
+    @RenderSection("Script", required: false);
+</body>
+</html>

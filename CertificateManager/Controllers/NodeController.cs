@@ -1,12 +1,8 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Logic;
-using CertificateManager.Logic.ActiveDirectory;
-using CertificateManager.Logic.ActiveDirectory.Interfaces;
-using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 
 namespace CertificateManager.Controllers
 {
@@ -86,6 +82,14 @@ namespace CertificateManager.Controllers
         {
             nodeLogic.InvokeIISCertificateDiscovery(id, User);
 
+            return http.RespondSuccess();
+        }
+
+        [HttpPost]
+        [Route("node/{nodeId:guid}/deploy/{certId:guid}")]
+        public JsonResult InvokeCertificateDeployment(Guid nodeId, Guid certId)
+        {
+            nodeLogic.InvokeCertificateDeployment(nodeId, certId, User);
             return http.RespondSuccess();
         }
     }

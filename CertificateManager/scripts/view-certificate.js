@@ -15,6 +15,19 @@
         ViewCertificate.InitializeShowPassword();
         ViewCertificate.InitializeResetPassword();
         ViewCertificate.InitializeSelects();
+
+        ViewCertificate.NodeSelect = $("#nodeSelect");
+        ViewCertificate.InitializeNodeSelect();
+
+        ViewCertificate.InitializeNodeSelect();
+    },
+
+    ShowDeployCertificateModal: function () {
+        UiGlobal.ShowModal('deployCertificateModal');
+    },
+
+    DeployToNode: function () {
+
     },
 
     GetCertificateId: function ()
@@ -100,6 +113,8 @@
     AclTable: null,
 
     CertificateAceModal: null,
+
+    NodeSelect: null,
 
     GetCertificateSuccessCallback: function (data)
     {
@@ -361,5 +376,58 @@
         };
 
         ViewCertificate.AclTable.jsGrid("insertItem", data);
+    },
+
+    InitializeNodeSelect: function () {
+        
+
+        ViewCertificate.NodeSelect.select2({
+            placeholder: 'search for a certificate manager user',
+            ajax: {
+
+                url: ("/nodes"),
+                dataType: 'json',
+                type: 'get',
+                delay: 30,
+                data: function (params) {
+                    return {
+                        query: params.term, // search term
+                        page: params.page
+                    };
+                },
+                processResults: function (data, params) {
+                    params.page = params.page || 1;
+
+                    return {
+                        results: data.payload,
+                    };
+                },
+                cache: true
+            },
+            escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
+            minimumInputLength: 2,
+            templateResult: ViewCertificate.NodeSelectFormatRepo, // omitted for brevity, see the source of this page
+            templateSelection: ViewCertificate.NodeSelectFormatRepoSelection // omitted for brevity, see the source of this page
+        });
+    },
+
+    NodeSelectFormatRepo: function (repo) {
+        return repo.hostname;
+    },
+
+    NodeSelectFormatRepoSelection: function (repo) {
+        return repo.hostname;
+    },
+
+    DeployToNode: function () {
+
+        var uri = '/node/' + ViewCertificate.NodeSelect.val() + '/deploy/' + ViewCertificate.GetCertificateId();
+
+        Services.Post(uri, null, ViewCertificate.DeployCertSuccessCallback, null);
+
+    },
+
+    DeployCertSuccessCallback: function (payload) {
+        UiGlobal.ShowSuccess('Certificate successfully deployed to node');
     }
 }

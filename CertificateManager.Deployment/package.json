@@ -1,0 +1,27 @@
+{
+  "name": "myproject",
+  "version": "1.0.0",
+  "devDependencies": {
+    "jquery": "^3.2.1",
+    "sb_admin": "~1.0.4",
+    "axios": "~0.16.2",
+    "bootstrap": "~4.0.0",
+    "datatables": "~1.10.13",
+    "jsgrid": "~1.5.3",
+    "metismenu": "2.7.0",
+    "select2": "4.0.4",
+    "morris.js": "^0.5.0",
+    "font-awesome": "^4.7.0",
+    "popper.js": "^1.12.5",
+    "jquery-easing": "^0.0.1",
+    "gulp": "3.9.1",
+    "gulp-less": "3.3.0",
+    "gulp-concat": "~2.6.1",
+    "gulp-clean-css": "~3.9.0",
+    "gulp-sourcemaps": "~2.6.1",
+    "adminlte-reactjs": "^1.0.6",
+    "adminlte-reactjs-carnegie": "^1.0.10",
+    "chart.js": "^2.7.1",
+    "bootstrap-table": "^1.12.1"
+  }
+}

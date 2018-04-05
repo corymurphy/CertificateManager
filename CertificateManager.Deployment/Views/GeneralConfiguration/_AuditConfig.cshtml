@@ -1,0 +1,29 @@
+﻿<p>
+    <h6>Security Auditing</h6>
+    <br />
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="None">  None       </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="Success">  Success       </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="securityAuditingState" value="Failure">  Failure        </label>
+    <label class="radio-inline"><input type="radio" name="securityAuditingState" value="All">  Success and Failure </label>
+</p>
+
+
+<hr />
+
+
+<p>
+    <h6>
+        Operations Logging
+    </h6>
+    <br />
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="None">  None        </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Information">  Information        </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Warnings">  Warnings        </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Errors">  Errors       </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="Debug">  Debug        </label>
+    <label class="radio-inline" style="margin-right: 15px;"><input type="radio" name="operationsLoggingState" value="All">  All        </label>
+</p>
+
+<p>
+    <button type="button" class="btn btn-primary" onclick="GeneralConfig.SaveAuditConfig()">Save</button>
+</p>

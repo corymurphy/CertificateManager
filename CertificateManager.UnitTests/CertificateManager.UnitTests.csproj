@@ -203,6 +203,7 @@
   <ItemGroup>
     <Compile Include="CertificateRequestTest.cs" />
     <Compile Include="CertificateRequestValidationTest.cs" />
+    <Compile Include="NodeLogicTest.cs" />
     <Compile Include="CertificateSubjectTest.cs" />
     <Compile Include="DnsValidationTest.cs" />
     <Compile Include="MicrosoftCertificateAuthorityTest.cs" />

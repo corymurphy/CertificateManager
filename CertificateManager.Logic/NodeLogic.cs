@@ -1,16 +1,15 @@
 ﻿using CertificateManager.Entities;
+using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Exceptions;
 using CertificateManager.Logic.Interfaces;
+using CertificateManager.Powershell.Runtime;
 using CertificateManager.Repository;
 using System;
 using System.Collections.Generic;
-using System.Security.Claims;
-using System.Linq;
-using System.Collections;
-using System.Management.Automation;
 using System.Collections.ObjectModel;
-using CertificateManager.Powershell.Runtime;
+using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
-using CertificateManager.Entities.Enumerations;
 
 namespace CertificateManager.Logic
 {
@@ -23,30 +22,40 @@ namespace CertificateManager.Logic
         IPowershellEngine powershell;
         IAuditLogic auditLogic;
         string hostIisDiscoveryScript = "HostIISDiscovery";
+        string certificateDeploymentScript = "DeployCertificateToNode";
 
-        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell, IAuditLogic auditLogic)
+        CertificateManagementLogic certificateManagement;
+
+        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell, IAuditLogic auditLogic, CertificateManagementLogic certificateManagement)
         {
             this.auditLogic = auditLogic;
             this.powershell = powershell;
             this.configurationRepository = configurationRepository;
             this.authorizationLogic = authorizationLogic;
             this.adIdpLogic = adIdpLogic;
+            this.certificateManagement = certificateManagement;
         }
 
         public NodeDetails Get(string id)
         {
+
+            if(string.IsNullOrEmpty(id))
+            {
+                throw new ArgumentNullException("Invalid Node");
+            }
+
             Guid validatedId;
 
             if (!Guid.TryParse(id, out validatedId))
             {
-                throw new Exception("Invalid Node");
+                throw new ArgumentOutOfRangeException("Invalid Node");
             }
 
             NodeDetails node = configurationRepository.Get<NodeDetails>(validatedId);
 
             if (node == null)
             {
-                throw new Exception("Node could not be found");
+                throw new ReferencedObjectDoesNotExistException("Node could not be found");
             }
 
             ActiveDirectoryMetadata idp = adIdpLogic.GetAll()
@@ -54,7 +63,7 @@ namespace CertificateManager.Logic
                 .FirstOrDefault();
 
             node.CredentialDisplayName = idp.Name;
-
+            
             return node;
         }
 
@@ -65,7 +74,7 @@ namespace CertificateManager.Logic
 
             if (node == null)
             {
-                throw new Exception("Node could not be found");
+                throw new ReferencedObjectDoesNotExistException("Node could not be found");
             }
 
             node.CredentialContext = adIdpLogic.GetAll()
@@ -186,5 +195,44 @@ namespace CertificateManager.Logic
 
             return cmdletParams;
         }
+
+        private void StartCertificateDeployment(NodeCredentialed node, Dictionary<string, object> cmdletParams, ClaimsPrincipal user)
+        {
+            //Collection<HostIISCertificateEntity> result = null;
+            try
+            {
+                object result = powershell.InvokeScriptAsync<object>(certificateDeploymentScript, cmdletParams, user);
+                return;
+                //result = powershell.InvokeScriptAsync<HostIISCertificateEntity>(hostIisDiscoveryScript, cmdletParams, user);
+                //this.RecieveIISCertificateDiscoveryResult(result, node);
+            }
+            catch (Exception ex)
+            {
+                string msg = string.Format("An error occured while starting the certificate deployment job {0}", ex.ToString());
+                auditLogic.LogOpsError(user, node.Id.ToString(), EventCategory.PowershellJob, msg);
+            }
+        }
+
+        public void InvokeCertificateDeployment(Guid nodeId, Guid certId, ClaimsPrincipal user)
+        {
+            DownloadPfxCertificateEntity cert = certificateManagement.GetPfxCertificateContent(certId);
+
+            NodeCredentialed node = this.GetCredentialedNode(nodeId);
+
+            string password = certificateManagement.GetCertificatePassword(certId, user).DecryptedPassword;
+
+            Dictionary<string, object> cmdletParams = new Dictionary<string, object>()
+            {
+                { "ComputerName", node.Hostname },
+                { "Credential", powershell.NewPSCredential(node.CredentialContext.Username, node.CredentialContext.Password) },
+                { "CertificateContent", Convert.ToBase64String(cert.Content) },
+                { "CertificateKey", password }
+            };
+
+            Task.Run(() => this.StartCertificateDeployment(node, cmdletParams, user));
+
+        }
+
+    
     }
 }

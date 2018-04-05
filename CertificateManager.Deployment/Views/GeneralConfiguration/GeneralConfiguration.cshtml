@@ -1,0 +1,134 @@
+﻿@{
+    ViewData["Title"] = "General Configuration";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Settings</a>
+    </li>
+    <li class="breadcrumb-item active">General Configuration</li>
+</ol>
+
+<div class="alert alert-success" id="success-alert" style="display:none;"></div>
+<div class="alert alert-danger" id="error-alert" style="display:none;"></div>
+
+<div class="tab">
+    <button class="tablinks generalConfig" onclick="openTab(event, 'generalConfig')" id="defaultOpen">Settings</button>
+    <button class="tablinks auditConfig" onclick="openTab(event, 'auditConfig')" id="defaultOpen">Auditing</button>
+    <button class="tablinks certificateAuthorities" onclick="openTab(event, 'certificateAuthorities')">Certificate Authorities</button>
+</div>
+
+<div id="generalConfig" class="tabcontent">
+
+    @Html.Partial("~/Views/GeneralConfiguration/_Settings.cshtml")
+
+</div>
+
+<div id="auditConfig" class="tabcontent">
+
+    @Html.Partial("~/Views/GeneralConfiguration/_AuditConfig.cshtml")
+
+</div>
+
+<div id="certificateAuthorities" class="tabcontent">
+    <h5>Some other config</h5>
+
+</div>
+
+
+
+
+
+
+@section Script{
+
+    <script>
+        $(document).ready(function () {
+            GeneralConfig.PageLoad();
+        });
+    </script>
+}
+
+
+@section Style{
+
+    <style>
+
+        .background-panel {
+            background: #fff;
+            border-radius: 4px;
+        }
+
+        .jsgrid-grid-header,
+        .jsgrid-grid-body {
+            overflow: auto;
+        }
+
+        td.jsgrid-cell {
+            font-size: 13px;
+        }
+
+        th {
+            color: #777;
+            width: 120px;
+            font-weight: 600;
+            text-align: right;
+            font-size: 12px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        td {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            font-size: 12px;
+        }
+
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
+
+                /* Change background color of buttons on hover */
+                div.tab button:hover {
+                    background-color: #ddd;
+                }
+
+                /* Create an active/current tablink class */
+                div.tab button.active {
+                    background-color: #ccc;
+                }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    </style>
+
+}
