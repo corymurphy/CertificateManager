@@ -12,6 +12,7 @@ namespace CertificateManager.Entities
         public DateTime MustRenewBy { get; set; }
         public string Thumbprint { get; set; }
         public Guid CertificateManagerId { get; set; }
+        public string X509Content { get; set; }
 
     }
 }

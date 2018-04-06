@@ -25,6 +25,7 @@ namespace CertificateManager.Logic
         IAuditLogic auditLogic;
         string hostIisDiscoveryScript = "HostIISDiscovery";
         string certificateDeploymentScript = "DeployCertificateToNode";
+        string iisCertificateRenewal = "RenewIISCertificate";
 
         CertificateManagementLogic certificateManagement;
 
@@ -142,8 +143,10 @@ namespace CertificateManager.Logic
             {
                 storedNode.ManagedCertificates = new List<ManagedCertificate>();
             }
-            
-            foreach (HostIISCertificateEntity result in results)
+
+            List<HostIISCertificateEntity> resultsList = results.ToList();
+
+            foreach (HostIISCertificateEntity result in resultsList)
             {
                 bool alreadyDiscovered = storedNode.ManagedCertificates.Exists(cert => cert.Thumbprint == result.Thumbprint && cert.ManagedCertificateType == ManagedCertificateType.IIS);
 
@@ -155,12 +158,27 @@ namespace CertificateManager.Logic
                         Id = Guid.NewGuid(),
                         Thumbprint = result.Thumbprint,
                         ManagedCertificateType = ManagedCertificateType.IIS,
-                        LastRenewal = DateTime.MinValue
+                        LastRenewal = DateTime.MinValue,
+                        X509Content = result.X509Content
                     };
 
                     storedNode.ManagedCertificates.Add(managedCertificate);
                 }
             }
+
+            List<ManagedCertificate> newManagedList = new List<ManagedCertificate>();
+
+            foreach (ManagedCertificate managedCert in storedNode.ManagedCertificates)
+            {
+                if(resultsList.Exists(x => x.Thumbprint == managedCert.Thumbprint))
+                {
+                    newManagedList.Add(managedCert);
+                }
+            }
+
+            storedNode.ManagedCertificates = newManagedList;
+            storedNode.CommunicationSuccess = true;
+            storedNode.LastCommunication = DateTime.Now;
 
             configurationRepository.Update<Node>(storedNode);
         }
@@ -207,6 +225,12 @@ namespace CertificateManager.Logic
             try
             {
                 object result = powershell.InvokeScriptAsync<object>(certificateDeploymentScript, cmdletParams, user);
+
+                node.LastCommunication = DateTime.Now;
+                node.CommunicationSuccess = true;
+
+                configurationRepository.Update<NodeCredentialed>(node);
+
                 return;
                 //result = powershell.InvokeScriptAsync<HostIISCertificateEntity>(hostIisDiscoveryScript, cmdletParams, user);
                 //this.RecieveIISCertificateDiscoveryResult(result, node);
@@ -238,19 +262,56 @@ namespace CertificateManager.Logic
 
         }
 
-        public void RenewIISCertificate(Guid nodeId, Guid nodeManagedCertId, ClaimsPrincipal user)
+        public void InvokeRenewIISCertificate(Guid nodeId, Guid nodeManagedCertId, ClaimsPrincipal user)
         {
             NodeCredentialed node = this.GetCredentialedNode(nodeId);
 
-            ManagedCertificate managedCertificate = node.ManagedCertificates.Where(cert => cert.Id == nodeManagedCertId).First();
+            ManagedCertificate managedCertificate = node.ManagedCertificates.Where(x => x.Id == nodeManagedCertId).First();
 
-            X509Certificate2 cert = new X509Certificate2( managedCertificate.X509 )
+            X509Certificate2 cert = new X509Certificate2( Convert.FromBase64String( managedCertificate.X509Content ) );
 
-            CreatePrivateCertificateModel entity = new CreatePrivateCertificateModel( )
+            CreatePrivateCertificateModel entity = new CreatePrivateCertificateModel(cert);
 
-            privateCertificateProcessing.CreateCertificateWithPrivateKey()
+            CreatePrivateCertificateResult newCert = privateCertificateProcessing.CreateCertificateWithPrivateKey(entity, user);
+
+            if(newCert.Status != PrivateCertificateRequestStatus.Success)
+            {
+                throw new CertificateAuthorityDeniedRequestException("Certificate request could not be processed");
+            }
+
+            DownloadPfxCertificateEntity pfx = certificateManagement.GetPfxCertificateContent(newCert.Id);
+
+            string password = certificateManagement.GetCertificatePassword(newCert.Id, user).DecryptedPassword;
+
+            Dictionary<string, object> cmdletParams = new Dictionary<string, object>()
+            {
+                { "ComputerName", node.Hostname },
+                { "Credential", powershell.NewPSCredential(node.CredentialContext.Username, node.CredentialContext.Password) },
+                { "CertificateContent", Convert.ToBase64String(pfx.Content) },
+                { "CertificateKey", password }
+            };
+
+            Task.Run(() => this.StartIISCertificateRenewal(node, cmdletParams, user));
+
         }
 
-        private void 
+
+        private void StartIISCertificateRenewal(NodeCredentialed node, Dictionary<string, object> cmdletParams, ClaimsPrincipal user)
+        {
+            //Collection<HostIISCertificateEntity> result = null;
+            try
+            {
+                object result = powershell.InvokeScriptAsync<object>(iisCertificateRenewal, cmdletParams, user);
+                return;
+                //result = powershell.InvokeScriptAsync<HostIISCertificateEntity>(hostIisDiscoveryScript, cmdletParams, user);
+                //this.RecieveIISCertificateDiscoveryResult(result, node);
+            }
+            catch (Exception ex)
+            {
+                string msg = string.Format("An error occured while starting the certificate deployment job {0}", ex.ToString());
+                auditLogic.LogOpsError(user, node.Id.ToString(), EventCategory.PowershellJob, msg);
+            }
+        }
+
     }
 }

@@ -90,19 +90,28 @@
         }
     },
 
+    ViewNode: function (item) {
+        document.location = "/view/node/" + item.id;
+    },
+
     InitializeGrid: function ()
     {
         Nodes.Grid.jsGrid({
             height: "auto",
             width: "100%",
 
-            editing: true,
+            
+            editing: false,
             sorting: true,
             paging: true,
             autoload: true,
 
             pageSize: 15,
             pageButtonCount: 5,
+
+            rowClick: function (args) {
+                Nodes.ViewNode(args.item);
+            },
 
             deleteConfirm: "Do you really want to delete this node?",
 

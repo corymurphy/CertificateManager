@@ -92,5 +92,14 @@ namespace CertificateManager.Controllers
             nodeLogic.InvokeCertificateDeployment(nodeId, certId, User);
             return http.RespondSuccess();
         }
+
+
+        [HttpPost]
+        [Route("node/{nodeId:guid}/renew/{managedCertId:guid}")]
+        public JsonResult InvokeRenewIISCertificate(Guid nodeId, Guid managedCertId)
+        {
+            nodeLogic.InvokeRenewIISCertificate(nodeId, managedCertId, User);
+            return http.RespondSuccess();
+        }
     }
 }
