@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Users";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Security</a>
+    </li>
+    <li class="breadcrumb-item active">Users</li>
+</ol>
+
+<div class="alert alert-success" id="success-alert" style="display:none;"></div>
+<div class="alert alert-danger" id="error-alert" style="display:none;"></div>
+
+<div class="background-panel" style="margin-bottom:15px;">
+    <button class="btn btn-info" onclick="UiGlobal.ShowModal('importUsersModal');"><i class="fa fa-upload" aria-hidden="true"></i> Import </button> 
+</div>
+
+<div class="background-panel">
+    <h5>Certificate Manager Users</h5>
+    <div id="authenticablePrincipalTable"></div>
+</div>
+
+<input type="text" id="targetUserId" name="targetUserId" style="display:none;" hidden="hidden" />
+
+@Html.Partial("~/Views/AuthenticablePrincipal/_ImportUsersModal.cshtml") 
+@Html.Partial("~/Views/AuthenticablePrincipal/_AuthenticablePrincipalActionModal.cshtml")
+@Html.Partial("~/Views/AuthenticablePrincipal/_ResetUserPasswordModal.cshtml")
+    
+@section Script{ 
+
+    <script>
+        $(document).ready(function () {
+            AuthenticablePrincipal.PageLoad();
+        });
+    </script>
+}
+
+
+
+
+
+@section Style{ 
+
+    <style>
+        @@media (max-width: 991px){
+            .user-search-select{
+                width:265px;
+            }
+        }
+        @@media (min-width: 992px) {
+            .user-search-select {
+                width: 320px;
+            }
+        }
+
+        .user-select-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .user-select-details {
+            margin-left: 10px;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+
+        .user-select-details-value{
+            font-weight:500;
+        }
+    </style>
+    
+}

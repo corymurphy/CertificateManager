@@ -1,0 +1,273 @@
+﻿// Configure bundling and minification for the project.
+// More info at https://go.microsoft.com/fwlink/?LinkId=808241
+//https://docs.microsoft.com/en-us/aspnet/core/client-side/less-sass-fa
+[
+  //{
+  //  "outputFileName": "wwwroot/css/base.min.css",
+  //  // An array of relative input file paths. Globbing patterns supported
+  //  "inputFiles": [
+  //    "node_modules/bootstrap/dist/css/bootstrap.min.css",
+  //    "node_modules/sb_admin/css/sb-admin.css",
+  //    "node_modules/morris.js/morris.css",
+  //    "node_modules/font-awesome/css/font-awesome.min.css",
+  //    "node_modules/jsgrid/dist/jsgrid.min.css",
+  //    "node_modules/jsgrid/dist/jsgrid-theme.min.css",
+  //    "node_modules/datatables/media/css/jquery.dataTables.min.css"
+  //  ],
+  //  "minify": {
+  //    //"enabled": false,
+  //    //"renameLocals": false
+  //    "enabled": false,
+  //    "renameLocals": false
+  //  },
+  //  // Optionally generate .map file
+  //  "sourceMap": false
+  //},
+  {
+    "outputFileName": "wwwroot/css/certificate-manager.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "style/certificate-manager.css"
+    ],
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/base.min.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "node_modules/bootstrap/dist/css/bootstrap.min.css",
+      "node_modules/sb_admin/css/sb-admin.css",
+      "node_modules/morris.js/morris.css",
+      "node_modules/font-awesome/css/font-awesome.min.css",
+      "node_modules/jsgrid/dist/jsgrid.min.css",
+      "node_modules/jsgrid/dist/jsgrid-theme.min.css",
+      "node_modules/datatables/media/css/jquery.dataTables.min.css",
+      "style/card.css"
+    ],
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/css/bootstrap.css",
+    "inputFiles": [ "node_modules/bootstrap/dist/css/bootstrap.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/bootstrap.min.css",
+    "inputFiles": [ "node_modules/bootstrap/dist/css/bootstrap.min.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/dashboard.css",
+    "inputFiles": [ "wwwroot/src-assets/dashboard.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/sb-admin.css",
+    "inputFiles": [ "node_modules/sb_admin/css/sb-admin.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/jsgrid.min.css",
+    "inputFiles": [ "node_modules/jsgrid/dist/jsgrid.min.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/jsgrid-theme.min.css",
+    "inputFiles": [ "node_modules/jsgrid/dist/jsgrid-theme.min.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/jquery.min.js",
+    "inputFiles": [ "node_modules/jquery/dist/jquery.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/jquery.slim.min.js",
+    "inputFiles": [ "node_modules/jquery/dist/jquery.slim.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/popper.min.js",
+    "inputFiles": [ "node_modules/popper.js/dist/popper.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/bootstrap-table.min.js",
+    "inputFiles": [ "node_modules/bootstrap-table/dist/bootstrap-table.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/bootstrap.min.js",
+    "inputFiles": [ "node_modules/bootstrap/dist/js/bootstrap.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/css/select2.min.css",
+    "inputFiles": [ "node_modules/select2/dist/css/select2.min.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/js/select2.full.min.js",
+    "inputFiles": [ "node_modules/select2/dist/js/select2.full.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+  {
+    "outputFileName": "wwwroot/js/Chart.bundle.min.js",
+    "inputFiles": [ "node_modules/chart.js/dist/Chart.bundle.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+  {
+    "outputFileName": "wwwroot/js/plugin.filler.js",
+    "inputFiles": [ "node_modules/chart.js/src/plugins/plugin.filler.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+  {
+    "outputFileName": "wwwroot/js/jsgrid.min.js",
+    "inputFiles": [ "node_modules/jsgrid/dist/jsgrid.min.js" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    }
+  },
+
+  {
+    "outputFileName": "wwwroot/js/cm.min.js",
+    "inputFiles": [
+      "scripts/"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  },
+
+  //{
+  //  "outputFileName": "wwwroot/js/cm.min.js",
+  //  "inputFiles": [
+  //    "scripts/cm-constants.js",
+  //    "scripts/cm-presentation.js",
+  //    "scripts/cm-services.js",
+  //    "scripts/view-certificate.js",
+  //    "scripts/private-certificate-authority.js",
+  //    "scripts/view-all-certificates.js",
+  //    "scripts/external-identity-sources.js",
+  //    "scripts/login.js",
+  //    "scripts/security-roles.js",
+  //    "scripts/pkiconfig.js",
+  //    "scripts/security-role-details.js",
+  //    "scripts/authenticable-principal.js"
+  //  ],
+  //  // Optionally specify minification options
+  //  "minify": {
+  //    //"enabled": false,
+  //    //"renameLocals": false
+  //    "enabled": false,
+  //    "renameLocals": false
+  //  },
+  //  // Optionally generate .map file
+  //  "sourceMap": false
+  //},
+  {
+    "outputFileName": "wwwroot/css/cm.min.css",
+    "inputFiles": [ "style/cm.css" ],
+    "minify": {
+      "enabled": false,
+      "renameLocals": false
+    },
+    "sourceMap": false
+  },
+
+  {
+    "outputFileName": "wwwroot/js/base.min.js",
+    "inputFiles": [
+      "node_modules/jquery/dist/jquery.min.js",
+      "node_modules/popper.js/dist/umd/popper.min.js",
+      "node_modules/bootstrap/dist/js/bootstrap.min.js",
+      "node_modules/axios/dist/axios.min.js",
+
+      "node_modules/datatables/media/js/jquery.dataTables.min.js",
+      "node_modules/jquery-easing/dist/jquery.easing.1.3.umd.min.js",
+      "node_modules/jsgrid/dist/jsgrid.min.js",
+      "node_modules/select2/dist/js/select2.full.min.js"
+      //"wwwroot/js/site.js",
+      //"wwwroot/lib/startbootstrap-sb-admin/js/sb-admin.min.js"
+      //"wwwroot/lib/startbootstrap-sb-admin-2/dist/js/sb-admin-2.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      //"enabled": false,
+      //"renameLocals": false
+      "enabled": false,
+      "renameLocals": false
+    },
+    // Optionally generate .map file
+    "sourceMap": false
+  }
+]

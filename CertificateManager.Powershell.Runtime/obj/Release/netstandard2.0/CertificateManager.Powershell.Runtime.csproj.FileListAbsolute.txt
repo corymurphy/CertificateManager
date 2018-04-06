@@ -7,3 +7,6 @@ C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Releas
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Release\netstandard2.0\CertificateManager.Powershell.Runtime.AssemblyInfo.cs
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Release\netstandard2.0\CertificateManager.Powershell.Runtime.dll
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Release\netstandard2.0\CertificateManager.Powershell.Runtime.pdb
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Release\netstandard2.0\DeployCertificateToNode.ps1
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Release\netstandard2.0\HostIISDiscovery.ps1
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Release\netstandard2.0\RenewIISCertificate.ps1

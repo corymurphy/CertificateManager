@@ -1,0 +1,223 @@
+﻿@{
+    ViewData["Title"] = "External Identity Sources";
+    Layout = "~/Views/Shared/_Layout.full.cshtml";
+}
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item">
+        <a href="#">Security</a>
+    </li>
+    <li class="breadcrumb-item active">Identity Providers</li>
+</ol>
+
+<div class="alert alert-danger" id="error-alert" style="display:none;"></div>
+<div class="alert alert-success" id="success-alert" style="display:none;"></div>
+
+<div class="tab">
+    <button class="tablinks activeDirectory" onclick="openTab(event, 'activeDirectory')" id="defaultOpen">Active Directory</button>
+    <button class="tablinks openIdConnect" onclick="openTab(event, 'openIdConnect')">OpenID Connect</button>
+    <button class="tablinks local" onclick="openTab(event, 'local')">Local</button>
+    <button class="tablinks authnApi" onclick="openTab(event, 'authnApi')">AuthN API</button>
+</div>
+
+
+<div id="activeDirectory" class="tabcontent">
+    @*<h5>Active Directory</h5>*@
+    <div id="ActiveDirectoryMetadatasTable"></div>
+</div>
+
+
+<div id="openIdConnect" class="tabcontent">
+    <div id="openIdConfigTable"></div>
+</div>
+
+<div id="local" class="tabcontent">
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-id-card"></i> Settings
+        </div>
+        <div class="card-body">
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Allow Local Logon</label>
+                        <input type="checkbox" aria-label="Checkbox for following text input" id="allowLocalAuthentication">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Allow Emergency Access</label>
+                        <input type="checkbox" aria-label="Checkbox for following text input" id="allowEmergencyAccess">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Allow Windows Authentication</label>
+                        <input type="checkbox" aria-label="Checkbox for following text input" id="allowWindowsAuth">
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <button id="saveLocalConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ActiveDirectoryMetadatas.SetLocalAppConfig();">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="authnApi" class="tabcontent">
+    <div class="card mb-3">
+        <div class="card-header">
+            <i class="fa fa-id-card"></i> Settings
+        </div>
+        <div class="card-body">
+
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">JWT Validity Period</label>
+                        <input type="text" class="form-control" name="name" id="jwtValidityPeriod">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="name">Local IDP Identifier</label>
+                        <input type="text" class="form-control" name="name" id="localIdpIdentifier">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <button id="saveAppConfig" class="btn btn-primary" style="margin-left:15px;" onclick="ActiveDirectoryMetadatas.SetAppConfig();">Save</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="card mb-3">
+
+        <div class="card-header">
+            <i class="fa fa-id-card"></i> Trusted JWT Signing Certificates
+        </div>
+        <div class="card-body">
+            <div id="authApiSigningCertificatesTable"></div>
+        </div>
+
+        @*<div class="card-footer small text-muted"></div>*@
+    </div>
+</div>
+
+    @Html.Partial("~/Views/ActiveDirectoryMetadatas/_AddActiveDirectoryMetadataModal.cshtml")
+    @Html.Partial("~/Views/ActiveDirectoryMetadatas/_AuthApiConfigActionModal.cshtml")
+    @Html.Partial("~/Views/ActiveDirectoryMetadatas/_OidcIdpActionModal.cshtml")
+
+@section Script{
+    <script>
+        $(document).ready(function () {
+            ActiveDirectoryMetadatas.PageLoad();
+            OidcIdentityProvider.PageLoad();
+        });
+    </script>
+}
+
+@section Style{
+
+    <style>
+        .cert-select-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .cert-select-details,
+        .cert-select-details-value {
+            font-size: 12px;
+        }
+
+        .background-panel {
+            background: #fff;
+            border-radius: 4px;
+        }
+
+        .jsgrid-grid-header,
+        .jsgrid-grid-body {
+            overflow: auto;
+        }
+
+        td.jsgrid-cell {
+            font-size: 13px;
+        }
+
+        th {
+            color: #777;
+            width: 120px;
+            font-weight: 600;
+            text-align: right;
+            font-size: 12px;
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        td {
+            padding-left: 15px;
+            padding-right: 15px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            font-size: 12px;
+        }
+
+        /* Style the tab */
+        div.tab {
+            overflow: hidden;
+            border: 1px solid #ccc;
+            background-color: #f1f1f1;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
+
+                /* Change background color of buttons on hover */
+                div.tab button:hover {
+                    background-color: #ddd;
+                }
+
+                /* Create an active/current tablink class */
+                div.tab button.active {
+                    background-color: #ccc;
+                }
+
+        /* Style the tab content */
+        .tabcontent {
+            display: none;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-top: none;
+            border-bottom-left-radius: 4px;
+            border-bottom-right-radius: 4px;
+        }
+    </style>
+
+}
