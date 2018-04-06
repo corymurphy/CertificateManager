@@ -41,9 +41,9 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult IssuePendingCertificate(Guid id)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, templateLogic, audit);
 
-            CreatePrivateCertificateResult result = processor.IssuePendingCertificate(id);
+            CreatePrivateCertificateResult result = processor.IssuePendingCertificate(id, User);
 
             return http.RespondSuccess(result);
         }
@@ -55,9 +55,9 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.BadRequest, Description = "The certificate request contained invalid data. Refer to the response message for details.")]
         public JsonResult CreateCertificate(CreatePrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, templateLogic, audit);
 
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, User);
 
             return http.RespondSuccess(result);
         }
@@ -67,9 +67,9 @@ namespace CertificateManager.Controllers
         [SwaggerResponse(HttpStatusCode.OK, Description = "Certificate was successfully signed by the certificate authority.")]
         public JsonResult SignCertificaste(SignPrivateCertificateModel model)
         {
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, User, templateLogic);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, templateLogic, audit);
 
-            SignPrivateCertificateResult result = processor.SignCertificate(model);
+            SignPrivateCertificateResult result = processor.SignCertificate(model, User);
 
             return http.RespondSuccess(result);
         }

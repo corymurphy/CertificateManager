@@ -17,7 +17,14 @@
     <div id="logsTable"></div>
 </div>
 
+<ol class="breadcrumb" style="margin-top:20px;">
+    <a class="btn btn-sm btn-info" href="#" onclick="Logs.Clear();">
+        <i class="fa fa-eraser"></i> Clear Logs
+    </a>
+</ol>
+
 @Html.Partial("~/Views/Audit/_LogDetailsModal.cshtml")
+
 
 
 @section Script{

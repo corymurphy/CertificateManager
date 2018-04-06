@@ -36,5 +36,11 @@ namespace CertificateManager.Repository
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             return col.Find(query);
         }
+
+        public void DeleteAll()
+        {
+            LiteCollection<AuditEvent> col = db.GetCollection<AuditEvent>(auditCollectionName);
+            col.Delete(Query.All());
+        }
     }
 }

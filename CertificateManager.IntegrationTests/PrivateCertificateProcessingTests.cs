@@ -34,6 +34,12 @@ namespace CertificateManager.IntegrationTests
         RoleManagementLogic roleManagementLogic;
         ActiveDirectoryRepository activeDirectory;
 
+        private static IAuditLogic GetAuditLogic()
+        {
+            Mock<IAuditLogic> mock = new Mock<IAuditLogic>();
+            return mock.Object;
+        }
+
         private IAuthorizationLogic GetAuthorizationLogic_Allow()
         {
             Mock<IAuthorizationLogic> mock = new Mock<IAuthorizationLogic>();
@@ -72,8 +78,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -101,8 +107,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             X509Certificate2 cert = new X509Certificate2(result.PfxByte, result.Password);
 
@@ -131,8 +137,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -157,8 +163,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -183,8 +189,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -209,8 +215,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -236,8 +242,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             Assert.AreEqual(PrivateCertificateRequestStatus.Success, result.Status);
         }
@@ -264,8 +270,8 @@ namespace CertificateManager.IntegrationTests
             };
 
 
-            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), user.Object, templateLogic);
-            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model);
+            PrivateCertificateProcessing processor = new PrivateCertificateProcessing(certDb, configDb, certProvider, GetAuthorizationLogic_Allow(), templateLogic, GetAuditLogic());
+            CreatePrivateCertificateResult result = processor.CreateCertificateWithPrivateKey(model, user.Object);
 
             X509Certificate2 cert = new X509Certificate2(result.PfxByte, result.Password);
 

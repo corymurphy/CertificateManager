@@ -40,6 +40,10 @@
                 Logs.ShowDetailsModal(args.item);
             },
 
+            rowClass: function (item, itemIndex) {
+                return UiGlobal.GetRowClass(item, itemIndex);
+            },
+
             editing: false,
             sorting: true,
             paging: true,
@@ -68,10 +72,15 @@
     PageLoad: function ()
     {
         Logs.Grid = $('#logsTable');
-
-        //UiGlobal.ShowCurrentTab();
-
         Logs.InitializeGrid();
+    },
+
+    Clear: function () {
+        Services.Delete('/logs', Logs.ClearLogsCallbackSuccess, null);
+    },
+
+    ClearLogsCallbackSuccess: function (data) {
+        location.reload();
     }
 }
 

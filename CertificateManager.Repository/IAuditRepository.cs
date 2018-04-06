@@ -12,5 +12,7 @@ namespace CertificateManager.Repository
         IEnumerable<AuditEvent> GetAllEvents();
 
         IEnumerable<T> Get<T>(Expression<Func<T, bool>> query);
+
+        void DeleteAll();
     }
 }

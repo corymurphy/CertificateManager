@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Extensions;
 using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
@@ -7,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using CertificateManager.Entities.Extensions;
 
 namespace CertificateManager.Logic
 {
@@ -118,7 +118,7 @@ namespace CertificateManager.Logic
                     UserId = userContext.GetUserId(),
                     UserDisplay = userContext.GetName(),
                     Time = DateTime.Now,
-                    EventResult = EventResult.Error,
+                    EventResult = EventResult.Success,
                     Message = message
                 };
                 Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
@@ -162,5 +162,21 @@ namespace CertificateManager.Logic
             }
         }
 
+        public void ClearLogs(ClaimsPrincipal user)
+        {
+            auditRepository.DeleteAll();
+
+            AuditEvent log = new AuditEvent()
+            {
+                EventCategory = EventCategory.LogCleared,
+                EventResult = EventResult.Success,
+                UserId = user.GetUserId(),
+                Message = "Log was successfully cleared",
+                UserDisplay = user.GetName(),
+                Target = "Audit Logs"
+            };
+
+            this.Log(log);
+        }
     }
 }

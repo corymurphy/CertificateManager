@@ -1,4 +1,5 @@
-﻿using CertificateServices.Enumerations;
+﻿using CertificateManager.Entities;
+using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
 using System.Security.Cryptography.X509Certificates;
@@ -51,11 +52,6 @@ namespace CertificateManager.Logic
             }
 
             return keyUsage;
-
-
-
-
-            
         }
 
         private KeyUsage SetFlag(KeyUsage current, KeyUsage additional)

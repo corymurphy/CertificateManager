@@ -24,6 +24,7 @@
         IdentityProviderAdd,
         JobSuccess,
         JobError,
-        PowershellJob
+        PowershellJob,
+        LogCleared
     }
 }

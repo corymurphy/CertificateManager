@@ -53,6 +53,22 @@ var Services = {
         });
     },
 
+    Delete: function (uri, successCallback, errorCallback) {
+        $.ajax({
+            url: uri,
+            type: 'delete',
+            cache: false,
+            async: true,
+            dataType: "json",
+            success: function (data) {
+                successCallback(data);
+            },
+            error: function (x, t, m) {
+                errorCallback('Error while retrieving data');
+            }
+        });
+    },
+
     GetNode: function (id, successCallback, errorCallback) {
         $.ajax({
             url: "/node/" + id,

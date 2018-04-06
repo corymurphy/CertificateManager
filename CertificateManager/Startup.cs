@@ -230,13 +230,17 @@ namespace CertificateManager
 
             services.AddSingleton<SecurityPrincipalLogic>();
 
-            services.AddSingleton<AdcsTemplateLogic>(new AdcsTemplateLogic(configurationRepository, activeDirectory));
+            AdcsTemplateLogic adcsTemplateLogic = new AdcsTemplateLogic(configurationRepository, activeDirectory);
+
+            services.AddSingleton<AdcsTemplateLogic>(adcsTemplateLogic);
 
             services.AddSingleton<IAuthorizationLogic>(authorizationLogic);
 
             services.AddSingleton<IConfigurationRepository>(configurationRepository);
 
-            services.AddSingleton<ICertificateProvider>(new Win32CertificateProvider());
+            ICertificateProvider certificateProvider = new Win32CertificateProvider();
+
+            services.AddSingleton<ICertificateProvider>(certificateProvider);
           
             services.AddSingleton<ICertificateRepository>(certificateRepository);
 
@@ -254,7 +258,11 @@ namespace CertificateManager
 
             services.AddSingleton<CertificateManagementLogic>(certificateManagementLogic);
 
-            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic, powershellEngine, auditLogic, certificateManagementLogic));
+            PrivateCertificateProcessing privateCertificateProcessing  = new PrivateCertificateProcessing(certificateRepository, configurationRepository, certificateProvider, authorizationLogic, adcsTemplateLogic, auditLogic);
+
+            services.AddSingleton<IPrivateCertificateProcessing>(privateCertificateProcessing);
+
+            services.AddSingleton<NodeLogic>(new NodeLogic(configurationRepository, authorizationLogic, activeDirectoryIdentityProviderLogic, powershellEngine, auditLogic, certificateManagementLogic, privateCertificateProcessing));
         
             services.AddSingleton<IRuntimeConfigurationState>(
                 new RuntimeConfigurationState(configurationRepository, runtimeCacheRepository)

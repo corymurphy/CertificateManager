@@ -41,6 +41,20 @@ var UIDefaults = {
 
 var UiGlobal = {
 
+    GetRowClass: function (item, itemIndex) {
+
+        if (item.eventCategory == "CertificateIssuance" && item.eventResult == "Success" ) {
+            return 'event-primary';
+        }
+        if (item.eventCategory == "LogCleared") {
+            return 'warning';
+        }
+
+        if (item.eventResult == "Error") {
+            return 'error';
+        }
+    },
+
     GetWindowsApiDisplay: function (name)
     {
         var displayName = "unknown";

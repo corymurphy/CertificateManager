@@ -31,6 +31,14 @@ namespace CertificateManager.Controllers
             return http.RespondSuccess(audit.GetAllEvents());
         }
 
+        [HttpDelete]
+        [Route("logs")]
+        public JsonResult Clear()
+        {
+            audit.ClearLogs(User);
+            return http.RespondSuccess();
+        }
+
         [HttpGet]
         [Route("logs/init/data")]
         public JsonResult InitializeMockData()
@@ -38,5 +46,7 @@ namespace CertificateManager.Controllers
             audit.InitializeMockData();
             return http.RespondSuccess();
         }
+
+
     }
 }

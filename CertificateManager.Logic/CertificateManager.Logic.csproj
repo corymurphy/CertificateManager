@@ -383,6 +383,7 @@
     <Compile Include="Interfaces\IAuthorizationLogic.cs" />
     <Compile Include="Interfaces\IOpenIdConnectIdentityProviderLogic.cs" />
     <Compile Include="Interfaces\IPowershellEngine.cs" />
+    <Compile Include="Interfaces\IPrivateCertificateProcessing.cs" />
     <Compile Include="Interfaces\IScriptManagementLogic.cs" />
     <Compile Include="ManagedCertificateDiscoveryLogic.cs" />
     <Compile Include="MvcMiddleware\ErrorHandlingMiddleware.cs" />

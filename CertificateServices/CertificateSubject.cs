@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CertificateServices
 {
@@ -66,6 +67,48 @@ namespace CertificateServices
             Organization = organization;
 
             SetSubjectAlternativeName(san);
+
+        }
+
+        public CertificateSubject(X509Certificate2 cert)
+        {
+            if(cert == null)
+            {
+                throw new ArgumentNullException(nameof(cert));
+            }
+
+            if(string.IsNullOrWhiteSpace(cert.Subject))
+            {
+                throw new Exception("Subject cannot be null");
+            }
+
+            if(!IsValidDistinguishedNameLength(cert.Subject))
+            {
+                throw new Exception("Distinguished name of the subject is too long");
+            }
+
+
+            if(cert.Subject.Contains(","))
+            {
+                foreach(string component in cert.Subject.Split(','))
+                {
+                    if (IsCommonNameComponent(component))
+                    {
+                        this.CommonName = GetCommonName(component);
+                    }
+                }
+                return;
+            }
+
+            else
+            {
+                if(!IsCommonNameComponent(cert.Subject))
+                {
+                    throw new Exception("Invalid CN");
+                }
+            }
+
+            throw new Exception("Could not parse subject");
 
         }
 
@@ -249,6 +292,7 @@ namespace CertificateServices
             else
                 return false;
         }
+
         private bool IsDepartmentComponent(string item)
         {
             if (item.Trim().ToUpper().StartsWith("OU=", StringComparison.CurrentCultureIgnoreCase))
@@ -256,6 +300,7 @@ namespace CertificateServices
             else
                 return false;
         }
+
         private bool IsOrganizationComponent(string item)
         {
             if (item.Trim().ToUpper().StartsWith("O=", StringComparison.CurrentCultureIgnoreCase))
@@ -263,6 +308,7 @@ namespace CertificateServices
             else
                 return false;
         }
+
         private bool IsCityComponent(string item)
         {
             if (item.Trim().ToUpper().StartsWith("L=", StringComparison.CurrentCultureIgnoreCase))
@@ -270,6 +316,7 @@ namespace CertificateServices
             else
                 return false;
         }
+
         private bool IsStateComponent(string item)
         {
             if (item.Trim().ToUpper().StartsWith("S=", StringComparison.CurrentCultureIgnoreCase))
@@ -277,6 +324,7 @@ namespace CertificateServices
             else
                 return false;
         }
+
         private bool IsCountryComponent(string item)
         {
             if (item.Trim().ToUpper().StartsWith("C=", StringComparison.CurrentCultureIgnoreCase))
@@ -289,22 +337,27 @@ namespace CertificateServices
         {
             return item.Trim().Substring(3);
         }
+
         private string GetDepartment(string item)
         {
             return item.Trim().Substring(3);
         }
+
         private string GetOrganization(string item)
         {
             return item.Trim().Substring(2);
         }
+
         private string GetCity(string item)
         {
             return item.Trim().Substring(2);
         }
+
         private string GetState(string item)
         {
             return item.Trim().Substring(2);
         }
+
         private string GetCountry(string item)
         {
             return item.Trim().Substring(2);
@@ -318,6 +371,7 @@ namespace CertificateServices
                 return true;
 
         }
+
         private bool IsValidDistinguishedNameComponentValue(string value)
         {
             if (string.IsNullOrWhiteSpace(value))

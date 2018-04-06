@@ -14,5 +14,6 @@ namespace CertificateManager.Logic.Interfaces
         void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category);
         void LogOpsError(ClaimsPrincipal userContext, string target, EventCategory category, string message);
         void InitializeMockData();
+        void ClearLogs(ClaimsPrincipal user);
     }
 }

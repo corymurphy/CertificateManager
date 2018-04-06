@@ -9,12 +9,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace CertificateManager.Logic
 {
     public class NodeLogic
     {
+        IPrivateCertificateProcessing privateCertificateProcessing;
         IConfigurationRepository configurationRepository;
         IAuthorizationLogic authorizationLogic;
         ActiveDirectoryIdentityProviderLogic adIdpLogic;
@@ -26,7 +28,7 @@ namespace CertificateManager.Logic
 
         CertificateManagementLogic certificateManagement;
 
-        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell, IAuditLogic auditLogic, CertificateManagementLogic certificateManagement)
+        public NodeLogic(IConfigurationRepository configurationRepository, IAuthorizationLogic authorizationLogic, ActiveDirectoryIdentityProviderLogic adIdpLogic, IPowershellEngine powershell, IAuditLogic auditLogic, CertificateManagementLogic certificateManagement, IPrivateCertificateProcessing privateCertificateProcessing)
         {
             this.auditLogic = auditLogic;
             this.powershell = powershell;
@@ -34,6 +36,8 @@ namespace CertificateManager.Logic
             this.authorizationLogic = authorizationLogic;
             this.adIdpLogic = adIdpLogic;
             this.certificateManagement = certificateManagement;
+            this.privateCertificateProcessing = privateCertificateProcessing;
+
         }
 
         public NodeDetails Get(string id)
@@ -141,8 +145,9 @@ namespace CertificateManager.Logic
             
             foreach (HostIISCertificateEntity result in results)
             {
+                bool alreadyDiscovered = storedNode.ManagedCertificates.Exists(cert => cert.Thumbprint == result.Thumbprint && cert.ManagedCertificateType == ManagedCertificateType.IIS);
 
-                if(!storedNode.ManagedCertificates.Exists(cert => cert.Thumbprint == result.Thumbprint && cert.ManagedCertificateType == ManagedCertificateType.IIS))
+                if (!alreadyDiscovered)
                 {
                     ManagedCertificate managedCertificate = new ManagedCertificate()
                     {
@@ -233,6 +238,19 @@ namespace CertificateManager.Logic
 
         }
 
-    
+        public void RenewIISCertificate(Guid nodeId, Guid nodeManagedCertId, ClaimsPrincipal user)
+        {
+            NodeCredentialed node = this.GetCredentialedNode(nodeId);
+
+            ManagedCertificate managedCertificate = node.ManagedCertificates.Where(cert => cert.Id == nodeManagedCertId).First();
+
+            X509Certificate2 cert = new X509Certificate2( managedCertificate.X509 )
+
+            CreatePrivateCertificateModel entity = new CreatePrivateCertificateModel( )
+
+            privateCertificateProcessing.CreateCertificateWithPrivateKey()
+        }
+
+        private void 
     }
 }

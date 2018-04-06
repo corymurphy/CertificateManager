@@ -14,8 +14,9 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace CertificateManager.Logic
 {
-    public class PrivateCertificateProcessing
+    public class PrivateCertificateProcessing : IPrivateCertificateProcessing
     {
+        IAuditLogic audit;
         ICertificateRepository certificateRepository;
         IConfigurationRepository configurationRepository;
         ICertificateProvider certificateProvider;
@@ -24,11 +25,12 @@ namespace CertificateManager.Logic
         SecretKeyProvider secrets;
         EncryptionProvider cipher;
         HashProvider hashProvider;
-        ClaimsPrincipal user;
         AdcsTemplateLogic templateLogic;
 
-        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, ClaimsPrincipal user, AdcsTemplateLogic templateLogic)
+
+        public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, AdcsTemplateLogic templateLogic, IAuditLogic audit)
         {
+            this.audit = audit;
             this.configurationRepository = configurationRepository;
             this.certificateRepository = certificateRepository;
             this.certificateProvider = certificateProvider;
@@ -38,10 +40,29 @@ namespace CertificateManager.Logic
             this.hashProvider = new HashProvider();
             this.secrets = new SecretKeyProvider();
             this.cipher = new EncryptionProvider(configurationRepository.GetAppConfig().EncryptionKey);
-            this.user = user;
         }
 
-        public SignPrivateCertificateResult SignCertificate(SignPrivateCertificateModel model)
+        private void Audit(CreatePrivateCertificateResult result, ClaimsPrincipal user)
+        {
+
+            switch(result.Status)
+            {
+                case PrivateCertificateRequestStatus.Success:
+                    audit.LogOpsSuccess(user, result.Thumbprint, EventCategory.CertificateIssuance, "Certificate was successfully issued");
+                    break;
+                case PrivateCertificateRequestStatus.Pending:
+                    audit.LogOpsSuccess(user, result.Thumbprint, EventCategory.CertificateIssuance, "Certificate is pending issuance");
+                    break;
+                case PrivateCertificateRequestStatus.Error:
+                    audit.LogOpsError(user, string.Empty, EventCategory.CertificateIssuance, string.Format("Failed to issue certificate", result.Message ) );
+                    break;
+                default:
+                    audit.LogOpsError(user, string.Empty, EventCategory.CertificateIssuance, string.Format("Failed to issue certificate", result.Message));
+                    break;
+            }
+        }
+
+        public SignPrivateCertificateResult SignCertificate(SignPrivateCertificateModel model, ClaimsPrincipal user)
         {
             CertificateRequest csr = certificateProvider.InitializeFromEncodedCsr(model.EncodedCsr);
 
@@ -61,14 +82,13 @@ namespace CertificateManager.Logic
             }
         }
 
-        public CreatePrivateCertificateResult CreateCertificateWithPrivateKey(CreatePrivateCertificateModel model)
+        public CreatePrivateCertificateResult CreateCertificateWithPrivateKey(CreatePrivateCertificateModel model, ClaimsPrincipal user)
         {
             model.RequestDate = DateTime.Now;
 
             KeyUsage keyUsage = dataTransformation.ParseKeyUsage(model.KeyUsage);
 
             AdcsTemplate template = templateLogic.DiscoverTemplate(model.CipherAlgorithm, model.Provider, keyUsage);
-            //AdcsTemplate template = configurationRepository.GetAdcsTemplate(model.HashAlgorithm, model.CipherAlgorithm, model.Provider, keyUsage);
 
             if(!templateLogic.ValidateTemplateWithRequest(model, template))
             {
@@ -83,8 +103,10 @@ namespace CertificateManager.Logic
 
                 CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
 
-                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(model, response, csr.Subject);
+                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(model, response, csr.Subject, user);
 
+                this.Audit(result, user);
+                
                 return result;
             }
             else
@@ -94,7 +116,7 @@ namespace CertificateManager.Logic
   
         }
 
-        public CreatePrivateCertificateResult IssuePendingCertificate(Guid id)
+        public CreatePrivateCertificateResult IssuePendingCertificate(Guid id, ClaimsPrincipal user)
         {
             PendingCertificate pendingCertificate = certificateRepository.Get<PendingCertificate>(id);
 
@@ -110,7 +132,7 @@ namespace CertificateManager.Logic
 
                 CertificateAuthorityRequestResponse response = ca.Sign(csr, template.Name, template.KeyUsage);
 
-                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(pendingCertificate, response, csr.Subject);
+                CreatePrivateCertificateResult result = ProcessCertificateAuthorityResponse(pendingCertificate, response, csr.Subject, user);
 
                 certificateRepository.Delete<PendingCertificate>(id);
 
@@ -121,9 +143,6 @@ namespace CertificateManager.Logic
                 throw new UnauthorizedAccessException("Current user is not authorized to issue pending certificates");
             }
         }
-
-
-
 
         private CreatePrivateCertificateResult ProcessNewPendingCertificateWorkflow(CreatePrivateCertificateModel model)
         {
@@ -136,7 +155,7 @@ namespace CertificateManager.Logic
             return result;
         }
 
-        private CreatePrivateCertificateResult ProcessCertificateAuthoritySuccessResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
+        private CreatePrivateCertificateResult ProcessCertificateAuthoritySuccessResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject, ClaimsPrincipal user)
         {
             string nonce = secrets.NewSecretBase64(16);
             string password = secrets.NewSecret(64);
@@ -184,14 +203,14 @@ namespace CertificateManager.Logic
             return result;
         }
 
-        private CreatePrivateCertificateResult ProcessCertificateAuthorityResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
+        private CreatePrivateCertificateResult ProcessCertificateAuthorityResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject, ClaimsPrincipal user)
         {
             CreatePrivateCertificateResult result;
 
             switch (response.CertificateRequestStatus)
             {
                 case CertificateRequestStatus.Issued:
-                    result = ProcessCertificateAuthoritySuccessResponse(model, response, subject);
+                    result = ProcessCertificateAuthoritySuccessResponse(model, response, subject, user);
                     break;
                 case CertificateRequestStatus.Pending:
                     throw new CertificateAuthorityDeniedRequestException(string.Format("Error while processing request id {0}", response.RequestId));
@@ -203,12 +222,6 @@ namespace CertificateManager.Logic
 
             return result;
         }
-
-        
-
-
-
-
 
         private SignPrivateCertificateResult HandleCertificateAuthorityResponse(SignPrivateCertificateModel model, CertificateAuthorityRequestResponse response, CertificateSubject subject)
         {

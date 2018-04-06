@@ -8,6 +8,10 @@ namespace CertificateManager.Logic.InitialSetupDependencies
 {
     public class AuditLogicInitialSetup : IAuditLogic
     {
+        public void ClearLogs(ClaimsPrincipal user)
+        {
+        }
+
         public IEnumerable<AuditEvent> GetAllEvents()
         {
             return null;

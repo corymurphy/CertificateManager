@@ -129,6 +129,5 @@ namespace CertificateManager.Logic
 
             return subject;
         }
-
     }
 }

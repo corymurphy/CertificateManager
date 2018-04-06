@@ -15,7 +15,7 @@ namespace CertificateManager.UnitTests
         [ExpectedException(typeof(ArgumentNullException))]
         public void NodeLogic_Get_NullId_ArgumentNullException()
         {
-            NodeLogic nodeLogic = new NodeLogic(null, null, null, null, null);
+            NodeLogic nodeLogic = new NodeLogic(null, null, null, null, null, null);
 
             string id = null;
 
@@ -26,7 +26,7 @@ namespace CertificateManager.UnitTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void NodeLogic_NodeIdInvalidGuid_ArgumentOutOfRangeException()
         {
-            NodeLogic nodeLogic = new NodeLogic(null, null, null, null, null);
+            NodeLogic nodeLogic = new NodeLogic(null, null, null, null, null, null);
 
             string id = "zzz";
 
@@ -43,7 +43,7 @@ namespace CertificateManager.UnitTests
             Mock<IConfigurationRepository> configRepo = new Mock<IConfigurationRepository>();
             configRepo.Setup(m => m.Get<NodeDetails>(It.IsAny<Guid>())).Returns((NodeDetails)null);
 
-            NodeLogic nodeLogic = new NodeLogic(configRepo.Object, null, null, null, null);
+            NodeLogic nodeLogic = new NodeLogic(configRepo.Object, null, null, null, null, null);
 
             nodeLogic.Get(id);
         }
