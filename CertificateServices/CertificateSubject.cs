@@ -72,6 +72,8 @@ namespace CertificateServices
 
         public CertificateSubject(X509Certificate2 cert)
         {
+            this.ContainsSubjectAlternativeName = false;
+
             if(cert == null)
             {
                 throw new ArgumentNullException(nameof(cert));
@@ -99,12 +101,12 @@ namespace CertificateServices
                 }
                 return;
             }
-
             else
             {
-                if(!IsCommonNameComponent(cert.Subject))
+                if(IsCommonNameComponent(cert.Subject))
                 {
-                    throw new Exception("Invalid CN");
+                    this.CommonName = GetCommonName(cert.Subject);
+                    return;
                 }
             }
 

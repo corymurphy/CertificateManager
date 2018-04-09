@@ -173,7 +173,8 @@ namespace CertificateManager.Logic
                 UserId = user.GetUserId(),
                 Message = "Log was successfully cleared",
                 UserDisplay = user.GetName(),
-                Target = "Audit Logs"
+                Target = "Audit Logs",
+                Time = DateTime.Now
             };
 
             this.Log(log);

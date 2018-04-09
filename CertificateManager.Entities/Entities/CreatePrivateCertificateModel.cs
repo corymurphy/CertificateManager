@@ -18,7 +18,7 @@ namespace CertificateManager.Entities
             this.SubjectCommonName = subject.CommonName;
             this.CipherAlgorithm = CipherAlgorithm.RSA;
             this.HashAlgorithm = HashAlgorithm.SHA256;
-            this.Provider = WindowsApi.CryptoApi;
+            this.Provider = WindowsApi.Cng;
             this.KeySize = 2048;
         }
 

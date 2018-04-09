@@ -42,7 +42,7 @@ li.hr {
 }
 
 
-jsgrid-alt-row.warning > .jsgrid-cell {
+.jsgrid-alt-row.warning > .jsgrid-cell {
     color: #856404;
     background-color: #fff3cd;
     border-color: #ffeeba;
@@ -57,7 +57,7 @@ jsgrid-alt-row.warning > .jsgrid-cell {
 }
 
 
-jsgrid-alt-row.error > .jsgrid-cell {
+.jsgrid-alt-row.error > .jsgrid-cell {
     color: #721c24;
     background-color: #f8d7da;
     border-color: #f5c6cb;
@@ -74,7 +74,7 @@ jsgrid-alt-row.error > .jsgrid-cell {
 }
 
 
-jsgrid-alt-row.event-primary > .jsgrid-cell {
+.jsgrid-alt-row.event-primary > .jsgrid-cell {
     color: #004085;
     background-color: #cce5ff;
     border-color: #b8daff;

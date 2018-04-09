@@ -3,6 +3,8 @@ using CertificateServices;
 using CertificateServices.Enumerations;
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
+using System.Linq;
 
 namespace CertificateManager.Logic
 {
@@ -66,6 +68,45 @@ namespace CertificateManager.Logic
 
             return keyUsage;
             
+        }
+
+        public string GetEkuStringFromX509Certificate2(X509Certificate2 cert)
+        {
+
+            X509EnhancedKeyUsageExtension ekuExtension = null;
+
+            foreach (X509Extension extension in cert.Extensions)
+            {
+                if (extension.Oid.Value == "2.5.29.37")
+                {
+                    ekuExtension = extension as X509EnhancedKeyUsageExtension;
+                    break;
+                }
+
+            }
+
+
+            if(ekuExtension == null)
+            {
+                throw new Exception("Could not determine EKU");
+            }
+
+            string ekuString = string.Empty;
+
+            foreach(var eku in ekuExtension.EnhancedKeyUsages)
+            {
+                if(string.IsNullOrEmpty(ekuString))
+                {
+                    ekuString = eku.FriendlyName.Replace(" ", string.Empty).Trim();
+                }
+                else
+                {
+                    ekuString = "," + eku.FriendlyName.Replace(" ", string.Empty).Trim();
+                }
+            }
+
+
+            return ekuString;
         }
 
         public List<Guid> ParseGuidList(string str)

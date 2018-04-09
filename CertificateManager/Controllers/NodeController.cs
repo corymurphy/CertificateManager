@@ -33,7 +33,7 @@ namespace CertificateManager.Controllers
         {
             return View();
         }
-
+       
 
         [HttpGet]
         [Route("nodes")]
@@ -99,6 +99,14 @@ namespace CertificateManager.Controllers
         public JsonResult InvokeRenewIISCertificate(Guid nodeId, Guid managedCertId)
         {
             nodeLogic.InvokeRenewIISCertificate(nodeId, managedCertId, User);
+            return http.RespondSuccess();
+        }
+
+        [HttpDelete]
+        [Route("node/{nodeId:guid}/managedcertificates")]
+        public JsonResult ResetManagedCertificatesState(Guid nodeId)
+        {
+            nodeLogic.ResetManagedCertificateState(nodeId, User);
             return http.RespondSuccess();
         }
     }

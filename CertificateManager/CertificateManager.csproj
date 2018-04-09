@@ -4,6 +4,11 @@
     <!--<TargetFramework>netstandard2.0</TargetFramework>-->
     <RuntimeIdentifier>win7-x86</RuntimeIdentifier>
     <UserSecretsId>f1f82cf3-b94a-4ed5-a10a-7dfac8e36bd5</UserSecretsId>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <RepositoryUrl>https://github.com/corymurphy/CertificateManager</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <Copyright>MIT</Copyright>
+    <Description>Web app for managing Active Directory Certificate Services infrastructure</Description>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <PlatformTarget>AnyCPU</PlatformTarget>

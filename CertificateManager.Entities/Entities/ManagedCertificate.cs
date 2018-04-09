@@ -13,6 +13,7 @@ namespace CertificateManager.Entities
         public string Thumbprint { get; set; }
         public Guid CertificateManagerId { get; set; }
         public string X509Content { get; set; }
+        public string PSPath { get; set; }
 
     }
 }

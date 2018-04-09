@@ -478,7 +478,10 @@ namespace CertificateServices
 
             pkcs10.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
 
-            pkcs10.X509Extensions.Add(GetQualifiedSan(subject.SubjectAlternativeName));
+            if(subject.ContainsSubjectAlternativeName)
+            {
+                pkcs10.X509Extensions.Add(GetQualifiedSan(subject.SubjectAlternativeName));
+            }
 
             pkcs10.X509Extensions.Add(GetKeyUsage());
 
