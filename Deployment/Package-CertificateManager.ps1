@@ -1,0 +1,1 @@
+nuget pack "C:\workspace\CertificateManager\Deployment\CertificateManager.nuspec" -OutputFileNamesWithoutVersion -NoPackageAnalysis -OutputDirectory "C:\workspace\CertificateManager\Deployment"

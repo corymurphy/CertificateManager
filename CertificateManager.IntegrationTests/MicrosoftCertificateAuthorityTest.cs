@@ -9,10 +9,10 @@ namespace CertificateManager.IntegrationTests
     [TestClass]
     public class MicrosoftCertificateAuthorityTest
     {
-        private string caServerName = "srv14.cm.local";
-        private string caCommonName = "CertificateAuthority";
+        private string caServerName = "ca02.certmgr.local";
+        private string caCommonName = "Certificate Manager Root Certificate Authority G1";
         private string username = "Administrator";
-        private string domain = "cm.local";
+        private string domain = "certmgr.local";
         private string password = "Password1@";
 
         [TestMethod]

@@ -6,9 +6,9 @@ namespace CertificateManager.IntegrationTests
     [TestClass]
     public class ActiveDirectoryAuthenticatorTests
     {
-        private string domain = "cm.local";
-        private string domainDn = "DC=cm,DC=local";
-        private string domainController = "srv14.cm.local";
+        private string domain = "certmgr.local";
+        private string domainDn = "DC=certmgr,DC=local";
+        private string domainController = "dc01.certmgr.local";
         //private string caServerName = "srv14.cm.local";
         //private string caCommonName = "CertificateAuthority";
         private string username = "Administrator";

@@ -270,42 +270,41 @@ namespace CertificateManager.Logic
 
             ManagedCertificate managedCertificate = node.ManagedCertificates.Where(x => x.Id == nodeManagedCertId).First();
 
-            X509Certificate2 cert = new X509Certificate2( Convert.FromBase64String( managedCertificate.X509Content ) );
-
-            CreatePrivateCertificateModel entity = new CreatePrivateCertificateModel(cert);
-
-            entity.KeyUsage = dataTransformation.GetEkuStringFromX509Certificate2(cert);
-
-            CreatePrivateCertificateResult newCert = privateCertificateProcessing.CreateCertificateWithPrivateKey(entity, user);
-
-            if(newCert.Status != PrivateCertificateRequestStatus.Success)
-            {
-                throw new CertificateAuthorityDeniedRequestException("Certificate request could not be processed");
-            }
-
-            DownloadPfxCertificateEntity pfx = certificateManagement.GetPfxCertificateContent(newCert.Id);
-
-            string password = certificateManagement.GetCertificatePassword(newCert.Id, user).DecryptedPassword;
-
-            Dictionary<string, object> cmdletParams = new Dictionary<string, object>()
-            {
-                { "ComputerName", node.Hostname },
-                { "Credential", powershell.NewPSCredential(node.CredentialContext.Username, node.CredentialContext.Password) },
-                { "CertificateContent", Convert.ToBase64String(pfx.Content) },
-                { "CertificateKey", password },
-                { "BindingPath", managedCertificate.PSPath }
-            };
-
-            Task.Run(() => this.StartIISCertificateRenewal(node, cmdletParams, user));
+            Task.Run(() => this.StartIISCertificateRenewal(node, managedCertificate, user));
 
         }
 
-
-        private void StartIISCertificateRenewal(NodeCredentialed node, Dictionary<string, object> cmdletParams, ClaimsPrincipal user)
+        private void StartIISCertificateRenewal(NodeCredentialed node, ManagedCertificate managedCertificate, ClaimsPrincipal user)
         {
             //Collection<HostIISCertificateEntity> result = null;
             try
             {
+                X509Certificate2 cert = new X509Certificate2(Convert.FromBase64String(managedCertificate.X509Content));
+
+                CreatePrivateCertificateModel entity = new CreatePrivateCertificateModel(cert);
+
+                entity.KeyUsage = dataTransformation.GetEkuStringFromX509Certificate2(cert);
+
+                CreatePrivateCertificateResult newCert = privateCertificateProcessing.CreateCertificateWithPrivateKey(entity, user);
+
+                if (newCert.Status != PrivateCertificateRequestStatus.Success)
+                {
+                    throw new CertificateAuthorityDeniedRequestException("Certificate request could not be processed");
+                }
+
+                DownloadPfxCertificateEntity pfx = certificateManagement.GetPfxCertificateContent(newCert.Id);
+
+                string password = certificateManagement.GetCertificatePassword(newCert.Id, user).DecryptedPassword;
+
+                Dictionary<string, object> cmdletParams = new Dictionary<string, object>()
+                {
+                    { "ComputerName", node.Hostname },
+                    { "Credential", powershell.NewPSCredential(node.CredentialContext.Username, node.CredentialContext.Password) },
+                    { "CertificateContent", Convert.ToBase64String(pfx.Content) },
+                    { "CertificateKey", password },
+                    { "BindingPath", managedCertificate.PSPath }
+                };
+
                 object result = powershell.InvokeScriptAsync<object>(iisCertificateRenewal, cmdletParams, user);
                 this.InvokeIISCertificateDiscovery(node.Id, user);
                 return;
