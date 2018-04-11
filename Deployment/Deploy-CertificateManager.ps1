@@ -1,3 +1,5 @@
+param( [string]$ComputerName, [PSCredential]$Credential )
+
 function New-CertificateManagerIISConfiguration
 {
     param
@@ -200,3 +202,6 @@ function Deploy-CertificateManager
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
     }
 }
+
+
+Deploy-CertificateManager -ComputerName:$ComputerName -Credential:$Credential;
