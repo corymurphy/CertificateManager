@@ -133,9 +133,7 @@ function Deploy-CertificateManager
                 $ConfigurationPath, 
                 $WebsiteHostname
             )
-
-            Import-Module -Name 'WebAdministration' -ErrorAction 'Stop';
-
+            
             $PackagePath = [IO.Path]::Combine($ServerTempDirectory, $PackageName);
             $PackageZipPath = [IO.Path]::Combine($ServerTempDirectory, $PackageZipName);
 
@@ -162,6 +160,8 @@ function Deploy-CertificateManager
                 $result = $job | Receive-Job;
                 throw 'IIS Configuration failed {0}{1}' -f [System.Environment]::NewLine,$result;
             }
+
+            Import-Module -Name 'WebAdministration' -ErrorAction 'Stop';
 
             Set-ItemProperty -Path 'IIS:\AppPools\CertificateManager' -Name 'managedRuntimeVersion' -Value [string]::Empty -Force;
         }

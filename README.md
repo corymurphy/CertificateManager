@@ -13,7 +13,7 @@ Ideally, private keys would only be stored on a node where they are needed to pe
 * Install .NET Core IIS Server Hosting - https://www.microsoft.com/net/download/dotnet-core/runtime-2.0.6
 * Run the following powershell to automatically deploy CertificateManager to your server. Supply value for *ComputerName*, you will be prompted for a credential
 ```powershell
-$ComputerName = 'mywebserver.domain.local';Invoke-WebRequest -Uri:'https://github.com/corymurphy/CertificateManager/blob/master/Deployment/Deploy-CertificateManager.ps1?raw=true' -OutFile:$('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP); . $('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP) -ComputerName:$ComputerName -Credential:(Get-Credential);
+$ComputerName = 'web03.certmgr.local'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest -Uri:'https://github.com/corymurphy/CertificateManager/blob/master/Deployment/Deploy-CertificateManager.ps1?raw=true' -OutFile:$('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP);$cmdlet =  $('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP); . $cmdlet -ComputerName:$ComputerName -Credential:(Get-Credential);
 ```
 * If the above cmdlet does not work, ensure that PSRemoting works to your web server.
 * After you've run the cmdlet, open the web app that was created and follow the initial setup instructions
