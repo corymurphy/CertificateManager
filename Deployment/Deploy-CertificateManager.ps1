@@ -190,8 +190,7 @@ function Deploy-CertificateManager
                 $ServerTempDirectory, 
                 $InstallPath, 
                 $ConfigurationPath, 
-                $WebsiteHostname,
-                $AclConfigScript
+                $WebsiteHostname
             )
 
             $PackagePath = [IO.Path]::Combine($ServerTempDirectory, $PackageName);
@@ -225,8 +224,7 @@ function Deploy-CertificateManager
 
             Set-ItemProperty -Path 'IIS:\AppPools\CertificateManager' -Name 'managedRuntimeVersion' -Value [string]::Empty -Force;
 
-
-            Invoke-Command -ScriptBlock:$AclConfigScript -ArgumentList:@($InstallPath);
+            #Invoke-Command -ScriptBlock:$AclConfigScript -ArgumentList:@($InstallPath);
         }
 
         $createDscFolderScript = { 
@@ -252,20 +250,19 @@ function Deploy-CertificateManager
         Invoke-Command -ScriptBlock $createDscFolderScript -ArgumentList @($serverTempDirectory, $ConfigurationName) -Session $session;
 
         Copy-Item -ToSession $session -Path $configurationPath.FullName -Destination ([IO.Path]::Combine($ServerTempDirectory, $configurationname)) -Force;
-        
-        $aclConfigScript = Get-SetCertificateManagerAclScript;
-
+    
         $setupArgs = @(
             $PackageName,
             $PackageZipName,
             $ServerTempDirectory,
             $InstallPath,
             $serverConfigPath,
-            $WebsiteHostname,
-            $aclConfigScript
+            $WebsiteHostname
         );
         
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
+
+        Invoke-Command -ScriptBlock:(Get-SetCertificateManagerAclScript) -ArgumentList:@($InstallPath) -Session:$session;
     }
 }
 
