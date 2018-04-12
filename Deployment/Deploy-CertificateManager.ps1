@@ -52,7 +52,7 @@ function Get-SetCertificateManagerAclScript
         $acl.AddAccessRule($systemFullControlAceArgs);
         $acl.AddAccessRule($appPoolReadExecuteAce);
 
-        Set-Acl -Path:$InstallPath;
+        Set-Acl -Path:$InstallPath -AclObject:$acl;
 
     }
     return $script;
