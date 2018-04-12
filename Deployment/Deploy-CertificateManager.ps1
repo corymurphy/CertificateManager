@@ -1,5 +1,64 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
+function Get-SetCertificateManagerAclScript
+{
+
+    $script = {
+        param
+        (
+            [String]$InstallPath
+        )
+
+        if(-not (Test-Path -Path:$InstallPath))
+        {
+            throw 'Install path not found';
+        }       
+
+        $inheritance = ([System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit);
+
+        $systemFullControlAceArgs = @(
+            (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('NT AUTHORITY\SYSTEM')),
+            [System.Security.AccessControl.FileSystemRights]::FullControl,
+            $inheritance,
+            [System.Security.AccessControl.PropagationFlags]::None,
+            [System.Security.AccessControl.AccessControlType]::Allow
+        )
+        $systemFullControlAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$systemFullControlAceArgs
+
+        $adminFullControlAceArgs = @(
+            (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('BUILTIN\Administrators')),
+            [System.Security.AccessControl.FileSystemRights]::FullControl,
+            $inheritance,
+            [System.Security.AccessControl.PropagationFlags]::None,
+            [System.Security.AccessControl.AccessControlType]::Allow
+        )
+        $adminFullControlAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$adminFullControlAceArgs
+
+        $appPoolReadExecuteAceArgs = @(
+            (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+            [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
+            $inheritance,
+            [System.Security.AccessControl.PropagationFlags]::None,
+            [System.Security.AccessControl.AccessControlType]::Allow
+        )
+        $appPoolReadExecuteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolReadExecuteAceArgs
+
+
+        $acl = [System.Security.AccessControl.DirectorySecurity]::new();
+        
+        $acl.SetOwner( (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('BUILTIN\Administrators')) );
+
+        $acl.AddAccessRule($adminFullControlAceArgs);
+        $acl.AddAccessRule($systemFullControlAceArgs);
+        $acl.AddAccessRule($appPoolReadExecuteAce);
+
+        Set-Acl -Path:$InstallPath;
+
+    }
+    return $script;
+}
+
+
 function New-CertificateManagerIISConfiguration
 {
     param
@@ -131,9 +190,10 @@ function Deploy-CertificateManager
                 $ServerTempDirectory, 
                 $InstallPath, 
                 $ConfigurationPath, 
-                $WebsiteHostname
+                $WebsiteHostname,
+                $AclConfigScript
             )
-            
+
             $PackagePath = [IO.Path]::Combine($ServerTempDirectory, $PackageName);
             $PackageZipPath = [IO.Path]::Combine($ServerTempDirectory, $PackageZipName);
 
@@ -164,6 +224,9 @@ function Deploy-CertificateManager
             Import-Module -Name 'WebAdministration' -ErrorAction 'Stop';
 
             Set-ItemProperty -Path 'IIS:\AppPools\CertificateManager' -Name 'managedRuntimeVersion' -Value [string]::Empty -Force;
+
+
+            Invoke-Command -ScriptBlock:$AclConfigScript -ArgumentList:@($InstallPath);
         }
 
         $createDscFolderScript = { 
@@ -190,13 +253,16 @@ function Deploy-CertificateManager
 
         Copy-Item -ToSession $session -Path $configurationPath.FullName -Destination ([IO.Path]::Combine($ServerTempDirectory, $configurationname)) -Force;
         
+        $aclConfigScript = Get-SetCertificateManagerAclScript;
+
         $setupArgs = @(
             $PackageName,
             $PackageZipName,
             $ServerTempDirectory,
             $InstallPath,
             $serverConfigPath,
-            $WebsiteHostname
+            $WebsiteHostname,
+            $aclConfigScript
         );
         
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
