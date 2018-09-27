@@ -94,9 +94,13 @@ function Get-SetCertificateManagerAclScript
 
         $dbAcl.AddAccessRule($appPoolWriteAce);
         #$dbAcl.SetAccessRuleProtection($true, $true);
-        Set-Acl -Path:$dbDirectory -AclObject:$acl;
+        Set-Acl -Path:$dbDirectory -AclObject:$dbAcl;
         
 
+        $logDirectory = ( [System.IO.Path]::Combine($InstallPath, 'logs') );
+        $logAcl = Get-Acl -Path:$logDirectory;
+        $logAcl.AddAccessRule($appPoolWriteAce);
+        Set-Acl -Path:$logDirectory -AclObject:$logAcl;
 
     }
     return $script;
@@ -276,6 +280,7 @@ function Deploy-CertificateManager
             Expand-Archive -Path $PackageZipPath -DestinationPath $InstallPath -Force;
 
             New-Item -Path:$InstallPath -Name 'db' -ItemType:'Directory' -Force | Out-Null;
+            New-Item -Path:$InstallPath -Name:'logs' -ItemType:'Directory' -Force | Out-Null;
 
             $job = Start-DscConfiguration -Path:$ConfigurationPath -Force;
 

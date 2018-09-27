@@ -105,7 +105,7 @@ namespace CertificateManager
                 InitializeSetup(services);
             }
 
-            oidcLogic.InitializeMiddleware(services);
+            //oidcLogic.InitializeMiddleware(services);
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
