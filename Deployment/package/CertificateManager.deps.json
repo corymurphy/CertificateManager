@@ -7,6 +7,7 @@
     "defines": [
       "TRACE",
       "RELEASE",
+      "NETFRAMEWORK",
       "NET461"
     ],
     "languageVersion": "",
@@ -47,10 +48,7 @@
           "System.ComponentModel.Composition": "4.0.0.0",
           "System.ComponentModel.DataAnnotations": "4.0.0.0",
           "System.Core": "4.0.0.0",
-          "System.Data": "4.0.0.0",
           "System": "4.0.0.0",
-          "System.Drawing": "4.0.0.0",
-          "System.IO.Compression.FileSystem": "4.0.0.0",
           "System.Net.Http.WebRequest": "4.0.0.0",
           "System.Numerics": "4.0.0.0",
           "System.Runtime.Serialization": "4.0.0.0",
@@ -59,6 +57,9 @@
           "System.Web.Extensions": "4.0.0.0",
           "System.Xml": "4.0.0.0",
           "System.Xml.Linq": "4.0.0.0",
+          "System.Data": "4.0.0.0",
+          "System.Drawing": "4.0.0.0",
+          "System.IO.Compression.FileSystem": "4.0.0.0",
           "System.Reflection.Emit.Reference": "0.0.0.0",
           "System.Reflection.Emit.ILGeneration": "0.0.0.0",
           "System.Reflection.Emit.Lightweight.Reference": "0.0.0.0",
@@ -195,24 +196,9 @@
           ".NETFramework/v4.6.1/System.Core.dll": {}
         }
       },
-      "System.Data/4.0.0.0": {
-        "compile": {
-          ".NETFramework/v4.6.1/System.Data.dll": {}
-        }
-      },
       "System/4.0.0.0": {
         "compile": {
           ".NETFramework/v4.6.1/System.dll": {}
-        }
-      },
-      "System.Drawing/4.0.0.0": {
-        "compile": {
-          ".NETFramework/v4.6.1/System.Drawing.dll": {}
-        }
-      },
-      "System.IO.Compression.FileSystem/4.0.0.0": {
-        "compile": {
-          ".NETFramework/v4.6.1/System.IO.Compression.FileSystem.dll": {}
         }
       },
       "System.Net.Http.WebRequest/4.0.0.0": {
@@ -253,6 +239,21 @@
       "System.Xml.Linq/4.0.0.0": {
         "compile": {
           ".NETFramework/v4.6.1/System.Xml.Linq.dll": {}
+        }
+      },
+      "System.Data/4.0.0.0": {
+        "compile": {
+          ".NETFramework/v4.6.1/System.Data.dll": {}
+        }
+      },
+      "System.Drawing/4.0.0.0": {
+        "compile": {
+          ".NETFramework/v4.6.1/System.Drawing.dll": {}
+        }
+      },
+      "System.IO.Compression.FileSystem/4.0.0.0": {
+        "compile": {
+          ".NETFramework/v4.6.1/System.IO.Compression.FileSystem.dll": {}
         }
       },
       "System.Reflection.Emit.Reference/0.0.0.0": {
@@ -2098,10 +2099,7 @@
           "System.ComponentModel.Composition": "4.0.0.0",
           "System.ComponentModel.DataAnnotations": "4.0.0.0",
           "System.Core": "4.0.0.0",
-          "System.Data": "4.0.0.0",
           "System": "4.0.0.0",
-          "System.Drawing": "4.0.0.0",
-          "System.IO.Compression.FileSystem": "4.0.0.0",
           "System.Net.Http.WebRequest": "4.0.0.0",
           "System.Numerics": "4.0.0.0",
           "System.Runtime.Serialization": "4.0.0.0",
@@ -2110,6 +2108,9 @@
           "System.Web.Extensions": "4.0.0.0",
           "System.Xml": "4.0.0.0",
           "System.Xml.Linq": "4.0.0.0",
+          "System.Data": "4.0.0.0",
+          "System.Drawing": "4.0.0.0",
+          "System.IO.Compression.FileSystem": "4.0.0.0",
           "System.Reflection.Emit.Reference": "0.0.0.0",
           "System.Reflection.Emit.ILGeneration": "0.0.0.0",
           "System.Reflection.Emit.Lightweight.Reference": "0.0.0.0",
@@ -3474,7 +3475,8 @@
       },
       "CertificateManager.Entities/1.0.0": {
         "dependencies": {
-          "CertificateServices": "1.0.0"
+          "CertificateServices": "1.0.0",
+          "LiteDB": "4.0.0.0"
         },
         "runtime": {
           "CertificateManager.Entities.dll": {}
@@ -3485,7 +3487,8 @@
           "CertificateManager.Entities": "1.0.0",
           "CertificateManager.Powershell.Runtime": "1.0.0",
           "CertificateManager.Repository": "1.0.0",
-          "CertificateServices": "1.0.0"
+          "CertificateServices": "1.0.0",
+          "BCrypt.Net-Next": "2.1.2.0"
         },
         "runtime": {
           "CertificateManager.Logic.dll": {}
@@ -3508,6 +3511,16 @@
       "CertificateServices/1.0.0": {
         "runtime": {
           "CertificateServices.dll": {}
+        }
+      },
+      "LiteDB.Reference/4.0.0.0": {
+        "runtime": {
+          "LiteDB.dll": {}
+        }
+      },
+      "BCrypt.Net-Next.Reference/2.1.2.0": {
+        "runtime": {
+          "BCrypt.Net-Next.dll": {}
         }
       }
     }
@@ -4754,6 +4767,16 @@
       "serviceable": false,
       "sha512": ""
     },
+    "LiteDB.Reference/4.0.0.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "BCrypt.Net-Next.Reference/2.1.2.0": {
+      "type": "reference",
+      "serviceable": false,
+      "sha512": ""
+    },
     "Microsoft.CSharp.Reference/4.0.0.0": {
       "type": "referenceassembly",
       "serviceable": false,
@@ -4779,22 +4802,7 @@
       "serviceable": false,
       "sha512": ""
     },
-    "System.Data/4.0.0.0": {
-      "type": "referenceassembly",
-      "serviceable": false,
-      "sha512": ""
-    },
     "System/4.0.0.0": {
-      "type": "referenceassembly",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "System.Drawing/4.0.0.0": {
-      "type": "referenceassembly",
-      "serviceable": false,
-      "sha512": ""
-    },
-    "System.IO.Compression.FileSystem/4.0.0.0": {
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""
@@ -4835,6 +4843,21 @@
       "sha512": ""
     },
     "System.Xml.Linq/4.0.0.0": {
+      "type": "referenceassembly",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Data/4.0.0.0": {
+      "type": "referenceassembly",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Drawing/4.0.0.0": {
+      "type": "referenceassembly",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.IO.Compression.FileSystem/4.0.0.0": {
       "type": "referenceassembly",
       "serviceable": false,
       "sha512": ""
