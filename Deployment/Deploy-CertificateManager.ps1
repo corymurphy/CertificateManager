@@ -1,5 +1,8 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
+Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
+Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
+
 function Get-SetCertificateManagerAclScript
 {
 
