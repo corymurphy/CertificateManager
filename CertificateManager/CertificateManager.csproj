@@ -24,11 +24,17 @@
     <OutputPath>bin\Release</OutputPath>
   </PropertyGroup>
   <ItemGroup>
+    <Content Remove="wwwroot\js\Chart.bundle.min.js" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="scripts\cm-scripts.js" />
     <None Remove="scripts\node-details.js" />
     <None Remove="scripts\script-details.js" />
     <None Remove="scripts\security-roles - Copy.js" />
     <None Remove="style\sb-admin-full.css" />
+  </ItemGroup>
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\js\Chart.bundle.min.js" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="scripts\authenticable-principal.js" />
@@ -87,6 +93,8 @@
   <ItemGroup>
     <Folder Include="Views\Node\" />
     <Folder Include="wwwroot\fonts\" />
-    <Folder Include="wwwroot\js\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="wwwroot\js\Chart.bundle.min.js" />
   </ItemGroup>
 </Project>

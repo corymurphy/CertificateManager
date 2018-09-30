@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Exceptions;
+using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using System;
@@ -78,6 +79,17 @@ namespace CertificateManager.Logic
 
                 cert.Acl = acl;  
             }
+
+            return cert;
+        }
+
+        public T GetCertificate<T>(Guid id) where T: ILoggableEntity
+        {
+            T cert = certificateRepository.Get<T>(id);
+
+            ClaimsPrincipal system = LocalIdentityProviderLogic.GetSystemIdentity();
+
+            audit.LogSecurityAuditSuccess(system, cert, EventCategory.CertificateViewed);
 
             return cert;
         }

@@ -31,6 +31,7 @@ namespace CertificateManager.Controllers
         {
             AppConfig appConfig = configurationRepository.GetAppConfig();
             appConfig.CachePeriod = model.CachePeriod;
+            appConfig.JwtCertificateId = new System.Guid("642b706b-4664-4296-9a0d-58869a62db42");
             configurationRepository.SetAppConfig(appConfig);
 
             return http.RespondSuccess();

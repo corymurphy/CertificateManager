@@ -1,8 +1,10 @@
+using CertificateManager.ActionFilters;
 using CertificateManager.Entities;
 using CertificateManager.Logic;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
 using CertificateServices.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.Swagger.Annotations;
 using System;
@@ -11,6 +13,7 @@ using System.Net.Http;
 
 namespace CertificateManager.Controllers
 {
+    [Authorize]
     public class PrivateCertificateAuthorityController : Controller
     {
         private ICertificateRepository certificateRepository;

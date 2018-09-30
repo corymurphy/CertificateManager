@@ -77,23 +77,12 @@ function Get-SetCertificateManagerAclScript
 
         Set-Acl -Path:$InstallPath -AclObject:$acl;
 
-        <#
-                Get-ChildItem -Path:$InstallPath -Filter "appSettings*.json" | ForEach-Object -Process {
-            $acl = Get-Acl -Path $_.FullName;
-            $acl.AddAccessRule($appPoolWriteFileAce);
-            $acl.SetAccessRuleProtection($true, $true);
-            Set-Acl -Path:$InstallPath -AclObject:$acl;
-        };
-
-
-        
-        #>
+        Add-CertificateManagerKeyStorePermissions
 
         $dbDirectory = ( [System.IO.Path]::Combine($InstallPath, 'db') );
         $dbAcl = Get-Acl -Path:$dbDirectory
 
         $dbAcl.AddAccessRule($appPoolWriteAce);
-        #$dbAcl.SetAccessRuleProtection($true, $true);
         Set-Acl -Path:$dbDirectory -AclObject:$dbAcl;
         
 
@@ -307,6 +296,7 @@ function Deploy-CertificateManager
 
             Set-ItemProperty -Path 'IIS:\AppPools\CertificateManager' -Name 'managedRuntimeVersion' -Value '' -Force;
 
+            Set-ItemProperty -Path:'IIS:\AppPools\CertificateManager' -Name:"processModel.loadUserProfile" -Value "True" -Force;
             #Invoke-Command -ScriptBlock:$AclConfigScript -ArgumentList:@($InstallPath);
         }
 
@@ -353,5 +343,113 @@ function Deploy-CertificateManager
     }
 }
 
+function Add-CertificateManagerKeyStorePermissions
+{
 
+    $inheritance = ([System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit);
+
+    $appPoolReadExecuteAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolReadExecuteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolReadExecuteAceArgs
+
+    $appPoolWriteAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::Write,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolWriteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolWriteAceArgs
+
+
+    $appPoolModifyAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::FullControl,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::None,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolModifyFilesAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolModifyAceArgs
+
+    $cryptoPath = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto');
+
+    $cryptoAcl = Get-Acl -Path:$cryptoPath;
+
+    $cryptoAcl.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath -AclObject:$cryptoAcl;
+    
+
+    $rsaAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA';
+    $rsaAcl.AddAccessRule($appPoolReadExecuteAce);
+    $rsaAcl.AddAccessRule($appPoolWriteAce);
+    $rsaAcl.AddAccessRule($appPoolModifyFilesAce);
+    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA' -AclObject:$rsaAcl;
+
+    $keysAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys';
+    $keysAcl.AddAccessRule($appPoolReadExecuteAce);
+    $keysAcl.AddAccessRule($appPoolWriteAce);
+    $keysAcl.AddAccessRule($appPoolModifyFilesAce);
+    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys' -AclObject:$keysAcl;
+
+
+    $regAcl = Get-Acl 'HKLM:\SOFTWARE\Microsoft\SystemCertificates'
+
+    <#
+        'System.Security.AccessControl.RegistryAccessRule'
+
+    System.Security.AccessControl.RegistryAccessRule new(string identity, System.Security.AccessControl.RegistryRights
+registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags,
+System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type)
+    #>
+
+
+
+
+
+    $cryptoPath1 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
+
+    $cryptoAcl1 = Get-Acl -Path:$cryptoPath1;
+
+    $cryptoAcl1.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl1.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl1.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath1 -AclObject:$cryptoAcl1;
+
+
+    $cryptoPath2 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
+
+    $cryptoAcl2 = Get-Acl -Path:$cryptoPath2;
+
+    $cryptoAcl2.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl2.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl2.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath2 -AclObject:$cryptoAcl2;
+
+
+    $regAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.RegistryRights]::FullControl,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+
+    $regAce = New-Object -TypeName 'System.Security.AccessControl.RegistryAccessRule' -ArgumentList:$regAceArgs;
+
+    $regAcl.AddAccessRule($regAce)
+
+    Set-Acl -Path:'HKLM:\SOFTWARE\Microsoft\SystemCertificates' -AclObject:$regAcl
+
+
+}
 Deploy-CertificateManager -ComputerName:$ComputerName -Credential:$Credential;

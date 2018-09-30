@@ -8,9 +8,13 @@ using CertificateServices.Enumerations;
 using CertificateServices.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Security.AccessControl;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-
+using System.Security.Principal;
 
 namespace CertificateManager.Logic
 {
@@ -27,6 +31,7 @@ namespace CertificateManager.Logic
         HashProvider hashProvider;
         AdcsTemplateLogic templateLogic;
 
+        string[] searchDirs = new string[3] { @"C:\ProgramData\Microsoft\Crypto\Keys", @"C:\ProgramData\Microsoft\Crypto\RSA\MachineKeys", @"C:\ProgramData\Microsoft\Crypto\RSA\S-1-5-18" };
 
         public PrivateCertificateProcessing(ICertificateRepository certificateRepository, IConfigurationRepository configurationRepository, ICertificateProvider certificateProvider, IAuthorizationLogic authorizationLogic, AdcsTemplateLogic templateLogic, IAuditLogic audit)
         {
@@ -155,11 +160,70 @@ namespace CertificateManager.Logic
             return result;
         }
 
+        private void SetPrivateKeyFileSystemAccess(ICertificateRequestPublicPrivateKeyPair model, X509Certificate2 cert, ClaimsPrincipal user)
+        {
+
+            audit.LogOpsSuccess(user, cert.Thumbprint, EventCategory.CertificateAccess, "SetPrivateKeyFileSystemAccess");
+
+            string uniqueName = string.Empty;
+
+            audit.LogOpsSuccess(user, cert.Thumbprint, EventCategory.CertificateAccess, model.Provider.ToString());
+
+            if (model.Provider == WindowsApi.Cng)
+            {
+
+                uniqueName = cert.GetCngKey().UniqueName;
+
+                audit.LogOpsSuccess(user, cert.Thumbprint, EventCategory.CertificateAccess, uniqueName);
+
+                string keyPath = string.Empty;
+                //string searchDir = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("ProgramData"), @"Microsoft\Crypto");
+                //System.IO.Directory.GetFiles(searchDir, uniqueName, System.IO.SearchOption.AllDirectories);
+
+                foreach(string dir in searchDirs)
+                {
+                    string[] keyPaths = Directory.GetFiles(dir, uniqueName, SearchOption.AllDirectories);
+
+                    if(keyPaths.Any())
+                    {
+                        keyPath = keyPaths.First();
+                        continue;
+                        
+                    }
+
+                    
+                }
+
+                audit.LogOpsSuccess(user, cert.Thumbprint, EventCategory.CertificateAccess, keyPath);
+
+                DirectoryInfo directoryInfo = new DirectoryInfo(keyPath);
+
+                DirectorySecurity acl = directoryInfo.GetAccessControl();
+
+                FileSystemAccessRule ace = new FileSystemAccessRule
+                    (
+                        new NTAccount(WindowsIdentity.GetCurrent().Name),
+                        FileSystemRights.FullControl,
+                        InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit,
+                        PropagationFlags.None,
+                        AccessControlType.Allow
+                    );
+
+                acl.AddAccessRule(ace);
+
+                Directory.SetAccessControl(keyPath, acl);
+
+            }
+
+        }
+
         private CreatePrivateCertificateResult ProcessCertificateAuthoritySuccessResponse(ICertificateRequestPublicPrivateKeyPair model, CertificateAuthorityRequestResponse response, CertificateSubject subject, ClaimsPrincipal user)
         {
             string nonce = secrets.NewSecretBase64(16);
             string password = secrets.NewSecret(64);
             X509Certificate2 cert = certificateProvider.InstallIssuedCertificate(response.IssuedCertificate);
+            
+            SetPrivateKeyFileSystemAccess(model, cert, user);
 
             byte[] certContent = cert.Export(X509ContentType.Pfx, password);
 

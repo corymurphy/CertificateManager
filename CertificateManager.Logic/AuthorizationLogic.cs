@@ -1,5 +1,6 @@
 ﻿using CertificateManager.Entities;
 using CertificateManager.Entities.Enumerations;
+using CertificateManager.Entities.Extensions;
 using CertificateManager.Entities.Interfaces;
 using CertificateManager.Logic.Interfaces;
 using CertificateManager.Repository;
@@ -53,6 +54,9 @@ namespace CertificateManager.Logic
         {
             if (certificate == null || certificate.Acl == null)
                 return false;
+
+            if (user.GetUserId() == LocalIdentityProviderLogic.SystemUid)
+                return true;
 
             if (user == null)
                 return false;

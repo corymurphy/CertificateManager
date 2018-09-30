@@ -86,7 +86,7 @@ namespace CertificateManager.Repository
         public bool Exists<T>(Guid id)
         {
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
-            return col.Exists(Query.EQ("Id", id));
+            return col.FindById(id) != null;
         }
 
         public IEnumerable<T> Get<T>(Expression<Func<T, bool>> query)
@@ -94,12 +94,6 @@ namespace CertificateManager.Repository
             LiteCollection<T> col = db.GetCollection<T>(collectionDiscoveryLogic.GetName<T>());
             return col.Find(query);
         }
-
-
-
-
-
-
 
         public MicrosoftCertificateAuthorityOptions GetPrivateCertificateAuthorityOptions(HashAlgorithm hash)
         {

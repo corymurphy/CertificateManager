@@ -26,6 +26,7 @@ namespace CertificateManager.Entities
         public bool windowsAuthEnabled { get; set; }
         public int JwtValidityPeriod { get; set; }
         public string LocalIdpIdentifier { get; set; }
+        public Guid JwtCertificateId { get; set; }
         public Guid Id { get; set; }
         public int CachePeriod { get; set; }
     }

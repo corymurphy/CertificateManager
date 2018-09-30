@@ -108,20 +108,23 @@ namespace CertificateManager.Logic
         {
             AppConfig appConfig = configurationRepository.GetAppConfig();
 
+            AuditEvent auditEvent = new AuditEvent
+            {
+                Id = Guid.NewGuid(),
+                Target = target,
+                EventCategory = category,
+                UserId = userContext.GetUserId(),
+                UserDisplay = userContext.GetName(),
+                Time = DateTime.Now,
+                EventResult = EventResult.Success,
+                Message = message
+            };
+            auditRepository.InsertAuditEvent(auditEvent);
+            //Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+
             if (appConfig.OperationsLoggingState == OperationsLoggingState.Errors)
             {
-                AuditEvent auditEvent = new AuditEvent
-                {
-                    Id = Guid.NewGuid(),
-                    Target = target,
-                    EventCategory = category,
-                    UserId = userContext.GetUserId(),
-                    UserDisplay = userContext.GetName(),
-                    Time = DateTime.Now,
-                    EventResult = EventResult.Success,
-                    Message = message
-                };
-                Task.Run(() => auditRepository.InsertAuditEvent(auditEvent));
+
             }
         }
 

@@ -87,6 +87,8 @@ namespace CertificateManager.Logic
 
         private void ImportWithoutMerge(ImportUsersActiveDirectoryMetadataModel entity)
         {
+            var domains = configurationRepository.GetAll<ActiveDirectoryMetadata>();
+
             foreach (var user in entity.Users)
             {
                 if (!configurationRepository.Exists<ActiveDirectoryMetadata>(user.DomainId))

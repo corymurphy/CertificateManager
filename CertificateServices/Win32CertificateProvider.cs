@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Principal;
 
 namespace CertificateServices
 {
@@ -16,14 +17,14 @@ namespace CertificateServices
         private const int SUCCESS = 0;
         private const int ALG_FLAGS_NONE = 0;
         private const int CC_DEFAULTCONFIG = 0;
-        private const int CC_UIPICKCONFIG = 0x1; 
+        private const int CC_UIPICKCONFIG = 0x1;
         private const int XCN_CRYPT_OID_INFO_PUBKEY_ANY = 0;
         private const uint CERT_KEY_PROV_INFO_PROP_ID = 0x2;
         private const int XCN_NCRYPT_ALLOW_EXPORT_FLAG = 0x1;
         private const int NCRYPT_MACHINE_KEY_FLAG = 0x00000020;
         private const int XCN_CRYPT_PUBKEY_ALG_OID_GROUP_ID = 0x3;
         private const int XCN_NCRYPT_ALLOW_PLAINTEXT_EXPORT_FLAG = 0x2;
-        
+
         private const string BCRYPT_RSA_ALGORITHM = "RSA";
         private const string BCRYPT_ECDH_P256_ALGORITHM = "ECDH_P256";
         private const string BCRYPT_ECDH_P384_ALGORITHM = "ECDH_P384";
@@ -57,7 +58,7 @@ namespace CertificateServices
 
 
         #region public methods
-        
+
 
         /// <summary>
         /// This method is useful if you generated the csr on another machine and would like to validate/or sign the csr yourself.
@@ -207,7 +208,7 @@ namespace CertificateServices
 
             string pwd = secret.NewSecret(16);
             string pfx = enrollment.CreatePFX(pwd, PFXExportOptions.PFXExportChainWithRoot, EncodingType.XCN_CRYPT_STRING_BASE64);
-            return new X509Certificate2(Convert.FromBase64String(pfx), pwd, X509KeyStorageFlags.Exportable);
+            return new X509Certificate2(Convert.FromBase64String(pfx), pwd, X509KeyStorageFlags.Exportable | X509KeyStorageFlags.UserKeySet);
         }
 
 
@@ -249,6 +250,13 @@ namespace CertificateServices
 
 
         #region private methods
+        
+        private string GetDefaultPrivateKeySecurityDescriptor()
+        {
+            string contextSid = WindowsIdentity.GetCurrent().User.ToString();
+            return "D:P(A;;0xd01f01ff;;;CO)(A;;0xd01f01ff;;;SY)(A;;0xd01f01ff;;;BA)(A;;0xd01f01ff;;;" + contextSid + ")";
+        }
+
         private CX509PrivateKey CreatePrivateKey(CipherAlgorithm cipher, int keysize, WindowsApi api = WindowsApi.CryptoApi)
         {
             CX509PrivateKey privateKey = new CX509PrivateKey
@@ -275,6 +283,7 @@ namespace CertificateServices
             privateKey.KeyUsage = X509PrivateKeyUsageFlags.XCN_NCRYPT_ALLOW_ALL_USAGES;
             privateKey.MachineContext = true;
             privateKey.CspInformations = GetCspInformation(api);
+            privateKey.SecurityDescriptor = GetDefaultPrivateKeySecurityDescriptor();
             privateKey.Create();
 
             return privateKey;
@@ -422,7 +431,6 @@ namespace CertificateServices
                             Unable to determine the correct type of certificate signing request. Pkcs10 and Cmc decoding were attempted. Review failure results below
                             
                             Pkcs10: {0}
-
                             Cmc: {1}
                         ",
                         pkcs10Msg, cmcMsg
@@ -463,7 +471,7 @@ namespace CertificateServices
             CertificateSubject subject = BuildSubject(cmc.Subject);
             return ImproveDeserializedCsrFidelity(new CertificateRequest(subject, SigningRequestProtocol.Pkcs10, false), cmc.PublicKey);
         }
-        
+
         private CertificateRequest ImproveDeserializedCsrFidelity(CertificateRequest csr, CX509PublicKey publicKey)
         {
             csr.SubjectKeyIdentifier = ComputeSubjectKeyIdentifier(publicKey);
@@ -478,7 +486,7 @@ namespace CertificateServices
 
             pkcs10.InitializeFromPrivateKey(X509CertificateEnrollmentContext.ContextMachine, privateKey, "");
 
-            if(subject.ContainsSubjectAlternativeName)
+            if (subject.ContainsSubjectAlternativeName)
             {
                 pkcs10.X509Extensions.Add(GetQualifiedSan(subject.SubjectAlternativeName));
             }
@@ -533,7 +541,7 @@ namespace CertificateServices
             return crc.PublicKey.ComputeKeyIdentifier(KeyIdentifierHashAlgorithm.SKIHashSha1, EncodingType.XCN_CRYPT_STRING_HEX).
                         Trim().Replace(" ", "").Replace(System.Environment.NewLine, "").Trim();
         }
-        
+
         /// <summary>
         /// After obtaining the unmanaged data about a private key, we must create a managed structure.
         /// </summary>
@@ -546,7 +554,7 @@ namespace CertificateServices
             {
                 return (CRYPT_KEY_PROV_INFO)Marshal.PtrToStructure(providerDataPtr, typeof(CRYPT_KEY_PROV_INFO));
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new Exception(string.Format("Unable to allocate memory for key provider metadata - {0}", e.Message));
             }
@@ -572,7 +580,7 @@ namespace CertificateServices
 
             bool result = cngProvider.CertGetCertificateContextProperty(cert.Handle, CERT_KEY_PROV_INFO_PROP_ID, providerDataPtr, ref providerDataSize);
 
-            if(result)
+            if (result)
             {
                 return GetPrivateKeyProviderStructructureFromPointer(providerDataPtr);
             }
@@ -595,7 +603,7 @@ namespace CertificateServices
 
             bool result = cngProvider.CertGetCertificateContextProperty(cert.Handle, CERT_KEY_PROV_INFO_PROP_ID, IntPtr.Zero, ref providerDataSize);
 
-            if(result)
+            if (result)
             {
                 return providerDataSize;
             }
@@ -618,12 +626,12 @@ namespace CertificateServices
 
             result = cngProvider.NCryptOpenStorageProvider(ref providerHandle, keyProvider.pwszProvName, 0);
 
-            switch(result)
+            switch (result)
             {
                 case SUCCESS:
                     return providerHandle;
                 default:
-                    throw new Exception( string.Format("Unable to open provider - {0}", result) );
+                    throw new Exception(string.Format("Unable to open provider - {0}", result));
             }
         }
 
@@ -640,7 +648,7 @@ namespace CertificateServices
 
             int result = cngProvider.NCryptOpenKey(providerHandle, out keyHandle, keyProv.pwszContainerName, 0, NCRYPT_MACHINE_KEY_FLAG);
 
-            switch(result)
+            switch (result)
             {
                 case SUCCESS:
                     return keyHandle;

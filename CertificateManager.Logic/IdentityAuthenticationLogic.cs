@@ -110,6 +110,13 @@ namespace CertificateManager.Logic
                 
         }
 
+        public ClaimsPrincipal AuthenticateWia(ClaimsPrincipal principal)
+        {
+            var domain = System.Environment.UserDomainName;
+
+            return principal;
+        }
+
         public ClaimsPrincipal Authenticate(string upn)
         {
             AuthenticablePrincipal authenticablePrincipal = localIdentityProviderLogic.Authenticate(upn);

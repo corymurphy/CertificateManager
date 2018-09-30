@@ -13,10 +13,13 @@ using CertificateServices.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.IISIntegration;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 
 namespace CertificateManager
 {
@@ -26,6 +29,8 @@ namespace CertificateManager
         DatabaseLocator databaseLocator;
         private bool initialSetupComplete = false;
         private IHostingEnvironment env;
+        private CertificateManagementLogic certificateManagementLogic;
+        private AppConfig appConfig;
         private EnvironmentInitializationProvider environmentInitializationProvider;
         private IOpenIdConnectIdentityProviderLogic oidcLogic;
         //private static CancellationTokenSource cancelTokenSource = new System.Threading.CancellationTokenSource();
@@ -68,6 +73,52 @@ namespace CertificateManager
             }
         }
 
+        public void ConfigureAuthentication(IServiceCollection services)
+        {
+
+
+            DownloadPfxCertificateEntity certEntity = certificateManagementLogic.GetPfxCertificateContent(appConfig.JwtCertificateId);
+
+            string password = certificateManagementLogic.GetCertificatePassword(appConfig.JwtCertificateId, LocalIdentityProviderLogic.GetSystemIdentity()).DecryptedPassword;
+
+            X509Certificate2 cert = new X509Certificate2(certEntity.Content, password);
+
+
+            services.AddAuthentication(IISDefaults.AuthenticationScheme);
+
+
+            services
+                .AddAuthentication(authOptions =>
+                {
+                    authOptions.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    authOptions.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    authOptions.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    authOptions.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                    authOptions.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                })
+                .AddCookie(options =>
+                {
+                    options.AccessDeniedPath = "/view/auth/forbidden";
+                    options.LoginPath = "/view/auth/login";
+                })
+                .AddJwtBearer(cfg =>
+                {
+                    cfg.RequireHttpsMetadata = false;
+                    cfg.SaveToken = true;
+
+                    cfg.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidIssuer = appConfig.LocalIdpIdentifier,
+                        ValidAudience = appConfig.LocalIdpIdentifier,
+                        IssuerSigningKey = new SymmetricSecurityKey(cert.Export(X509ContentType.Cert))
+                    };
+
+                });
+
+
+
+        }
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -77,20 +128,7 @@ namespace CertificateManager
                 options.AutomaticAuthentication = true;
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
-                {
-                    options.AccessDeniedPath = "/view/auth/forbidden";
-                    options.LoginPath = "/view/auth/login";
-                });
-
-            
             AppSettings appSettings = Configuration.GetSection("AppSettings").Get<AppSettings>();
-
-            //LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
-            //OpenIdConnectIdentityProviderLogic oidcLogic = new OpenIdConnectIdentityProviderLogic(configurationRepository);
-
-            //this.InitializeOidc(services, oidcLogic.GetIdentityProviders());
 
             databaseLocator = new DatabaseLocator(appSettings);
 
@@ -105,7 +143,7 @@ namespace CertificateManager
                 InitializeSetup(services);
             }
 
-            //oidcLogic.InitializeMiddleware(services);
+            ConfigureAuthentication(services);
 
             // Add framework services.
             services.AddMvc().AddJsonOptions(options =>
@@ -183,7 +221,7 @@ namespace CertificateManager
         {
             LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
 
-            AppConfig appConfig = configurationRepository.GetAppConfig();
+            appConfig = configurationRepository.GetAppConfig();
 
             ActiveDirectoryRepository activeDirectory = new ActiveDirectoryRepository();
 
@@ -248,7 +286,7 @@ namespace CertificateManager
 
             services.AddSingleton<ActiveDirectoryIdentityProviderLogic>(activeDirectoryIdentityProviderLogic);
 
-            CertificateManagementLogic certificateManagementLogic = new CertificateManagementLogic(
+            certificateManagementLogic = new CertificateManagementLogic(
                 configurationRepository,
                 certificateRepository,
                 authorizationLogic,

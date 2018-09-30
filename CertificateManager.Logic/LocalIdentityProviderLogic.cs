@@ -2,6 +2,8 @@
 using CertificateManager.Entities.Exceptions;
 using CertificateManager.Repository;
 using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace CertificateManager.Logic
 {
@@ -12,6 +14,8 @@ namespace CertificateManager.Logic
 
         IConfigurationRepository configurationRepository;
 
+        public static Guid SystemUid { get { return new Guid("53a90eeb-7f59-4e03-b109-38b20faf3877");  } }
+
         public LocalIdentityProviderLogic(IConfigurationRepository configurationRepository)
         {
             this.configurationRepository = configurationRepository;
@@ -21,6 +25,15 @@ namespace CertificateManager.Logic
         {
             AppConfig appConfig = configurationRepository.GetAppConfig();
             return appConfig.LocalIdpIdentifier;
+        }
+
+        public static ClaimsPrincipal GetSystemIdentity()
+        {
+            Claim name = new Claim(WellKnownClaim.Name, "SYSTEM");
+            Claim uid = new Claim(WellKnownClaim.Uid, LocalIdentityProviderLogic.SystemUid.ToString());
+            List<Claim> claims = new List<Claim>() { name, uid };
+
+            return new ClaimsPrincipal( new ClaimsIdentity(claims) );
         }
 
         public AuthenticablePrincipal InitializeEmergencyAccess(string secret)
