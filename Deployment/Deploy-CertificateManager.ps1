@@ -1,9 +1,31 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
-Write-Host " before module install "
+Remove-ModuleMultipleVersions -Name:'xWebAdministration';
+Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
+
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
 Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
+
+function Remove-ModuleMultipleVersions
+{
+    param
+    (
+        [string]$Name
+    )
+
+    $modules = Get-Module -Name:$Name -ListAvailable
+
+    if( $null -eq $modules )
+    {
+        return;
+    }
+
+    if($modules.Count -gt 1)
+    {
+        $modules | Uninstall-Module -Force;
+    }
+}
 
 function Get-SetCertificateManagerAclScript
 {
@@ -118,7 +140,29 @@ function New-CertificateManagerIISConfiguration
     return $result;
 }
 
+function Get-ModuleLatestVersion
+{
+    param
+    (
+        [string]$Name
+    )
 
+    $availableModules = Get-Module -Name:$Name -ListAvailable;
+
+    $directoryMatch = $env:USERPROFILE
+
+    foreach($module in $availableModules)
+    {
+        if($module.ModuleBase.StartsWith($directoryMatch))
+        {
+            return $module.Version.ToString();
+        }
+    }
+
+    return ( $availableModules | Select-Object -First 1).Version.ToString();
+    # If there is no user module, just return the first one
+
+}
 function Install-CertificateManagerRequiredModuled
 {
     param($Session)
@@ -248,8 +292,8 @@ function Deploy-CertificateManager
             New-SelfSignedCertificate -DnsName:$HostName;
         }
 
-        Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
-        Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
+        # Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
+        # Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
 
         $setupScript = { 
             param
