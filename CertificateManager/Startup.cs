@@ -172,10 +172,10 @@ namespace CertificateManager
                 app.UseExceptionHandler("/Home/Error");
             }
 
-            //IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
+            IRuntimeConfigurationState runtimeConfigurationState = app.ApplicationServices.GetService<IRuntimeConfigurationState>();
 
-            //if (env.IsDevelopment())
-            //    runtimeConfigurationState.IsDevelopment = true;
+            if (env.IsDevelopment())
+                runtimeConfigurationState.IsDevelopment = true;
 
 
             app.UseAuthentication();

@@ -17,6 +17,7 @@ namespace CertificateManager.Logic
             this.configurationRepository = configurationRepository;
         }
 
+
         public IEnumerable<Script> All(ClaimsPrincipal user)
         {
             return configurationRepository.GetAll<Script>();

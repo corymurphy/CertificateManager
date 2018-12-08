@@ -121,13 +121,14 @@ namespace CertificateManager.Controllers
             return Challenge("OidcPrimary");
         }
 
+        [HttpGet]
         [HttpPost]
         [Route("auth/login/dev-bypass")]
         public async Task<ActionResult> AuthenticateDevBypass()
         {
             if(runtimeConfigurationState.IsDevelopment)
             {
-                await HttpContext.SignInAsync(authenticationLogic.Authenticate("cmurphy"));
+                await HttpContext.SignInAsync(authenticationLogic.Authenticate("administrator@certificatemanager.local"));
                 return Redirect(Url.Content("~/")); 
             }
             else
