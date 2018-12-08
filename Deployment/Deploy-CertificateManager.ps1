@@ -1,5 +1,6 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
+Write-Host " before module install "
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
 Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
