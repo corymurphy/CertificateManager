@@ -1,12 +1,12 @@
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\DeployCertificateToNode.ps1
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\HostIISDiscovery.ps1
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\RenewIISCertificate.ps1
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.deps.json
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.dll
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.pdb
+C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.csprojAssemblyReference.cache
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.csproj.CoreCompileInputs.cache
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.AssemblyInfoInputs.cache
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.AssemblyInfo.cs
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.dll
 C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.pdb
-C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\DeployCertificateToNode.ps1
-C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\HostIISDiscovery.ps1
-C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\bin\Debug\netstandard2.0\RenewIISCertificate.ps1
-C:\workspace\CertificateManager\CertificateManager.Powershell.Runtime\obj\Debug\netstandard2.0\CertificateManager.Powershell.Runtime.csprojAssemblyReference.cache
