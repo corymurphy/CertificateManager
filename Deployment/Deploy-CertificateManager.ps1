@@ -247,8 +247,8 @@ function Deploy-CertificateManager
             New-SelfSignedCertificate -DnsName:$HostName;
         }
 
-        Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue;
-        Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue;
+        Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
+        Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -ErrorAction:Stop -WarningAction:SilentlyContinue -Force;
 
         $setupScript = { 
             param
