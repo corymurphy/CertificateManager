@@ -1,11 +1,35 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
-# Remove-ModuleMultipleVersions -Name:'xWebAdministration';
-# Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
+function Initialize-LocalRequiredModules
+{
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
-# Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
-# Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
-# Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
+    New-Variable -Name:'count' -Value:0 -Force;
+
+    $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
+
+    Get-Module 'xPSDesiredStateConfiguration' -ListAvailable | Where {$_.Path -like $("$env:USERPROFILE*");} | Uninstall-Module
+
+    if($count -eq 0)
+    {
+        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+    }
+    elseif($count -eq 1)
+    {
+        Update-Module -Name:$module;
+    }
+    elseif($count -gt 1)
+    {
+        Get-Module -Name:$module -ListAvailable | Uninstall-Module -Force;
+        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+    }
+    else
+    {
+        throw "unexpected module count value";
+    }
+}
+
+Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
 
 function Remove-ModuleMultipleVersions
 {
@@ -214,34 +238,7 @@ function Install-CertificateManagerRequiredModuled
     Remove-Item -Path:$xPSDesiredStateConfigurationSourcePath -Force -Recurse -Confirm:$false;
 }
 
-function Initialize-LocalRequiredModules
-{
-    Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
-    New-Variable -Name:'count' -Value:0 -Force;
-
-    $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
-
-    Get-Module 'xPSDesiredStateConfiguration' -ListAvailable | Where {$_.Path -like $("$env:USERPROFILE*");} | Uninstall-Module
-
-    if($count -eq 0)
-    {
-        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
-    }
-    elseif($count -eq 1)
-    {
-        Update-Module -Name:$module;
-    }
-    elseif($count -gt 1)
-    {
-        Get-Module -Name:$module -ListAvailable | Uninstall-Module -Force;
-        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
-    }
-    else
-    {
-        throw "unexpected module count value";
-    }
-}
 
 function Initialize-RequiredModules
 {
@@ -659,6 +656,6 @@ System.Security.AccessControl.PropagationFlags propagationFlags, System.Security
 # Remove-ModuleMultipleVersions -Name:'xWebAdministration';
 # Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
 
-Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
+
 
 Deploy-CertificateManager -ComputerName:$ComputerName -Credential:$Credential;
