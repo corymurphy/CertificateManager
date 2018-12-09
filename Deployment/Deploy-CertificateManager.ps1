@@ -4,8 +4,8 @@ Remove-ModuleMultipleVersions -Name:'xWebAdministration';
 Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
 
 Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
-Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
-Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
+# Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
+# Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
 
 function Remove-ModuleMultipleVersions
 {
@@ -163,6 +163,40 @@ function Get-ModuleLatestVersion
     # If there is no user module, just return the first one
 
 }
+
+function Install-Chocolatey
+{
+    param
+    (
+        [string]$ComputerName,
+        [PSCredential]$Credential
+    )
+
+    $sb = {
+        if ( $null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue) ) {
+            [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
+            iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+        }    
+    }
+    Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName;
+}
+
+function Install-DotNetCoreHosting
+{
+    param
+    (
+        [string]$ComputerName,
+        [PSCredential]$Credential
+    )
+    $sb = {
+        if ( $null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue) ) {
+            throw 'Chocolatey is not installed, run Install-Chocolatey on this node';
+        }  
+
+        choco install dotnetcore-sdk --version 2.2 -y
+    }
+    Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName;
+}
 function Install-CertificateManagerRequiredModuled
 {
     param($Session)
@@ -180,6 +214,53 @@ function Install-CertificateManagerRequiredModuled
     Remove-Item -Path:$xPSDesiredStateConfigurationSourcePath -Force -Recurse -Confirm:$false;
 }
 
+function Initialize-LocalRequiredModules
+{
+
+}
+
+function Initialize-RequiredModules
+{
+    
+    param
+    (
+        [string]$ComputerName,
+        [PSCredential]$Credential,
+        [System.Collections.Generic.List[string]]$Modules
+    )
+
+    $sb = {
+        param ([System.Collections.Generic.List[string]]$ModulesArg)
+
+        Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
+
+        foreach($module in $ModulesArg)
+        {
+            New-Variable -Name:'count' -Value:0 -Force;
+
+            $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
+
+            if($count -eq 0)
+            {
+                Install-Module -Name:$module -Scope:'AllUsers' -Force;
+            }
+            elseif($count -eq 1)
+            {
+                Update-Module -Name:$module;
+            }
+            elseif($count -gt 1)
+            {
+                Get-Module -Name:$module -ListAvailable | Uninstall-Module -Force;
+                Install-Module -Name:$module -Scope:'AllUsers' -Force;
+            }
+            else
+            {
+                throw "unexpected module count value";
+            }
+        }
+    }
+    Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName -ArgumentList @(,$Modules)
+}
 
 configuration CertificateManagerIISConfiguration
 {
@@ -213,17 +294,20 @@ configuration CertificateManagerIISConfiguration
         }
     }
 
-    Package InstallDotNetCoreWindowsHosting
-    {
-           Ensure = "Present"
-           Path = $HostingPackagePath
-           Arguments = "/q /norestart"
-           Name = "DotNetCore"
-           #52EB917D-6633-4063-BBDE-A57FA2E51F32
-           #"2E6AD27D-9060-324F-AB1B-7C0F837583B3" - package x64
-           ProductId = "52EB917D-6633-4063-BBDE-A57FA2E51F32"
-           DependsOn = '[WindowsFeature]IIS'
-    }
+    <#
+        choco install dotnetcore-windowshosting
+            Package InstallDotNetCoreWindowsHosting
+            {
+                Ensure = "Present"
+                Path = $HostingPackagePath
+                Arguments = "/q /norestart"
+                Name = "DotNetCore"
+                #52EB917D-6633-4063-BBDE-A57FA2E51F32
+                #"2E6AD27D-9060-324F-AB1B-7C0F837583B3" - package x64
+                ProductId = "52EB917D-6633-4063-BBDE-A57FA2E51F32"
+                DependsOn = '[WindowsFeature]IIS'
+            }
+    #>
 
     xWebAppPool CertMgrAppPool
     {
@@ -250,6 +334,50 @@ configuration CertificateManagerIISConfiguration
         DependsOn = '[WindowsFeature]IIS'
     }
 
+}
+
+
+function Get-CertificateManagerWebApplicationPackageHttp
+{
+    param
+    (
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][System.Uri]$PackageUri,
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][string]$PackagePath
+    )
+    $downloadArgs = @{
+        Uri = $PackageUri;
+        OutFile = $PackagePath;
+    };
+    Invoke-WebRequest @downloadArgs | Out-Null;
+}
+
+function Get-CertificateManagerWebApplicationPackageFile
+{
+    param
+    (
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][System.Uri]$PackageUri,
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][string]$PackagePath
+    )
+
+    Copy-Item -Path:($PackageUri.AbsolutePath) -Destination:$PackagePath -Force;
+
+}
+
+
+function Get-CertificateManagerWebApplicationPackage
+{
+    param
+    (
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][System.Uri]$PackageUri,
+        [Parameter(mandatory=$false)][ValidateNotNullOrEmpty()][string]$PackagePath
+    )
+
+    switch($PackageUri.Scheme)
+    {
+        "https" { Get-CertificateManagerWebApplicationPackageHttp -PackageUri:$PackageUri -PackagePath:$PackagePath; }
+        "file" { Get-CertificateManagerWebApplicationPackageFile -PackageUri:$PackageUri -PackagePath:$PackagePath; }
+        default { throw "PackageUri is not valid. https and file allowed." }
+    }
 }
 
 function Deploy-CertificateManager
@@ -360,15 +488,15 @@ function Deploy-CertificateManager
 
         $configurationPath = New-CertificateManagerIISConfiguration -InstallPath:$InstallPath -HostName:$WebsiteHostname -Thumbprint:$cert.Thumbprint -HostingPackagePath:( [IO.Path]::Combine($ServerTempDirectory, $hostingPackageName) );
 
-        Install-CertificateManagerRequiredModuled -Session:$Session;
+        # Install-CertificateManagerRequiredModuled -Session:$Session;
 
-        Invoke-WebRequest @downloadArgs | Out-Null;
+        Get-CertificateManagerWebApplicationPackage -PackageUri:$PackageUri -PackagePath:$packagePath;
 
-        Invoke-WebRequest @downloadDotNetCoreHostingArgs | Out-Null;
+        #Invoke-WebRequest @downloadDotNetCoreHostingArgs | Out-Null;
 
         Copy-Item -ToSession:$session -Path:$packagePath -Destination:$serverTempDirectory -Force;
 
-        Copy-Item -ToSession:$session -Path:$hostingBundlePath -Destination:$serverTempDirectory -Force;
+        #Copy-Item -ToSession:$session -Path:$hostingBundlePath -Destination:$serverTempDirectory -Force;
 
         Invoke-Command -ScriptBlock $createDscFolderScript -ArgumentList @($serverTempDirectory, $ConfigurationName) -Session $session;
 
@@ -384,6 +512,9 @@ function Deploy-CertificateManager
         );
         
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
+
+        Install-Chocolatey -Credential:$Credential -ComputerName:$ComputerName;
+        Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
 
         Invoke-Command -ScriptBlock:([scriptblock](Get-SetCertificateManagerAclScript)) -ArgumentList:@($InstallPath) -Session:$session;
     }
