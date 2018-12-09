@@ -193,7 +193,7 @@ function Install-DotNetCoreHosting
             throw 'Chocolatey is not installed, run Install-Chocolatey on this node';
         }  
 
-        choco install dotnetcore-sdk --version 2.2 -y
+        choco install dotnetcore-windowshosting --version 2.2 -y
     }
     Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName;
 }
