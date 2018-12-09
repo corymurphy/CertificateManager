@@ -2,6 +2,10 @@ param( [string]$ComputerName, [PSCredential]$Credential )
 
 function Initialize-LocalRequiredModules
 {
+    param
+    (
+        [System.Collections.Generic.List[string]]$Modules
+    )
     Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
     New-Variable -Name:'count' -Value:0 -Force;
