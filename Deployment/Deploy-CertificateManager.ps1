@@ -1,9 +1,9 @@
 param( [string]$ComputerName, [PSCredential]$Credential )
 
-Remove-ModuleMultipleVersions -Name:'xWebAdministration';
-Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
+# Remove-ModuleMultipleVersions -Name:'xWebAdministration';
+# Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
 
-Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
+# Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 # Install-Module -Name 'xWebAdministration' -Scope CurrentUser -Confirm:$false -Force;
 # Install-Module -Name 'xPSDesiredStateConfiguration' -Scope CurrentUser -Confirm:$false -Force;
 
@@ -216,7 +216,31 @@ function Install-CertificateManagerRequiredModuled
 
 function Initialize-LocalRequiredModules
 {
+    Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
+    New-Variable -Name:'count' -Value:0 -Force;
+
+    $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
+
+    Get-Module 'xPSDesiredStateConfiguration' -ListAvailable | Where {$_.Path -like $("$env:USERPROFILE*");} | Uninstall-Module
+
+    if($count -eq 0)
+    {
+        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+    }
+    elseif($count -eq 1)
+    {
+        Update-Module -Name:$module;
+    }
+    elseif($count -gt 1)
+    {
+        Get-Module -Name:$module -ListAvailable | Uninstall-Module -Force;
+        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+    }
+    else
+    {
+        throw "unexpected module count value";
+    }
 }
 
 function Initialize-RequiredModules
@@ -224,8 +248,7 @@ function Initialize-RequiredModules
     
     param
     (
-        [string]$ComputerName,
-        [PSCredential]$Credential,
+        [PSSession]$Session,
         [System.Collections.Generic.List[string]]$Modules
     )
 
@@ -259,7 +282,7 @@ function Initialize-RequiredModules
             }
         }
     }
-    Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName -ArgumentList @(,$Modules)
+    Invoke-Command -ScriptBlock:$sb -Session:$Session -ArgumentList @(,$Modules)
 }
 
 configuration CertificateManagerIISConfiguration
@@ -482,6 +505,7 @@ function Deploy-CertificateManager
     
     process
     {
+
         $session = New-PSSession -ComputerName $ComputerName -Credential $Credential -ErrorAction 'Stop';
 
         $cert = Invoke-Command -ScriptBlock:$newCertScript -ArgumentList @($WebsiteHostname) -Session:$session;
@@ -497,6 +521,8 @@ function Deploy-CertificateManager
         Copy-Item -ToSession:$session -Path:$packagePath -Destination:$serverTempDirectory -Force;
 
         #Copy-Item -ToSession:$session -Path:$hostingBundlePath -Destination:$serverTempDirectory -Force;
+
+        Initialize-RequiredModules -Session:$session;
 
         Invoke-Command -ScriptBlock $createDscFolderScript -ArgumentList @($serverTempDirectory, $ConfigurationName) -Session $session;
 
@@ -629,4 +655,10 @@ System.Security.AccessControl.PropagationFlags propagationFlags, System.Security
 
 
 }
+
+# Remove-ModuleMultipleVersions -Name:'xWebAdministration';
+# Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
+
+Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
+
 Deploy-CertificateManager -ComputerName:$ComputerName -Credential:$Credential;
