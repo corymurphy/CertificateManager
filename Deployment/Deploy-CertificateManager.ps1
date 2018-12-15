@@ -8,29 +8,34 @@ function Initialize-LocalRequiredModules
     )
     Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
-    New-Variable -Name:'count' -Value:0 -Force;
+    foreach($module in $Modules)
+    {
+        New-Variable -Name:'count' -Value:0 -Force;
 
-    $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
+        $count = Get-Module -Name:$module -ListAvailable | Measure-Object | Select-Object -ExpandProperty Count
 
-    Get-Module 'xPSDesiredStateConfiguration' -ListAvailable | Where {$_.Path -like $("$env:USERPROFILE*");} | Uninstall-Module
+        if($count -eq 0)
+        {
+            Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+        }
+        elseif($count -eq 1)
+        {
+            Update-Module -Name:$module;
+        }
+        elseif($count -gt 1)
+        {
+            $pattern = $("{0}*" -f $env:USERPROFILE);
 
-    if($count -eq 0)
-    {
-        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+            Get-Module -FullyQualifiedName:$module -ListAvailable | Where {$_.Path -like $pattern } | Uninstall-Module
+
+            # Install-Module -Name:$module -Scope:'CurrentUser' -Force;
+        }
+        else
+        {
+            throw "unexpected module count value";
+        }
     }
-    elseif($count -eq 1)
-    {
-        Update-Module -Name:$module;
-    }
-    elseif($count -gt 1)
-    {
-        Get-Module -Name:$module -ListAvailable | Uninstall-Module -Force;
-        Install-Module -Name:$module -Scope:'CurrentUser' -Force;
-    }
-    else
-    {
-        throw "unexpected module count value";
-    }
+
 }
 
 Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
