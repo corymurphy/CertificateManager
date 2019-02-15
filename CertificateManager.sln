@@ -17,7 +17,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.Integrat
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.UnitTests", "CertificateManager.UnitTests\CertificateManager.UnitTests.csproj", "{49B276DA-C262-4BB3-8CEE-F8B0A21AC17C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.Powershell.Runtime", "CertificateManager.Powershell.Runtime\CertificateManager.Powershell.Runtime.csproj", "{0AB7339C-F98B-41F0-9888-9DC3713BA61F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CertificateManager.Powershell.Runtime", "CertificateManager.Powershell.Runtime\CertificateManager.Powershell.Runtime.csproj", "{0AB7339C-F98B-41F0-9888-9DC3713BA61F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CertificateManager.Powershell.Module", "CertificateManager.Powershell.Module\CertificateManager.Powershell.Module.csproj", "{70F3BA2C-96D9-46A8-B588-E919A80732C6}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,18 @@ Global
 		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x64.Build.0 = Release|Any CPU
 		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x86.ActiveCfg = Release|Any CPU
 		{0AB7339C-F98B-41F0-9888-9DC3713BA61F}.Release|x86.Build.0 = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|x64.Build.0 = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Debug|x86.Build.0 = Debug|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|x64.ActiveCfg = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|x64.Build.0 = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|x86.ActiveCfg = Release|Any CPU
+		{70F3BA2C-96D9-46A8-B588-E919A80732C6}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

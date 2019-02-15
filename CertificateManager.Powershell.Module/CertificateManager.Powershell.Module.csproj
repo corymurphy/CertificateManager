@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CertificateManager.Entities\CertificateManager.Entities.csproj" />
+    <ProjectReference Include="..\CertificateManager.Logic\CertificateManager.Logic.csproj" />
+    <ProjectReference Include="..\CertificateManager.Repository\CertificateManager.Repository.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="CertificateManager\" />
+  </ItemGroup>
+
+</Project>

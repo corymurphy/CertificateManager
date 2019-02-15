@@ -19,4 +19,4 @@ CertificateServices/obj/
 CertificateServices/bin/
 CertificateManager/node_modules/
 CertificateManager/wwwroot/js/
-.vs/
+.vs
