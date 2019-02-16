@@ -38,7 +38,7 @@ function Initialize-LocalRequiredModules
 
 }
 
-Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
+#Initialize-LocalRequiredModules -Modules:@(,@('xWebAdministration', 'xPSDesiredStateConfiguration'));
 
 function Remove-ModuleMultipleVersions
 {
@@ -73,6 +73,7 @@ function Get-SetCertificateManagerAclScript
         {
             throw 'Install path not found';
         }       
+        
         
         $inheritance = ([System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit);
 
@@ -134,8 +135,6 @@ function Get-SetCertificateManagerAclScript
 
         Set-Acl -Path:$InstallPath -AclObject:$acl;
 
-        Add-CertificateManagerKeyStorePermissions
-
         $dbDirectory = ( [System.IO.Path]::Combine($InstallPath, 'db') );
         $dbAcl = Get-Acl -Path:$dbDirectory
 
@@ -180,6 +179,8 @@ function Get-ModuleLatestVersion
         [string]$Name
     )
 
+    Add-Type -AssemblyName System.Linq;
+
     $availableModules = Get-Module -Name:$Name -ListAvailable;
 
     $directoryMatch = $env:USERPROFILE
@@ -209,7 +210,12 @@ function Install-Chocolatey
         if ( $null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue) ) {
             [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12;
             iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-        }    
+        }
+
+        $newPath = $( "{0};C:\ProgramData\chocolatey\bin\" -f $env:PATH );
+        [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::Machine)
+        [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::Process)
+        [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::User)
     }
     Invoke-Command -ScriptBlock:$sb -Credential:$Credential -ComputerName:$ComputerName;
 }
@@ -223,8 +229,12 @@ function Install-DotNetCoreHosting
     )
     $sb = {
         if ( $null -eq (Get-Command 'choco.exe' -ErrorAction SilentlyContinue) ) {
-            throw 'Chocolatey is not installed, run Install-Chocolatey on this node';
-        }  
+            #throw 'Chocolatey is not installed, run Install-Chocolatey on this node';
+            $newPath = $( "{0};C:\ProgramData\chocolatey\bin\" -f $env:PATH );
+            [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::Machine)
+            [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::Process)
+            [Environment]::SetEnvironmentVariable('PATH', $newPath, [System.EnvironmentVariableTarget]::User)
+        }
 
         choco install dotnetcore-windowshosting --version 2.2 -y
     }
@@ -254,7 +264,7 @@ function Initialize-RequiredModules
     
     param
     (
-        [PSSession]$Session,
+        [System.Management.Automation.Runspaces.PSSession]$Session,
         [System.Collections.Generic.List[string]]$Modules
     )
 
@@ -291,6 +301,22 @@ function Initialize-RequiredModules
     Invoke-Command -ScriptBlock:$sb -Session:$Session -ArgumentList @(,$Modules)
 }
 
+function Get-ModuleLatest 
+{
+    param
+    (
+        [string]$Name
+    )
+
+    $availibleModules = Get-Module -ListAvailable -Name $Name;
+
+    $versionList = New-Object 'System.Collections.Generic.List[object]' -ArgumentList (,$availibleModules.Version)
+
+    $latestVersion = [System.Linq.Enumerable]::Max($versionList)
+    
+    return ( $availibleModules | where Version -eq $latestVersion | select -First 1 )
+}
+
 configuration CertificateManagerIISConfiguration
 {
     param
@@ -301,11 +327,14 @@ configuration CertificateManagerIISConfiguration
         [string]$HostingPackagePath
     )
 
+    Get-ModuleLatest 'xWebAdministration' | Import-Module -Force
+
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration';
     Import-DscResource -ModuleName 'xPSDesiredStateConfiguration';
-    Import-DscResource -ModuleName 'xWebAdministration';
+    Import-DscResource -ModuleName 'xWebAdministration' -ModuleVersion '2.4.0.0'
 
-    WindowsFeature IIS {
+    WindowsFeature IIS 
+    {
         Ensure = "Present"
         Name = "Web-Server"
     }
@@ -408,6 +437,117 @@ function Get-CertificateManagerWebApplicationPackage
         default { throw "PackageUri is not valid. https and file allowed." }
     }
 }
+
+function Add-CertificateManagerKeyStorePermissions
+{
+
+    $inheritance = ([System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit);
+
+    $appPoolReadExecuteAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolReadExecuteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolReadExecuteAceArgs
+
+    $appPoolWriteAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::Write,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolWriteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolWriteAceArgs
+
+
+    $appPoolModifyAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.FileSystemRights]::FullControl,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::None,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+    $appPoolModifyFilesAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolModifyAceArgs
+
+    $cryptoPath = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto');
+
+    $cryptoAcl = Get-Acl -Path:$cryptoPath;
+
+    $cryptoAcl.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath -AclObject:$cryptoAcl;
+    
+
+    $rsaAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA';
+    $rsaAcl.AddAccessRule($appPoolReadExecuteAce);
+    $rsaAcl.AddAccessRule($appPoolWriteAce);
+    $rsaAcl.AddAccessRule($appPoolModifyFilesAce);
+    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA' -AclObject:$rsaAcl;
+
+    $keysAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys';
+    $keysAcl.AddAccessRule($appPoolReadExecuteAce);
+    $keysAcl.AddAccessRule($appPoolWriteAce);
+    $keysAcl.AddAccessRule($appPoolModifyFilesAce);
+    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys' -AclObject:$keysAcl;
+
+
+    $regAcl = Get-Acl 'HKLM:\SOFTWARE\Microsoft\SystemCertificates'
+
+    <#
+        'System.Security.AccessControl.RegistryAccessRule'
+
+    System.Security.AccessControl.RegistryAccessRule new(string identity, System.Security.AccessControl.RegistryRights
+registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags,
+System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type)
+    #>
+
+
+
+
+
+    $cryptoPath1 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
+
+    $cryptoAcl1 = Get-Acl -Path:$cryptoPath1;
+
+    $cryptoAcl1.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl1.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl1.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath1 -AclObject:$cryptoAcl1;
+
+
+    $cryptoPath2 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
+
+    $cryptoAcl2 = Get-Acl -Path:$cryptoPath2;
+
+    $cryptoAcl2.AddAccessRule($appPoolReadExecuteAce);
+    $cryptoAcl2.AddAccessRule($appPoolWriteAce);
+    $cryptoAcl2.AddAccessRule($appPoolModifyFilesAce);
+
+    Set-Acl -Path:$cryptoPath2 -AclObject:$cryptoAcl2;
+
+
+    $regAceArgs = @(
+        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
+        [System.Security.AccessControl.RegistryRights]::FullControl,
+        $inheritance,
+        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
+        [System.Security.AccessControl.AccessControlType]::Allow
+    )
+
+    $regAce = New-Object -TypeName 'System.Security.AccessControl.RegistryAccessRule' -ArgumentList:$regAceArgs;
+
+    $regAcl.AddAccessRule($regAce)
+
+    Set-Acl -Path:'HKLM:\SOFTWARE\Microsoft\SystemCertificates' -AclObject:$regAcl
+
+
+}
+
 
 function Deploy-CertificateManager
 {
@@ -549,122 +689,8 @@ function Deploy-CertificateManager
         Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
 
         Invoke-Command -ScriptBlock:([scriptblock](Get-SetCertificateManagerAclScript)) -ArgumentList:@($InstallPath) -Session:$session;
+        Invoke-Command -ScriptBlock:${function:Add-CertificateManagerKeyStorePermissions} -Session:$session;
     }
 }
-
-function Add-CertificateManagerKeyStorePermissions
-{
-
-    $inheritance = ([System.Security.AccessControl.InheritanceFlags]::ContainerInherit -bor [System.Security.AccessControl.InheritanceFlags]::ObjectInherit);
-
-    $appPoolReadExecuteAceArgs = @(
-        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
-        [System.Security.AccessControl.FileSystemRights]::ReadAndExecute,
-        $inheritance,
-        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
-        [System.Security.AccessControl.AccessControlType]::Allow
-    )
-    $appPoolReadExecuteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolReadExecuteAceArgs
-
-    $appPoolWriteAceArgs = @(
-        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
-        [System.Security.AccessControl.FileSystemRights]::Write,
-        $inheritance,
-        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
-        [System.Security.AccessControl.AccessControlType]::Allow
-    )
-    $appPoolWriteAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolWriteAceArgs
-
-
-    $appPoolModifyAceArgs = @(
-        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
-        [System.Security.AccessControl.FileSystemRights]::FullControl,
-        $inheritance,
-        [System.Security.AccessControl.PropagationFlags]::None,
-        [System.Security.AccessControl.AccessControlType]::Allow
-    )
-    $appPoolModifyFilesAce = New-Object -TypeName:'System.Security.AccessControl.FileSystemAccessRule' -ArgumentList:$appPoolModifyAceArgs
-
-    $cryptoPath = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto');
-
-    $cryptoAcl = Get-Acl -Path:$cryptoPath;
-
-    $cryptoAcl.AddAccessRule($appPoolReadExecuteAce);
-    $cryptoAcl.AddAccessRule($appPoolWriteAce);
-    $cryptoAcl.AddAccessRule($appPoolModifyFilesAce);
-
-    Set-Acl -Path:$cryptoPath -AclObject:$cryptoAcl;
-    
-
-    $rsaAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA';
-    $rsaAcl.AddAccessRule($appPoolReadExecuteAce);
-    $rsaAcl.AddAccessRule($appPoolWriteAce);
-    $rsaAcl.AddAccessRule($appPoolModifyFilesAce);
-    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\RSA' -AclObject:$rsaAcl;
-
-    $keysAcl = Get-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys';
-    $keysAcl.AddAccessRule($appPoolReadExecuteAce);
-    $keysAcl.AddAccessRule($appPoolWriteAce);
-    $keysAcl.AddAccessRule($appPoolModifyFilesAce);
-    Set-Acl -Path:'C:\ProgramData\Microsoft\Crypto\Keys' -AclObject:$keysAcl;
-
-
-    $regAcl = Get-Acl 'HKLM:\SOFTWARE\Microsoft\SystemCertificates'
-
-    <#
-        'System.Security.AccessControl.RegistryAccessRule'
-
-    System.Security.AccessControl.RegistryAccessRule new(string identity, System.Security.AccessControl.RegistryRights
-registryRights, System.Security.AccessControl.InheritanceFlags inheritanceFlags,
-System.Security.AccessControl.PropagationFlags propagationFlags, System.Security.AccessControl.AccessControlType type)
-    #>
-
-
-
-
-
-    $cryptoPath1 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
-
-    $cryptoAcl1 = Get-Acl -Path:$cryptoPath1;
-
-    $cryptoAcl1.AddAccessRule($appPoolReadExecuteAce);
-    $cryptoAcl1.AddAccessRule($appPoolWriteAce);
-    $cryptoAcl1.AddAccessRule($appPoolModifyFilesAce);
-
-    Set-Acl -Path:$cryptoPath1 -AclObject:$cryptoAcl1;
-
-
-    $cryptoPath2 = [System.IO.Path]::Combine($env:ProgramData,'Microsoft\Crypto\RSA\MachineKeys');
-
-    $cryptoAcl2 = Get-Acl -Path:$cryptoPath2;
-
-    $cryptoAcl2.AddAccessRule($appPoolReadExecuteAce);
-    $cryptoAcl2.AddAccessRule($appPoolWriteAce);
-    $cryptoAcl2.AddAccessRule($appPoolModifyFilesAce);
-
-    Set-Acl -Path:$cryptoPath2 -AclObject:$cryptoAcl2;
-
-
-    $regAceArgs = @(
-        (New-Object -TypeName:'System.Security.Principal.NTAccount' -ArgumentList:@('IIS APPPOOL\CertificateManager')),
-        [System.Security.AccessControl.RegistryRights]::FullControl,
-        $inheritance,
-        [System.Security.AccessControl.PropagationFlags]::InheritOnly,
-        [System.Security.AccessControl.AccessControlType]::Allow
-    )
-
-    $regAce = New-Object -TypeName 'System.Security.AccessControl.RegistryAccessRule' -ArgumentList:$regAceArgs;
-
-    $regAcl.AddAccessRule($regAce)
-
-    Set-Acl -Path:'HKLM:\SOFTWARE\Microsoft\SystemCertificates' -AclObject:$regAcl
-
-
-}
-
-# Remove-ModuleMultipleVersions -Name:'xWebAdministration';
-# Remove-ModuleMultipleVersions -Name:'xPSDesiredStateConfiguration';
-
-
 
 Deploy-CertificateManager -ComputerName:$ComputerName -Credential:$Credential;
