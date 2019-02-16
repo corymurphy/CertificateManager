@@ -77,11 +77,11 @@ namespace CertificateManager
         {
 
 
-            DownloadPfxCertificateEntity certEntity = certificateManagementLogic.GetPfxCertificateContent(appConfig.JwtCertificateId);
+            //DownloadPfxCertificateEntity certEntity = certificateManagementLogic.GetPfxCertificateContent(appConfig.JwtCertificateId);
 
-            string password = certificateManagementLogic.GetCertificatePassword(appConfig.JwtCertificateId, LocalIdentityProviderLogic.GetSystemIdentity()).DecryptedPassword;
+            //string password = certificateManagementLogic.GetCertificatePassword(appConfig.JwtCertificateId, LocalIdentityProviderLogic.GetSystemIdentity()).DecryptedPassword;
 
-            X509Certificate2 cert = new X509Certificate2(certEntity.Content, password);
+            //X509Certificate2 cert = new X509Certificate2(certEntity.Content, password);
 
 
             services.AddAuthentication(IISDefaults.AuthenticationScheme);
@@ -100,20 +100,20 @@ namespace CertificateManager
                 {
                     options.AccessDeniedPath = "/view/auth/forbidden";
                     options.LoginPath = "/view/auth/login";
-                })
-                .AddJwtBearer(cfg =>
-                {
-                    cfg.RequireHttpsMetadata = false;
-                    cfg.SaveToken = true;
-
-                    cfg.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidIssuer = appConfig.LocalIdpIdentifier,
-                        ValidAudience = appConfig.LocalIdpIdentifier,
-                        IssuerSigningKey = new SymmetricSecurityKey(cert.Export(X509ContentType.Cert))
-                    };
-
                 });
+                //.AddJwtBearer(cfg =>
+                //{
+                //    cfg.RequireHttpsMetadata = false;
+                //    cfg.SaveToken = true;
+
+                //    cfg.TokenValidationParameters = new TokenValidationParameters()
+                //    {
+                //        ValidIssuer = appConfig.LocalIdpIdentifier,
+                //        ValidAudience = appConfig.LocalIdpIdentifier,
+                //        IssuerSigningKey = new SymmetricSecurityKey(cert.Export(X509ContentType.Cert))
+                //    };
+
+                //});
 
 
 

@@ -273,6 +273,8 @@ function Initialize-RequiredModules
 
         Set-PSRepository -Name 'PSGallery' -InstallationPolicy 'Trusted';
 
+        Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force;
+
         foreach($module in $ModulesArg)
         {
             New-Variable -Name:'count' -Value:0 -Force;
