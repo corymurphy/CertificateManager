@@ -310,7 +310,7 @@ function Get-ModuleLatest
 
     $availibleModules = Get-Module -ListAvailable -Name $Name;
 
-    $versionList = New-Object 'System.Collections.Generic.List[object]' -ArgumentList (,$availibleModules.Version)
+    $versionList = New-Object 'System.Collections.Generic.List[object]' -ArgumentList ( ,@($availibleModules.Version) )
 
     $latestVersion = [System.Linq.Enumerable]::Max($versionList)
     
