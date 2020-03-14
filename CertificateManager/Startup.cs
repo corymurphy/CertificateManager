@@ -219,6 +219,8 @@ namespace CertificateManager
 
         private void InitializeApp(IServiceCollection services, AppSettings appSettings)
         {
+            //singleton pattern here was a huge mistake, i'm going to fix this.
+
             LiteDbConfigurationRepository configurationRepository = new LiteDbConfigurationRepository(databaseLocator.GetConfigurationRepositoryConnectionString());
 
             appConfig = configurationRepository.GetAppConfig();
