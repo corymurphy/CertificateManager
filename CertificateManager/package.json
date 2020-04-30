@@ -2,7 +2,7 @@
   "name": "myproject",
   "version": "1.0.0",
   "devDependencies": {
-    "jquery": "^3.2.1",
+    "jquery": "^3.5.0",
     "sb_admin": "~1.0.4",
     "axios": "~0.16.2",
     "bootstrap": "~4.0.0",
