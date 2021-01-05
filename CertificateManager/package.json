@@ -4,7 +4,7 @@
   "devDependencies": {
     "jquery": "^3.2.1",
     "sb_admin": "~1.0.4",
-    "axios": "~0.16.2",
+    "axios": "~0.21.1",
     "bootstrap": "~4.0.0",
     "datatables": "~1.10.13",
     "jsgrid": "~1.5.3",
