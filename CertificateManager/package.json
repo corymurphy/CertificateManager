@@ -21,7 +21,7 @@
     "gulp-sourcemaps": "~2.6.1",
     "adminlte-reactjs": "^1.0.6",
     "adminlte-reactjs-carnegie": "^1.0.10",
-    "chart.js": "^2.7.1",
+    "chart.js": "^2.9.4",
     "bootstrap-table": "^1.12.1",
     "knockout": "3.4.2"
   }
