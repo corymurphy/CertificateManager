@@ -28,7 +28,7 @@
     "polymer-build": "^2.0.0",
     "run-sequence": "^2.1.0",
     "through2": "^2.0.0",
-    "web-component-tester": "^6.0.1"
+    "web-component-tester": "^6.9.2"
   },
   "scripts": {
     "build": "gulp",
