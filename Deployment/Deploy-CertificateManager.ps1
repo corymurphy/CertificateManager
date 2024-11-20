@@ -333,7 +333,7 @@ configuration CertificateManagerIISConfiguration
 
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration';
     Import-DscResource -ModuleName 'xPSDesiredStateConfiguration';
-    Import-DscResource -ModuleName 'xWebAdministration' -ModuleVersion '2.4.0.0'
+    Import-DscResource -ModuleName 'xWebAdministration';
 
     WindowsFeature IIS 
     {
