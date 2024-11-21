@@ -333,7 +333,7 @@ configuration CertificateManagerIISConfiguration
 
     Import-DscResource -ModuleName 'PSDesiredStateConfiguration';
     Import-DscResource -ModuleName 'xPSDesiredStateConfiguration';
-    Import-DscResource -ModuleName 'xWebAdministration' -ModuleVersion '2.4.0.0'
+    Import-DscResource -ModuleName 'xWebAdministration';
 
     WindowsFeature IIS 
     {
@@ -387,7 +387,7 @@ configuration CertificateManagerIISConfiguration
                                Port                  = 443
                                CertificateThumbprint = $Thumbprint
                                CertificateStoreName  = "My"
-                               HostName = $HostName
+                               HostName = "*"
                              }
                          )
         ApplicationPool = 'CertificateManager'
@@ -670,7 +670,7 @@ function Deploy-CertificateManager
 
         #Copy-Item -ToSession:$session -Path:$hostingBundlePath -Destination:$serverTempDirectory -Force;
 
-        Initialize-RequiredModules -Session:$session;
+        Initialize-RequiredModules -Session:$session -Modules:@('xWebAdministration');
 
         Invoke-Command -ScriptBlock $createDscFolderScript -ArgumentList @($serverTempDirectory, $ConfigurationName) -Session $session;
 
@@ -687,8 +687,8 @@ function Deploy-CertificateManager
         
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
 
-        Install-Chocolatey -Credential:$Credential -ComputerName:$ComputerName;
-        Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
+        # Install-Chocolatey -Credential:$Credential -ComputerName:$ComputerName;
+        # Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
 
         Invoke-Command -ScriptBlock:([scriptblock](Get-SetCertificateManagerAclScript)) -ArgumentList:@($InstallPath) -Session:$session;
         Invoke-Command -ScriptBlock:${function:Add-CertificateManagerKeyStorePermissions} -Session:$session;
