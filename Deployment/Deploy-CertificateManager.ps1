@@ -687,8 +687,8 @@ function Deploy-CertificateManager
         
         Invoke-Command -ScriptBlock $setupScript -ArgumentList $setupArgs -Session $session;
 
-        # Install-Chocolatey -Credential:$Credential -ComputerName:$ComputerName;
-        # Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
+        Install-Chocolatey -Credential:$Credential -ComputerName:$ComputerName;
+        Install-DotNetCoreHosting -Credential:$Credential -ComputerName:$ComputerName;
 
         Invoke-Command -ScriptBlock:([scriptblock](Get-SetCertificateManagerAclScript)) -ArgumentList:@($InstallPath) -Session:$session;
         Invoke-Command -ScriptBlock:${function:Add-CertificateManagerKeyStorePermissions} -Session:$session;

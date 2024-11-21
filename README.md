@@ -10,7 +10,7 @@ Ideally, private keys would only be stored on a node where they are needed to pe
 # How to Deploy Certificate Manager
 
 * Certificate Manager is packaged in a single nuget package that can be deployed to IIS
-* [Install .NET Core IIS Server Hosting](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-2.0.9-windows-hosting-bundle-installer)
+* [Install ASP.NET Core 2.2.1 IIS Server Hosting](https://download.visualstudio.microsoft.com/download/pr/5ee633f2-bf6d-49bd-8fb6-80c861c36d54/caa93641707e1fd5b8273ada22009246/dotnet-hosting-2.2.1-win.exe)
 * Run the following powershell to automatically deploy CertificateManager to your server. Supply value for *ComputerName*, you will be prompted for a credential
 ```powershell
 $ComputerName = 'web03.certmgr.local'; [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;Invoke-WebRequest -Uri:'https://github.com/corymurphy/CertificateManager/blob/master/Deployment/Deploy-CertificateManager.ps1?raw=true' -OutFile:$('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP);$cmdlet =  $('{0}\Deploy-CertificateManager.ps1' -f $env:TEMP); . $cmdlet -ComputerName:$ComputerName -Credential:(Get-Credential);
